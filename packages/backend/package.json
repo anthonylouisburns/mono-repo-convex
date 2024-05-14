@@ -4,6 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "convex dev",
+    "ios": "convex dev",
     "setup": "convex dev --until-success"
   },
   "author": "",

@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
+    "ios": "turbo run ios",
     "build": "turbo run build",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"
@@ -16,5 +17,8 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@packages/backend": "^1.0.0"
+  }
 }
