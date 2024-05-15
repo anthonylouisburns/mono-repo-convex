@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "convex dev",
     "ios": "convex dev",
+    "android": "convex dev",
     "setup": "convex dev --until-success"
   },
   "author": "",

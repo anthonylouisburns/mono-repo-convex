@@ -23,7 +23,10 @@ Features include:
 
 ## Using this example
 
-**1)** Install dependencies with `yarn` or `pnpm i`.
+**1)** Install dependencies with `yarn` or `pnpm i`.  
+
+- I used yarn
+- pasted in .env.local to packages/, apps/web/, apps/native
 
 **2)** Configure Convex:
 
@@ -32,6 +35,8 @@ Features include:
 ```sh
 npm run setup --workspace packages/backend
 ```
+
+- old project, check CONVEX_URL matches url from dashboard
 
 The script will log you into Convex if you aren't already and prompt you to
 create a project (free). It will then wait to deploy your code until you
