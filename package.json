@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "ios": "turbo run ios",
+    "android": "turbo run android",
     "build": "turbo run build",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"

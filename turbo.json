@@ -14,6 +14,10 @@
       "cache": false,
       "persistent": true
     },
+    "android": {
+      "cache": false,
+      "persistent": true
+    },
     "lint": {},
     "clean": {
       "cache": false
