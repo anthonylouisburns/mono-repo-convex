@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "convex": "^1.8.0",
-    "openai": "^4.24.7"
+    "distinct-colors": "^3.0.0",
+    "openai": "^4.24.7",
+    "react-select": "^5.8.0"
   }
 }
