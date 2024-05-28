@@ -29,6 +29,16 @@ export const episode = query({
     },
 });
 
+export const timeline = query({
+    handler: async (ctx) => {
+        const podcasts = await ctx.db.query("podcast").collect();
+
+        return Promise.all(
+      podcasts.map((podcast) => ctx.db.query("episode").withIndex("podcast_episode_number", (q) => q.eq("podcast_id", podcast._id))),
+    )
+    },
+});
+
 export const patchEpisodeTimeSpan = mutation({
     args: {
         id: v.id("episode"), timespan: v.object({
