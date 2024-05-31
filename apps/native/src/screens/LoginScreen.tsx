@@ -54,17 +54,6 @@ const LoginScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.buttonApple}
-          onPress={() => onPress('apple')}
-        >
-          <AntDesign name='apple1' size={24} color='black' />
-          <Text
-            style={{ ...styles.buttonText, color: '#344054', marginLeft: 12 }}
-          >
-            Continue with Apple
-          </Text>
-        </TouchableOpacity>
 
         <View style={styles.signupContainer}>
           <Text style={{ fontFamily: 'Regular' }}>Don’t have an account? </Text>
