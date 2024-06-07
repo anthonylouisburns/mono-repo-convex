@@ -1,10 +1,9 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from '../screens/LoginScreen';
-import NotesDashboardScreen from '../screens/NotesDashboardScreen';
-import InsideNoteScreen from '../screens/InsideNoteScreen';
-import CreateNoteScreen from '../screens/CreateNoteScreen';
+import Timeline from '../screens/Timeline';
+import Podcasts from '../screens/Podcasts';
+import Episodes from '../screens/Episodes';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,13 +14,9 @@ const Navigation = () => {
         initialRouteName="Home"
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen
-          name="NotesDashboardScreen"
-          component={NotesDashboardScreen}
-        />
-        <Stack.Screen name="InsideNoteScreen" component={InsideNoteScreen} />
-        <Stack.Screen name="CreateNoteScreen" component={CreateNoteScreen} />
+        <Stack.Screen name="Timeline" component={Timeline} />
+        <Stack.Screen name="Podcasts" component={Podcasts} />
+        <Stack.Screen name="Episodes" component={Episodes} />
       </Stack.Navigator>
     </NavigationContainer>
   );

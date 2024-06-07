@@ -1,30 +1,39 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useOAuth } from '@clerk/clerk-expo';
+import { useOAuth, SignedIn, useSignUp, useSignIn } from '@clerk/clerk-expo';
 import { AntDesign } from '@expo/vector-icons';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = () => {
+   // Warm up the android browser to improve UX
+  // https://docs.expo.dev/guides/authentication/#improving-user-experience
+  // useWarmUpBrowser();
+  // https://clerk.com/docs/quickstarts/expo - maybe need this
+  
   const { startOAuthFlow: startGoogleAuthFlow } = useOAuth({
     strategy: 'oauth_google',
   });
+
+  // not used
   const { startOAuthFlow: startAppleAuthFlow } = useOAuth({
     strategy: 'oauth_apple',
   });
 
   const onPress = async (authType: string) => {
     try {
+      console.log('hello', authType)
       if (authType === 'google') {
-        const { createdSessionId, setActive } = await startGoogleAuthFlow();
+        console.log('google oauth started', authType)
+        
+        const { createdSessionId, signIn, signUp, setActive } = await startGoogleAuthFlow();
+        console.log('hello 21', authType)
         if (createdSessionId) {
           setActive({ session: createdSessionId });
-          navigation.navigate('NotesDashboardScreen');
         }
       } else if (authType === 'apple') {
         const { createdSessionId, setActive } = await startAppleAuthFlow();
         if (createdSessionId) {
           setActive({ session: createdSessionId });
-          navigation.navigate('NotesDashboardScreen');
         }
       }
     } catch (err) {

@@ -12,6 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "convex": "^1.8.0",
+    "convex-helpers": "^0.1.41",
+    "convex-schema-mermaid": "^0.1.0",
     "distinct-colors": "^3.0.0",
     "openai": "^4.24.7"
   }

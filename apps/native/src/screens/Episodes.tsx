@@ -17,7 +17,7 @@ const Timeline = ({ navigation }) => {
   const user = useUser();
   const imageUrl = user?.user?.imageUrl;
   const firstName = user?.user?.firstName;
-  const { isLoaded, signOut } = useAuth();
+  const { isLoaded,signOut } = useAuth();
 
   if (!isLoaded) {
     return null;
@@ -29,13 +29,16 @@ const Timeline = ({ navigation }) => {
   return (
     <View style={styles.container}>
 
-      <EverwhzHeader navigation={navigation} page={"timeline"}/>
-      <Text>hi tony timeline</Text>
+      <EverwhzHeader navigation={navigation} page={"episodes"}/>
+    
+          <Text>hi tony episodes</Text>
 
 
 
     </View>
   );
 };
+
+
 
 export default Timeline;

@@ -8,6 +8,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { JSXSource } from 'react/jsx-dev-runtime';
 import { EpisodeSelect } from './EpisodesSelect';
 import { Episode } from './Episode';
+import { EpisodeById } from './EpisodeById';
 
 export default function About() {
   const podcasts = useQuery(api.everwzh.podcasts);
@@ -19,7 +20,7 @@ export default function About() {
     setSelectedPod(value as Id<"podcast">);
   };
 
-  const episode = selectedEpisode ? <Episode episode_id={selectedEpisode} /> : ""
+  const episode = selectedEpisode ? <EpisodeById episode_id={selectedEpisode} /> : ""
   return <div>
     <select value={selectedPodcast || "-"} onChange={e => onChange(e)}>
       <option>-</option>

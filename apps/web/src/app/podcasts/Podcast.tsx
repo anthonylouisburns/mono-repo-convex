@@ -1,31 +1,32 @@
-"use client";
 
 import { Doc, Id } from "@packages/backend/convex/_generated/dataModel";
-import { Options } from "distinct-colors"
-import distinctColors from "distinct-colors"
 import { TimeSpans } from "../TimeSpans";
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
+import { Dispatch, SetStateAction } from "react";
+import Link from "next/link";
+import { linkStyle } from "@packages/backend/utilities/utility";
 
-export const Podcast = function Podcast({podcast, podcastColor}:{podcast:Doc<"podcast">, podcastColor:string}):JSX.Element{
-    const patchPodcastTimeSpan = useMutation(api.everwzh.patchPodcastTimeSpan)
-    const deletePodcastTimeSpan = useMutation(api.everwzh.deletePodcastTimeSpan)
-
-    function addTimeSpan(span: { name: string, start: string, end: string }) {
-        patchPodcastTimeSpan({ id: podcast._id, timespan: span })
-    }
-
-    function deleteSpan(index: number) {
-        deletePodcastTimeSpan({ id: podcast._id, index})
-    }
-
-
+export const Podcast = function Podcast({ podcast, podcastColor, setName, setRss }: { podcast: Doc<"podcast">, podcastColor: string, setName: Dispatch<SetStateAction<string>>, setRss: Dispatch<SetStateAction<string>> }): JSX.Element {
+    const deletePodcast = useMutation(api.everwzh.deletePodcast);
     const podcastStyle = { borderColor: podcastColor, borderWidth: 2, margin: 10, borderRadius: 3, textAlign: 'center' as const }
+    const redStyle = { color: "red" }
+    const timespans:Array<Doc<"timespan">> = useQuery(api.everwzh.timespans, {podcast_id: podcast._id}) ?? [];
+
     return <div style={podcastStyle}>
-        {podcast.name} {podcast.number_of_episodes || 0} episodes<br/>
-        {podcast.rss_url}<br/>
+        <Link style={linkStyle} href={{
+    pathname: '/pod_episodes',
+    query: { podcast_id: podcast._id },
+  }}>{podcast.name}</Link> {podcast.number_of_episodes || 0} episodes <a style={redStyle} onClick={() => {
+            setName(podcast.name)
+            setRss(podcast.rss_url)
+            deletePodcast({ id: podcast._id })
+                .catch((reason) => console.error(reason));
+        }}>x</a><br />
+        {podcast.rss_url}<br />
         {podcast.rss_body || "-"}
-        <TimeSpans spans={podcast.timeSpans ? podcast.timeSpans : []}  addSpan={addTimeSpan} deleteSpan={deleteSpan}/>
+
+        <TimeSpans spans={timespans} podcast_id={podcast._id} episode_id={undefined} />
     </div>
 }
 

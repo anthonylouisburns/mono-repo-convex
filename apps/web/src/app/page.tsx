@@ -1,21 +1,13 @@
 'use client';
 
-import Header from '@/components/Header';
-import Benefits from '@/components/home/Benefits';
-import Footer from '@/components/home/Footer';
-import FooterHero from '@/components/home/FooterHero';
-import Hero from '@/components/home/Hero';
-import Testimonials from '@/components/home/Testimonials';
+import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main>
-      <Header />
-      <Hero />
-      <Benefits />
-      <Testimonials />
-      <FooterHero />
-      <Footer />
-    </main>
+    <>
+      <Link href="/">everwzh</Link><br/>
+      <Link href="/podcasts">podcasts</Link><br/>
+      <Link href="/episodes">episodes</Link>
+    </>
   );
 }
