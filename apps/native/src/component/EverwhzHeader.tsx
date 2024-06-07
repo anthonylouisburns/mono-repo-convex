@@ -10,7 +10,6 @@ import {
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { api } from '@packages/backend/convex/_generated/api';
-import { useQuery } from 'convex/react';
 
 export const EverwhzHeader = ({ navigation, page }) => {
   const user = useUser();
@@ -48,16 +47,17 @@ export const EverwhzHeader = ({ navigation, page }) => {
   }
 
   function episode() {
-    if (page == 'timeline') {
+    if (page == 'episodes') {
       return (
-        <><Text style={styles.selected}>episodes</Text> | </>
+        <><Text style={styles.selected}>episodes</Text> </>
       )
     } else {
       return (
-        <><Text>episodes</Text> | </>
+        <><Text>episodes</Text> </>
       )
     }
   }
+  
   return (
     <>
       <View style={styles.yourNotesContainer}>
@@ -80,7 +80,8 @@ export const EverwhzHeader = ({ navigation, page }) => {
         <Text>
           {timeline()}
           {podcast()}
-          <Text>episodes</Text></Text>
+          {episode()}
+        </Text>
       </View>
     </>
   );
@@ -97,8 +98,7 @@ export const styles = StyleSheet.create({
     color: 'blue'
   },
   container: {
-    flex: 1,
-    backgroundColor: 'white',
+    margin: 5
   },
   header: {
     backgroundColor: '#0D87E1',
