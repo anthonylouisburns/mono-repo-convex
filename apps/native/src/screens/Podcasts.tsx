@@ -29,8 +29,9 @@ const Timeline = ({ navigation }) => {
   return (
     <View style={styles.container}>
 
-      <EverwhzHeader navigation={navigation} page={"timeline"}/>
-      <Text>hi tony timeline</Text>
+
+      <EverwhzHeader navigation={navigation} page="podcast"/>
+      <Text>hi tony podcasts</Text>
 
 
 

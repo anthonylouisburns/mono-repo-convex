@@ -1,9 +1,50 @@
 import { query, action, mutation } from './_generated/server';
 import { v } from "convex/values";
 import { api } from "./_generated/api";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 const { XMLParser } = require("fast-xml-parser");
 
+function isValidUrl(urlString: string): Boolean {
+    var urlPattern = new RegExp('^(https?:\\/\\/)?' + // validate protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // validate domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // validate OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // validate port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // validate query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // validate fragment locator
+
+    return !!urlPattern.test(urlString);
+}
+
+export const addPodcast = mutation({
+    args: { name: v.string(), rss_url: v.string() },
+    handler: async (ctx, args) => {
+        if (args.rss_url.trim().length === 0 || args.name.trim().length === 0) {
+            return { error: "empty arg" };
+        }
+
+        const existing = await ctx.db.query("podcast").withIndex("rss_url", q => q.eq("rss_url", args.rss_url)).unique();
+        if (existing) {
+            return { error: "existing" }
+        }
+
+        if (!isValidUrl(args.rss_url)) {
+            return { error: "invalid url" }
+        }
+
+        const id = await ctx.db.insert("podcast", {
+            name: args.name,
+            rss_url: args.rss_url,
+        });
+
+        console.log("added podcast {id} {args.name}");
+        await ctx.scheduler.runAfter(0, api.everwzh.downloadRssBody, {
+            id: id,
+            rss: args.rss_url,
+        });
+
+        return id
+    },
+});
 
 export const episodes = query({
     args: { podcast_id: v.union(v.id("podcast"), v.null()) },
@@ -29,79 +70,93 @@ export const episode = query({
     },
 });
 
-export const timeline = query({
-    handler: async (ctx) => {
-        const podcasts = await ctx.db.query("podcast").collect();
+export const deletePodcast = mutation({
+    args: { id: v.id("podcast") },
 
-        return Promise.all(
-      podcasts.map((podcast) => ctx.db.query("episode").withIndex("podcast_episode_number", (q) => q.eq("podcast_id", podcast._id))),
-    )
+    handler: async (ctx, args) => {
+        const data = (await ctx.db.get(args.id));
+        await ctx.db.delete(args.id);
+        if (data?.rss_body != null) {
+            await ctx.storage.delete(data?.rss_body);
+        }
+        const episodes = await ctx.db.query("episode")
+            .withIndex("podcast_episode_number", (q) => q.eq("podcast_id", args.id))
+            .collect();
+        for (const e of episodes) {
+            ctx.db.delete(e._id)
+        }
+        const spans = await ctx.db.query("timespan")
+            .withIndex("podcast_episode", (q) => q.eq("podcast_id", args.id))
+            .collect();
+        for (const span of spans) {
+            ctx.db.delete(span._id)
+        }
     },
 });
 
-export const patchEpisodeTimeSpan = mutation({
+export const timeline = query({
+    handler: async (ctx) => {
+        const timeSpans = await ctx.db.query("timespan").collect();
+
+        const data:Array<{span:Doc<"timespan">,podcast:Doc<"podcast"> | null,episode:Doc<"episode"> | null}> = []
+
+        if(!timeSpans){
+            return data
+        }
+
+        for(const span of timeSpans){
+            const pod = await ctx.db.get(span.podcast_id)
+            const episode =  span.episode_id ? await ctx.db.get(span.episode_id) : null
+            data.push({span:span, podcast: pod, episode: episode})
+        }
+
+        return data
+    },
+});
+
+export const addTimeSpan = mutation({
     args: {
-        id: v.id("episode"), timespan: v.object({
-            name: v.string(),
-            start: v.string(),
-            end: v.string(),
-        }),
+        podcast_id: v.id("podcast"),
+        episode_id: v.optional(v.id("episode")),
+        name: v.string(),
+        start: v.string(),
+        end: v.string(),
     },
 
     handler: async (ctx, args) => {
-        const episode = (await ctx.db.get(args.id));
-        let timeSpans = episode?.timeSpans || []
-        timeSpans.push(args.timespan)
-
-        ctx.db.patch(args.id, { timeSpans: timeSpans })
+        ctx.db.insert("timespan", args)
     }
 })
 
-export const deleteEpisodeTimeSpan = mutation({
-    args: { id: v.id("episode"), index: v.number(), },
+export const deleteTimeSpan = mutation({
+    args: { id: v.id("timespan"), },
 
     handler: async (ctx, args) => {
-        const episode = (await ctx.db.get(args.id));
-        let timeSpans = episode?.timeSpans || []
-        console.log(timeSpans.length)
-        timeSpans.splice(args.index, 1)
-        console.log(timeSpans.length)
-        ctx.db.patch(args.id, { timeSpans: timeSpans })
-    }
+        ctx.db.delete(args.id)
+    },
 })
 
-
-
-export const patchPodcastTimeSpan = mutation({
+export const timespans = query({
     args: {
-        id: v.id("podcast"), timespan: v.object({
-            name: v.string(),
-            start: v.string(),
-            end: v.string(),
-        }),
+        podcast_id: v.id("podcast"), episode_id: v.optional(v.id("episode")),
     },
 
     handler: async (ctx, args) => {
-        const podcast = (await ctx.db.get(args.id));
-        let timeSpans = podcast?.timeSpans || []
-        timeSpans.push(args.timespan)
+        if (args.episode_id) {
+            const timeSpans = await ctx.db.query("timespan")
+                .withIndex("podcast_episode", (q) => q.eq("podcast_id", args.podcast_id).eq("episode_id", args.episode_id) )
+                .collect()
+            return timeSpans
+        }else{
+            const timeSpans = await ctx.db.query("timespan")
+                .withIndex("podcast_episode", (q) => q.eq("podcast_id", args.podcast_id))
+                .collect()
+            return timeSpans
+        }
+    },
+});
 
-        ctx.db.patch(args.id, { timeSpans: timeSpans })
-    }
-})
 
-export const deletePodcastTimeSpan = mutation({
-    args: { id: v.id("podcast"), index: v.number(), },
-
-    handler: async (ctx, args) => {
-        const podcast = (await ctx.db.get(args.id));
-        let timeSpans = podcast?.timeSpans || []
-        console.log(timeSpans.length)
-        timeSpans.splice(args.index, 1)
-        console.log(timeSpans.length)
-        ctx.db.patch(args.id, { timeSpans: timeSpans })
-    }
-})
 export const podcasts = query({
     handler: async (ctx) => {
         const podcasts = await ctx.db.query("podcast").collect();

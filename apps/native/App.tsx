@@ -4,6 +4,9 @@ import { LogBox } from 'react-native';
 import Navigation from './src/navigation/Navigation';
 import ConvexClientProvider from './ConvexClientProvider';
 
+import { SignedIn, SignedOut } from '@clerk/clerk-expo';
+import LoginScreen from './src/screens/LoginScreen';
+
 export default function App() {
   LogBox.ignoreLogs(['Warning: ...']);
   LogBox.ignoreAllLogs();
@@ -37,7 +40,12 @@ export default function App() {
             barStyle="light-content"
           />
         </View>
-        <Navigation />
+        <SignedIn>
+          <Navigation />
+        </SignedIn>
+        <SignedOut>
+          <LoginScreen />
+        </SignedOut>
       </View>
     </ConvexClientProvider>
   );

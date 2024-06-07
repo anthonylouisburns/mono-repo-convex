@@ -1,21 +1,30 @@
 "use client";
 
 import { Button } from "@/components/common/button";
-import { useRef, createRef, Component, useState } from 'react';
+import { Doc, Id } from "@packages/backend/convex/_generated/dataModel";
+import { timedisplay } from "@packages/backend/utilities/utility";
+import { useState } from 'react';
+import { useMutation } from 'convex/react';
+import { api } from '@packages/backend/convex/_generated/api';
 
-export const TimeSpans = function TimeSpans({ spans, addSpan, deleteSpan }: {
-    spans: Array<{ name: string, start: string, end: string }>,
-    addSpan: (span: { name: string, start: string, end: string }) => void,
-    deleteSpan: (index: number) => void
-}): JSX.Element {
+export const TimeSpans = function TimeSpans({ spans, podcast_id, episode_id }:
+    {
+        spans: Array<Doc<"timespan">>,
+        podcast_id: Id<"podcast">,
+        episode_id: Id<"episode"> | undefined
+    }): JSX.Element {
     const errorStyle = { color: 'red' }
     const [name, setName] = useState<string>()
     const [start, setStart] = useState<string>()
     const [end, setEnd] = useState<string>()
     const [errorStr, setError] = useState<string>()
 
+
+    const addTimeSpan = useMutation(api.everwzh.addTimeSpan);
+    const deleteTimeSpan = useMutation(api.everwzh.deleteTimeSpan);
+
     function add() {
-        if(!start || !end || !name){
+        if (!start || !end || !name) {
             error("start, end and name must be set")
             return
         }
@@ -23,11 +32,11 @@ export const TimeSpans = function TimeSpans({ spans, addSpan, deleteSpan }: {
             error("name must be atleast 2 characters")
             return
         }
-        if(!validDate(start) || !validDate(end)){
+        if (!validDate(start) || !validDate(end)) {
             return
         }
 
-        addSpan({ name: name, start: start, end: end })
+        addTimeSpan({ podcast_id: podcast_id, episode_id: episode_id, name: name, start: start, end: end })
 
         setName('')
         setStart('')
@@ -40,11 +49,11 @@ export const TimeSpans = function TimeSpans({ spans, addSpan, deleteSpan }: {
             error('String must be numeric')
             return false
         }
-        if (!(dateString.length == 8 || (dateString[0]=='-' && dateString.length == 9))) {
+        if (!(dateString.length == 8 || (dateString[0] == '-' && dateString.length == 9))) {
             error("must be format YYYYMMDD or -YYYYMMDD")
             return false
         }
-        if (Number.parseInt(dateString.slice(-2)) > 31 || Number.parseInt(dateString.slice(-4, 2)) > 12) {
+        if (Number.parseInt(dateString.slice(-2)) > 31 || Number.parseInt(dateString.slice(-4, -2)) > 12) {
             error("YYYYMMDD MM <= 12 DD <= 31")
             return false
         }
@@ -52,28 +61,31 @@ export const TimeSpans = function TimeSpans({ spans, addSpan, deleteSpan }: {
     }
 
     function error(error: string) {
-        if(errorStr && errorStr.length>0){
-            error=errorStr+","+error
+        if (errorStr && errorStr.length > 0) {
+            error = errorStr + "," + error
         }
         setError(error)
     }
 
-    function deleteTimeSpan(index: number) {
+    function deleteSpan(index: number) {
+        alert(spans[index].name)
         setName(spans[index].name)
         setStart(spans[index].start)
         setEnd(spans[index].end)
 
-        deleteSpan(index)
+        deleteTimeSpan({ id: spans[index]._id })
     }
 
     const spanDivs = spans.map((span, index) => {
-        return <div><Button onClick={() => deleteTimeSpan(index)}>-</Button>{span.start}-{span.end} {span.name}</div>
+        return <div key={spans[index]._id}><Button onClick={() => deleteSpan(index)}>-</Button>{timedisplay(span.start)} to {timedisplay(span.end)} {span.name}</div>
     })
     return <div>
         <Button onClick={() => add()}>+</Button>
-        <input type="text" placeholder="YYYYMMDD start" onChange={e=>setStart(e.target.value)} value={start}/>
-        <input type="text" placeholder="YYYYMMDD end" onChange={e=>setEnd(e.target.value)} value={end}/>
-        <input type="text" placeholder="span name" onChange={e=>setName(e.target.value)} value={name}/>
+        <input type="text" placeholder="YYYYMMDD start" onChange={e => {
+            setStart(e.target.value)
+        }} value={start} />
+        <input type="text" placeholder="YYYYMMDD end" onChange={e => setEnd(e.target.value)} value={end} />
+        <input type="text" placeholder="span name" onChange={e => setName(e.target.value)} value={name} />
         <div style={errorStyle}>{errorStr}</div>
         {spanDivs}
     </div>

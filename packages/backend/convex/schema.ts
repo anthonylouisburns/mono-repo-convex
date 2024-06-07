@@ -1,7 +1,8 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { schemaToMermaid } from "convex-schema-mermaid";
 
-export default defineSchema({
+const schema = defineSchema({
   notes: defineTable({
     userId: v.string(),
     title: v.string(),
@@ -13,11 +14,6 @@ export default defineSchema({
     rss_url: v.string(),
     rss_body: v.optional(v.id("_storage")),
     number_of_episodes: v.optional(v.number()),
-    timeSpans: v.optional(v.array(v.object({
-      name: v.string(),
-      start: v.string(),
-      end: v.string(),
-    }))),
   })
   .index("rss_url", ["rss_url"]),
   episode: defineTable({
@@ -27,11 +23,16 @@ export default defineSchema({
     // pud_date: v.string(),
     // media_url: v.string(),
     body: v.any(),
-    timeSpans: v.optional(v.array(v.object({
-      name: v.string(),
-      start: v.string(),
-      end: v.string(),
-    }))),
   })
   .index("podcast_episode_number", ["podcast_id", "episode_number"]),
+  timespan: defineTable({
+    podcast_id: v.id("podcast"),
+    episode_id: v.optional(v.id("episode")),
+    name: v.optional(v.string()),
+    start: v.string(),
+    end: v.string(),
+  })
+  .index("podcast_episode", ["podcast_id", "episode_id"]),
 });
+console.log(schemaToMermaid(schema));
+export default schema;
