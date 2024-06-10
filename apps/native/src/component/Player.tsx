@@ -23,18 +23,22 @@ const Player = () => {
         sound,
         setSound,
         episode_id,
-        podcast_name
+        podcast_name,
+        duration,
+        set_duration,
+        position,
+        set_position,
     } = useContext(AudioContext);
 
 
-    const [position, setPosition] = useState("-");
-    const [duration, setDuration] = useState("-");
+    const [position1, setPosition] = useState("-");
 
     const episode = useQuery(api.everwzh.episode, { id: episode_id as Id<"episode"> });
 
     function playStatus(status: AVPlaybackStatus) {
         if (status["isPlaying"]) {
             setPosition(msToTime(status["positionMillis"]))
+            set_position(msToTime(status["positionMillis"]))
         }
     }
     function playStatusNoOp(status: AVPlaybackStatus) { }
@@ -44,7 +48,7 @@ const Player = () => {
     }
 
     function positionFocusOut() {
-        sound.setPositionAsync(timeToMs(position))
+        sound.setPositionAsync(timeToMs(position1))
         sound.setOnPlaybackStatusUpdate(playStatus);
     }
 
@@ -83,13 +87,11 @@ const Player = () => {
         const mp3_link = episode?.body.enclosure["@_url"]
         const source = { uri: mp3_link };
 
-        // const { sound } = await Audio.Sound.createAsync(require('./assets/Hello.mp3'));
-        // const { sound, status } = await Audio.Sound.createAsync(source, { positionMillis: timeToMs(position) }, playStatus);
         const { sound, status } = (position.length > 1) ?
             await Audio.Sound.createAsync(source, { positionMillis: timeToMs(position) }, playStatus) :
             await Audio.Sound.createAsync(source, {}, playStatus);
 
-        setDuration(msToTime(status["durationMillis"]))
+        set_duration(msToTime(status["durationMillis"]))
         setSound(sound);
 
         console.log('Playing Sound');

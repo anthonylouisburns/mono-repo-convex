@@ -8,8 +8,7 @@ import { SignedIn, SignedOut } from '@clerk/clerk-expo';
 import LoginScreen from './src/screens/LoginScreen';
 import { AudioContext } from './AudiContext'
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS, } from 'expo-av';
-import { createContext, useContext, useEffect, useState } from 'react';
-import Player from './src/component/Player';
+import { useEffect, useState } from 'react';
 
 
 
@@ -19,6 +18,8 @@ export default function App() {
   const [sound, setSound] = useState<Audio.Sound>();
   const [episode_id, set_episode_id] = useState();
   const [podcast_name, set_podcast_name] = useState();
+  const [duration, set_duration] = useState("-");
+  const [position, set_position] = useState("-");
 
 
   const [loaded] = useFonts({
@@ -76,7 +77,11 @@ export default function App() {
               episode_id,
               set_episode_id,
               podcast_name,
-              set_podcast_name
+              set_podcast_name,
+              duration,
+              set_duration,
+              position,
+              set_position
             }}
           >
             <Navigation />
