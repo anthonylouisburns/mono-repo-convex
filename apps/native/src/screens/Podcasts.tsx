@@ -32,12 +32,7 @@ const Timeline = ({ navigation }) => {
       }
     >{podcast.name}</Text>
   )) : []
-  // navigate("HeaderStack",{},
-  //   {
-  //     type: "Navigate",
-  //     routeName: "SecondView",
-  //     params: {name:"Jo"}
-  //   }
+
   return (
     <View style={styles.container}>
       <EverwhzHeader navigation={navigation} page="podcast" />

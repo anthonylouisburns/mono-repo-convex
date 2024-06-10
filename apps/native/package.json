@@ -17,15 +17,18 @@
     "@react-navigation/native-stack": "^6.9.17",
     "expo": "~51.0.9",
     "expo-auth-session": "5.5.2",
+    "expo-av": "^14.0.5",
     "expo-font": "~11.10.2",
     "expo-random": "~13.6.0",
     "expo-status-bar": "~1.11.1",
+    "hermes": "^0.4.4",
     "react": "18.2.0",
     "react-native": "0.74.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-responsive-fontsize": "^0.5.1",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "~3.29.0",
+    "react-native-track-player": "^4.1.1",
     "use-sync-external-store": "^1.2.2"
   },
   "devDependencies": {

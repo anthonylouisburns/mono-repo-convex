@@ -49,11 +49,25 @@ export const EverwhzHeader = ({ navigation, page }) => {
   function episode() {
     if (page == 'episodes') {
       return (
-        <><Text style={styles.selected}>episodes</Text> </>
+        <><Text style={styles.selected}>episodes</Text> | </>
       )
     } else {
       return (
-        <><Text>episodes</Text> </>
+        <><Text>episodes</Text> | </>
+      )
+    }
+  }
+
+  function player() {
+    if (page == 'player') {
+      return (
+        <><Text style={styles.selected}>player</Text> </>
+      )
+    } else {
+      return (
+        <><Text style={styles.link} onPress={() =>
+          navigation.navigate('Player')
+        }>player</Text></>
       )
     }
   }
@@ -81,6 +95,7 @@ export const EverwhzHeader = ({ navigation, page }) => {
           {timeline()}
           {podcast()}
           {episode()}
+          {player()}
         </Text>
       </View>
     </>
@@ -98,6 +113,18 @@ export const styles = StyleSheet.create({
     color: 'blue'
   },
   container: {
+    margin: 5
+  },
+  container_center: {
+    margin: 5,
+    marginTop: 25,
+    alignSelf: 'center',
+    alignItems: 'center'
+  },
+  player_center: {
+    alignSelf: 'center',
+    display: 'flex',
+    flexDirection: 'row',
     margin: 5
   },
   header: {
