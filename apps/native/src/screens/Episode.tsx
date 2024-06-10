@@ -5,20 +5,28 @@ import { useAuth, useUser } from '@clerk/clerk-expo';
 // https://rntp.dev/docs/basics/getting-started
 
 //https://docs.expo.dev/versions/latest/sdk/audio/
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Button } from 'react-native';
 import { AVPlaybackStatus, Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
-import { Episode } from "../component/Episode";
+import { EpisodeView } from "../component/EpisodeView";
 import { useQuery } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
+import { AudioContext } from '../../AudiContext'
+import Player from "../component/Player";
 
 
-const Player = ({ route, navigation }) => {
+const Episode = ({ route, navigation }) => {
     const { isLoaded, } = useAuth();
     // TrackPlayer.setupPlayer()
     const { page, episode_id, podcast_name } = route.params;
 
-    const [sound, setSound] = useState<Audio.Sound>();
+    const {
+        sound,
+        setSound,
+        set_episode_id,
+        set_podcast_name
+      } = useContext(AudioContext);
+    // const [sound, setSound] = useState<Audio.Sound>();
     const [position, setPosition] = useState("-");
     const [duration, setDuration] = useState("-");
 
@@ -83,28 +91,13 @@ const Player = ({ route, navigation }) => {
 
         setDuration(msToTime(status["durationMillis"]))
         setSound(sound);
+        set_episode_id(episode._id);
+        set_podcast_name(podcast_name);
 
         console.log('Playing Sound');
         await sound.playAsync();
     }
 
-    useEffect(() => {
-        Audio.setAudioModeAsync({
-            staysActiveInBackground: true,
-            playsInSilentModeIOS: true,
-            interruptionModeIOS: InterruptionModeIOS.DuckOthers,
-            interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
-            shouldDuckAndroid: true,
-            playThroughEarpieceAndroid: true,
-        });
-
-        return sound
-            ? () => {
-                console.log('Unloading Sound');
-                sound.unloadAsync();
-            }
-            : undefined;
-    }, [sound]);
 
 
     if (!isLoaded) {
@@ -116,25 +109,26 @@ const Player = ({ route, navigation }) => {
             <EverwhzHeader navigation={navigation} page="player" />
             <View style={styles.container_center}>
                 <Text style={styles.title}>{podcast_name}</Text>
-                <Episode episode_id={episode_id} />
+                <EpisodeView episode_id={episode_id} />
             </View>
-            <View style={styles.player_center}>
-                <Button title="Play" onPress={playSound} />
-                <Button title="Stop" onPress={stopSound} />
-            </View>
-            <View style={styles.player_center}>
-                <TextInput value={position} onFocus={positionFocus} onBlur={positionFocusOut} onChangeText={text => setPosition(text)} /><Text> / {duration}</Text>
-            </View>
+
+            <Text>{JSON.stringify(sound)}</Text>
+       
         </View>
     );
 }
 
-export default Player;
+export default Episode;
 
 // TODO
 // 1. check everything works
 // 2. check everything in
 // 3. play audio
+// a. continue play in background change tab
+// b. scroll view
+// c. return to player
+// d. keep track of play position
+// e. expand details
 // ....
 // 4. clean up delete unused code
 // 5. release

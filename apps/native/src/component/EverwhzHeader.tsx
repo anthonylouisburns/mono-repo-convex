@@ -7,9 +7,13 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
+
+import { useContext, useEffect, useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { api } from '@packages/backend/convex/_generated/api';
+import Player from './Player';
+import { AudioContext } from '../../AudiContext'
 
 export const EverwhzHeader = ({ navigation, page }) => {
   const user = useUser();
@@ -17,6 +21,9 @@ export const EverwhzHeader = ({ navigation, page }) => {
   const firstName = user?.user?.firstName;
   const { signOut } = useAuth();
 
+  const {
+    episode_id
+  } = useContext(AudioContext);
 
   function podcast() {
     if (page == 'podcast') {
@@ -61,13 +68,11 @@ export const EverwhzHeader = ({ navigation, page }) => {
   function player() {
     if (page == 'player') {
       return (
-        <><Text style={styles.selected}>player</Text> </>
+        <><Text style={styles.selected}>episode</Text> </>
       )
     } else {
       return (
-        <><Text style={styles.link} onPress={() =>
-          navigation.navigate('Player')
-        }>player</Text></>
+        <><Text>player</Text></>
       )
     }
   }
@@ -97,6 +102,7 @@ export const EverwhzHeader = ({ navigation, page }) => {
           {episode()}
           {player()}
         </Text>
+        {episode_id ? <Player/>:<></>}
       </View>
     </>
   );
@@ -124,14 +130,37 @@ export const styles = StyleSheet.create({
   player_center: {
     alignSelf: 'center',
     display: 'flex',
-    flexDirection: 'row',
-    margin: 5
+    flexDirection: 'column',
+    backgroundColor: 'lightgray',
+    margin: 0,
+    padding:0,
+    width: '100%'
+  },
+  white: {
+    backgroundColor: 'white',
+  },
+  player: {
+    alignSelf: 'center',
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  player_center_text: {
+    padding:0
+  },
+  player_center_text_input: {
+    padding:0
   },
   header: {
     backgroundColor: '#0D87E1',
     height: 67,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  footer: {
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
   logo: {
     width: 46,
@@ -143,6 +172,9 @@ export const styles = StyleSheet.create({
     fontSize: RFValue(17.5),
     fontFamily: 'MMedium',
     alignSelf: 'center',
+  },
+  podcast_name: {
+    fontSize: RFValue(12.5),
   },
   yourNotesContainer: {
     flexDirection: 'row',

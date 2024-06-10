@@ -6,10 +6,20 @@ import ConvexClientProvider from './ConvexClientProvider';
 
 import { SignedIn, SignedOut } from '@clerk/clerk-expo';
 import LoginScreen from './src/screens/LoginScreen';
+import { AudioContext } from './AudiContext'
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS, } from 'expo-av';
+import { createContext, useContext, useEffect, useState } from 'react';
+import Player from './src/component/Player';
+
+
 
 export default function App() {
   LogBox.ignoreLogs(['Warning: ...']);
   LogBox.ignoreAllLogs();
+  const [sound, setSound] = useState<Audio.Sound>();
+  const [episode_id, set_episode_id] = useState();
+  const [podcast_name, set_podcast_name] = useState();
+
 
   const [loaded] = useFonts({
     Bold: require('./src/assets/fonts/Inter-Bold.ttf'),
@@ -30,6 +40,24 @@ export default function App() {
   const STATUS_BAR_HEIGHT =
     Platform.OS === 'ios' ? 50 : StatusBar.currentHeight;
 
+
+  useEffect(() => {
+    Audio.setAudioModeAsync({
+      staysActiveInBackground: true,
+      playsInSilentModeIOS: true,
+      interruptionModeIOS: InterruptionModeIOS.DuckOthers,
+      interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: true,
+    });
+    return sound
+      ? () => {
+        console.log('Unloading Sound');
+        sound.unloadAsync();
+      }
+      : undefined;
+  }, [sound]);
+
   return (
     <ConvexClientProvider>
       <View style={{ flex: 1 }}>
@@ -41,7 +69,18 @@ export default function App() {
           />
         </View>
         <SignedIn>
-          <Navigation />
+          <AudioContext.Provider
+            value={{
+              sound,
+              setSound,
+              episode_id,
+              set_episode_id,
+              podcast_name,
+              set_podcast_name
+            }}
+          >
+            <Navigation />
+          </AudioContext.Provider>
         </SignedIn>
         <SignedOut>
           <LoginScreen />
