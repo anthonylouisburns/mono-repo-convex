@@ -5,97 +5,39 @@ import { useAuth, useUser } from '@clerk/clerk-expo';
 // https://rntp.dev/docs/basics/getting-started
 
 //https://docs.expo.dev/versions/latest/sdk/audio/
-import { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Button } from 'react-native';
-import { AVPlaybackStatus, Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
+import { useContext } from 'react';
 import { EpisodeView } from "../component/EpisodeView";
 import { useQuery } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
 import { AudioContext } from '../../AudiContext'
-import Player from "../component/Player";
 
 
 const Episode = ({ route, navigation }) => {
     const { isLoaded, } = useAuth();
-    // TrackPlayer.setupPlayer()
-    const { page, episode_id, podcast_name } = route.params;
+    const params = route.params;
+    const this_episode_id = params["episode_id"]
+    const this_podcast_name = params["podcast_name"]
 
     const {
         sound,
-        setSound,
+        episode_id,
         set_episode_id,
-        set_podcast_name
-      } = useContext(AudioContext);
-    // const [sound, setSound] = useState<Audio.Sound>();
-    const [position, setPosition] = useState("-");
-    const [duration, setDuration] = useState("-");
+        set_podcast_name,
+        set_duration,
+        set_position
+    } = useContext(AudioContext);
 
-    const episode = useQuery(api.everwzh.episode, { id: episode_id });
+    const episode = useQuery(api.everwzh.episode, { id: this_episode_id });
 
-    function playStatus(status: AVPlaybackStatus) {
-        if (status["isPlaying"]) {
-            setPosition(msToTime(status["positionMillis"]))
+
+    async function selectSong() {
+        if (episode_id != this_episode_id) {
+            set_episode_id(episode._id);
+            set_podcast_name(this_podcast_name);
+            set_position("-");
+            set_duration("-");
+            sound.stopAsync();
         }
-    }
-    function playStatusNoOp(status: AVPlaybackStatus) { }
-
-    function positionFocus() {
-        sound.setOnPlaybackStatusUpdate(playStatusNoOp);
-    }
-
-    function positionFocusOut() {
-        sound.setPositionAsync(timeToMs(position))
-        sound.setOnPlaybackStatusUpdate(playStatus);
-    }
-
-    function msToTime(duration) {
-        const milliseconds = Math.floor((duration % 1000) / 10),
-            seconds = Math.floor((duration / 1000) % 60),
-            minutes = Math.floor((duration / (1000 * 60)) % 60),
-            hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-
-        // var h = (hours < 10) ? "0" + hours : hours;
-        const h = hours;
-        const m = (minutes < 10) ? "0" + minutes : minutes;
-        const s = (seconds < 10) ? "0" + seconds : seconds;
-        // const ms = (milliseconds < 10) ? "0" + milliseconds : milliseconds;
-
-        return h + ":" + m + ":" + s;//+ "." + ms;
-    }
-
-    function timeToMs(positionString) {
-        const h = Number(positionString.slice(0, -6))
-        const m = Number(positionString.slice(-5, -3))
-        const s = Number(positionString.slice(-2))
-
-        const newPosition = (h * 1000 * 60 * 60) + (m * 1000 * 60) + (s * 1000);
-        return newPosition
-    }
-
-    async function stopSound() {
-        sound.stopAsync();
-    }
-
-    async function playSound() {
-        console.log('Loading Sound');
-        // const mp3_link = "https://500songs.com/podcast-download/2144/song-174b-i-heard-it-through-the-grapevine-part-two-it-takes-two.mp3"
-
-        const mp3_link = episode?.body.enclosure["@_url"]
-        const source = { uri: mp3_link };
-
-        // const { sound } = await Audio.Sound.createAsync(require('./assets/Hello.mp3'));
-        // const { sound, status } = await Audio.Sound.createAsync(source, { positionMillis: timeToMs(position) }, playStatus);
-        const { sound, status } = (position.length > 1) ?
-            await Audio.Sound.createAsync(source, { positionMillis: timeToMs(position) }, playStatus) :
-            await Audio.Sound.createAsync(source, {}, playStatus);
-
-        setDuration(msToTime(status["durationMillis"]))
-        setSound(sound);
-        set_episode_id(episode._id);
-        set_podcast_name(podcast_name);
-
-        console.log('Playing Sound');
-        await sound.playAsync();
     }
 
 
@@ -108,12 +50,12 @@ const Episode = ({ route, navigation }) => {
         <View style={styles.container}>
             <EverwhzHeader navigation={navigation} page="player" />
             <View style={styles.container_center}>
-                <Text style={styles.title}>{podcast_name}</Text>
-                <EpisodeView episode_id={episode_id} />
+                <Text style={styles.title}>{this_podcast_name}</Text>
+                <EpisodeView episode_id={this_episode_id} longView={true} navigation={navigation}/>
+                <Text style={styles.link} onPress={selectSong}>+</Text>
             </View>
 
-            <Text>{JSON.stringify(sound)}</Text>
-       
+
         </View>
     );
 }
