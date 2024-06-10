@@ -7,7 +7,7 @@ import HTMLView  from 'react-native-htmlview';
 import { useQuery } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
 
-export const Episode = ({ episode_id }) => {
+export const EpisodeView = ({ episode_id }) => {
     const episode =  useQuery(api.everwzh.episode, {id: episode_id});
 
     if (!episode) {

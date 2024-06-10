@@ -12,6 +12,7 @@ import { useAuth, useUser } from '@clerk/clerk-expo';
 import { api } from '@packages/backend/convex/_generated/api';
 import { useQuery } from 'convex/react';
 import { EverwhzHeader, styles } from '../component/EverwhzHeader';
+import Player from '../component/Player';
 
 const Timeline = ({ navigation }) => {
   const user = useUser();

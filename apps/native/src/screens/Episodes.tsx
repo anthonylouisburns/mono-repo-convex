@@ -8,7 +8,7 @@ import { api } from '@packages/backend/convex/_generated/api';
 import { useQuery } from 'convex/react';
 import { EverwhzHeader, styles } from '../component/EverwhzHeader';
 import { Id } from '@packages/backend/convex/_generated/dataModel';
-import { Episode } from '../component/Episode';
+import { EpisodeView } from '../component/EpisodeView';
 
 
 const Episodes = ({ route, navigation }) => {
@@ -26,9 +26,9 @@ const Episodes = ({ route, navigation }) => {
   const itemView = episodes ? episodes.map((episode) => (
     <>
       <Text style={styles.link} onPress={() => {
-        navigation.navigate('Player', { page: "player", podcast_name: podcast_name, episode_id: episode._id })
+        navigation.navigate('Episode', { page: "player", podcast_name: podcast_name, episode_id: episode._id })
       }}>{">"}</Text>
-      <Episode episode_id={episode._id} />
+      <EpisodeView episode_id={episode._id} />
     </>
   )) : []
   // todo https://rntp.dev/docs/basics/getting-started/
