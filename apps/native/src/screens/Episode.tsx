@@ -67,8 +67,9 @@ export default Episode;
 // 2. check everything in
 // 3. play audio
 // a. continue play in background change tab
+
+
 // b. scroll view
-// c. return to player
 // d. keep track of play position
 // e. expand details
 // ....
