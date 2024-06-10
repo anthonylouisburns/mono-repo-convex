@@ -28,13 +28,13 @@ const Timeline = ({ navigation }) => {
   const spans = useQuery(api.everwzh.timeline)
 
   const spansView = spans ? spans.map((span) => (
-    <View style={styles.container}>
+    <View style={styles.container} key={span.span._id}>
     <Text style={styles.link}
       onPress={() =>
         navigation.navigate('Episodes', {page: "episodes", podcast_id:span.podcast._id, podcast_name:span.podcast.name})
       }
     >{span.podcast.name}</Text> 
-    <HTMLView value={span.episode?.body.title}/>
+    <HTMLView value={span.episode?.body.title?span.episode?.body.title:""}/>
     <Text>{timedisplay(span.span.start)} to {timedisplay(span.span.end)} {span.span.name}</Text>
     </View>
   )): []

@@ -1,24 +1,18 @@
 import React from 'react';
 import {
-  StyleSheet,
   View,
   Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
 } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { api } from '@packages/backend/convex/_generated/api';
 import { useQuery } from 'convex/react';
 import { EverwhzHeader, styles } from '../component/EverwhzHeader';
 import { Id } from '@packages/backend/convex/_generated/dataModel';
-import HTMLView from 'react-native-htmlview';
+import { Episode } from '../component/Episode';
+
 
 const Episodes = ({ route, navigation }) => {
   const user = useUser();
-  const imageUrl = user?.user?.imageUrl;
-  const firstName = user?.user?.firstName;
   const { isLoaded, } = useAuth();
   const { page, podcast_id, podcast_name } = route.params;
 
@@ -30,11 +24,14 @@ const Episodes = ({ route, navigation }) => {
 
   const episodes = useQuery(api.everwzh.episodes, { podcast_id: podcast_id as Id<"podcast"> })
   const itemView = episodes ? episodes.map((episode) => (
-    <View style={styles.container}>
-      <HTMLView value={episode?.body.title} />
-    </View>
+    <>
+      <Text style={styles.link} onPress={() => {
+        navigation.navigate('Player', { page: "player", podcast_name: podcast_name, episode_id: episode._id })
+      }}>{">"}</Text>
+      <Episode episode_id={episode._id} />
+    </>
   )) : []
-
+  // todo https://rntp.dev/docs/basics/getting-started/
 
 
 
