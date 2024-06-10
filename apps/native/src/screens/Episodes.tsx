@@ -24,12 +24,12 @@ const Episodes = ({ route, navigation }) => {
 
   const episodes = useQuery(api.everwzh.episodes, { podcast_id: podcast_id as Id<"podcast"> })
   const itemView = episodes ? episodes.map((episode) => (
-    <>
+    <View style={styles.episode}>
+      <EpisodeView episode_id={episode._id} podcast_name={podcast_name} longView={false} navigation={navigation}/>
       <Text style={styles.link} onPress={() => {
         navigation.navigate('Episode', { page: "player", podcast_name: podcast_name, episode_id: episode._id })
       }}>{">"}</Text>
-      <EpisodeView episode_id={episode._id} />
-    </>
+    </View>
   )) : []
   // todo https://rntp.dev/docs/basics/getting-started/
 

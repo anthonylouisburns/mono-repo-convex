@@ -144,6 +144,11 @@ export const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row'
   },
+  episode: {
+    alignSelf: 'auto',
+    display: 'flex',
+    flexDirection: 'row'
+  },
   player_center_text: {
     padding:0
   },

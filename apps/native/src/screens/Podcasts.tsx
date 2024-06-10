@@ -14,7 +14,7 @@ import { useQuery } from 'convex/react';
 import { EverwhzHeader, styles } from '../component/EverwhzHeader';
 import Player from '../component/Player';
 
-const Timeline = ({ navigation }) => {
+const Podcasts = ({ navigation }) => {
   const user = useUser();
   const imageUrl = user?.user?.imageUrl;
   const firstName = user?.user?.firstName;
@@ -42,4 +42,4 @@ const Timeline = ({ navigation }) => {
   );
 };
 
-export default Timeline;
+export default Podcasts;
