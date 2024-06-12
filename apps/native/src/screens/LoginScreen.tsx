@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useOAuth, SignedIn, useSignUp, useSignIn } from '@clerk/clerk-expo';
-import { AntDesign } from '@expo/vector-icons';
+import { useOAuth,  } from '@clerk/clerk-expo';
+
 
 const LoginScreen = () => {
    // Warm up the android browser to improve UX

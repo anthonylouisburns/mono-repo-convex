@@ -1,12 +1,11 @@
 import { View, Text, TextInput, } from "react-native";
-import { EverwhzHeader, styles } from "../component/EverwhzHeader";
+import { styles } from './Styles';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 // import TrackPlayer from 'react-native-track-player';
 // https://rntp.dev/docs/basics/getting-started
 
 //https://docs.expo.dev/versions/latest/sdk/audio/
 import { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Button } from 'react-native';
 import { AVPlaybackStatus, Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
 import { EpisodeView } from "./EpisodeView";
 import { useQuery } from 'convex/react';
@@ -126,15 +125,3 @@ const Player = () => {
 
 export default Player;
 
-// TODO
-// 1. check everything works
-// 2. check everything in
-// 3. play audio
-// a. continue play in background change tab
-// b. scroll view
-// c. return to player
-// d. keep track of play position
-// e. expand details
-// ....
-// 4. clean up delete unused code
-// 5. release

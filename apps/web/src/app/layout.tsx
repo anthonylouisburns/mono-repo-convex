@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang='en'>
       <body className={inter.className}>
       <Link href="/">everwzh</Link> | <Link href="/podcasts">podcasts</Link> | <Link href="/episodes">episodes</Link> | <Link href="/timeline">timeline</Link>
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ConvexClientProvider>hello{children}</ConvexClientProvider>
       </body>
     </html>
   );

@@ -1,0 +1,110 @@
+{
+    "isLoaded": true,
+    "isSignedIn": true,
+    "user": {
+        "pathRoot": "/me",
+        "id": "user_2g8t4BZ4e0fya1ZHzKDoIDKLTpM",
+        "externalId": null,
+        "username": null,
+        "emailAddresses": [
+            {
+                "pathRoot": "/me/email_addresses",
+                "emailAddress": "burnstony@gmail.com",
+                "linkedTo": [
+                    {
+                        "pathRoot": "",
+                        "id": "idn_2g8t45nJIBUdnY6P5yAQOKv6Zla",
+                        "type": "oauth_google"
+                    }
+                ],
+                "id": "idn_2g8t41fEb0hBLIjONapLG1CZpz2",
+                "verification": {
+                    "pathRoot": "",
+                    "status": "verified",
+                    "strategy": "from_oauth_google",
+                    "nonce": null,
+                    "externalVerificationRedirectURL": null,
+                    "attempts": null,
+                    "expireAt": "2024-06-11T17:02:09.883Z",
+                    "error": null
+                }
+            }
+        ],
+        "phoneNumbers": [],
+        "web3Wallets": [],
+        "externalAccounts": [
+            {
+                "pathRoot": "/me/external_accounts",
+                "providerUserId": "100317389627249338984",
+                "emailAddress": "burnstony@gmail.com",
+                "approvedScopes": "email https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid profile",
+                "firstName": "Anthony Louis",
+                "lastName": "Burns",
+                "imageUrl": "https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLUU9YdVowNjkyR3pNcGdFMTY3NHI4WnZOYVQ1ZE8tQ1ZVb0EtYXdTMUZBVzBNWEpJNVJ3PXMxMDAwLWMiLCJzIjoibk5GYzRKRk80cksxem5pR24vYVlnMFpuYUNjK3NmZER1SFJUQ0t5VkFoVSJ9",
+                "username": "",
+                "publicMetadata": {},
+                "label": null,
+                "verification": {
+                    "pathRoot": "",
+                    "status": "verified",
+                    "strategy": "oauth_google",
+                    "nonce": null,
+                    "externalVerificationRedirectURL": null,
+                    "attempts": null,
+                    "expireAt": "2024-05-07T14:17:12.324Z",
+                    "error": null
+                },
+                "id": "eac_2g8t46JcMJ6u0lAIihcGbz7pqNU",
+                "identificationId": "idn_2g8t45nJIBUdnY6P5yAQOKv6Zla",
+                "provider": "google"
+            }
+        ],
+        "samlAccounts": [],
+        "organizationMemberships": [],
+        "passwordEnabled": false,
+        "firstName": "Anthony Louis",
+        "lastName": "Burns",
+        "fullName": "Anthony Louis Burns",
+        "primaryEmailAddressId": "idn_2g8t41fEb0hBLIjONapLG1CZpz2",
+        "primaryEmailAddress": {
+            "pathRoot": "/me/email_addresses",
+            "emailAddress": "burnstony@gmail.com",
+            "linkedTo": [
+                {
+                    "pathRoot": "",
+                    "id": "idn_2g8t45nJIBUdnY6P5yAQOKv6Zla",
+                    "type": "oauth_google"
+                }
+            ],
+            "id": "idn_2g8t41fEb0hBLIjONapLG1CZpz2",
+            "verification": {
+                "pathRoot": "",
+                "status": "verified",
+                "strategy": "from_oauth_google",
+                "nonce": null,
+                "externalVerificationRedirectURL": null,
+                "attempts": null,
+                "expireAt": "2024-06-11T17:02:09.883Z",
+                "error": null
+            }
+        },
+        "primaryPhoneNumberId": null,
+        "primaryPhoneNumber": null,
+        "primaryWeb3WalletId": null,
+        "primaryWeb3Wallet": null,
+        "imageUrl": "https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2ltYWdlcy5jbGVyay5kZXYvb2F1dGhfZ29vZ2xlL2ltZ18yZzh0NEM4OWNMRDRGTG9DUDFkOXpUUVRiQUYifQ",
+        "hasImage": true,
+        "twoFactorEnabled": false,
+        "totpEnabled": false,
+        "backupCodeEnabled": false,
+        "publicMetadata": {},
+        "unsafeMetadata": {},
+        "createOrganizationEnabled": true,
+        "deleteSelfEnabled": true,
+        "lastSignInAt": "2024-06-11T02:55:54.803Z",
+        "updatedAt": "2024-06-11T02:55:54.825Z",
+        "createdAt": "2024-05-07T14:07:18.835Z",
+        "cachedSessionsWithActivities": null
+    }
+}
+}

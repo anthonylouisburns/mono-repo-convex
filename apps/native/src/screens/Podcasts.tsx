@@ -1,18 +1,14 @@
 import React from 'react';
 import {
-  StyleSheet,
   View,
   Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
+  ScrollView,
 } from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { api } from '@packages/backend/convex/_generated/api';
 import { useQuery } from 'convex/react';
-import { EverwhzHeader, styles } from '../component/EverwhzHeader';
-import Player from '../component/Player';
+import { styles } from '../component/Styles';
+import { EverwhzHeader, } from '../component/EverwhzHeader';
 
 const Podcasts = ({ navigation }) => {
   const user = useUser();
@@ -29,7 +25,7 @@ const Podcasts = ({ navigation }) => {
   const podcastsView = podcasts ? podcasts.map((podcast) => (
     <Text style={styles.link}
       onPress={() =>
-        navigation.navigate('Episodes', { page: "episodes", podcast_id: podcast._id, podcast_name: podcast.name })
+        navigation.navigate('Episodes', { podcast_id: podcast._id, podcast_name: podcast.name })
       }
     >{podcast.name}</Text>
   )) : []
@@ -37,7 +33,9 @@ const Podcasts = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <EverwhzHeader navigation={navigation} page="podcast" />
-      <Text>{podcastsView}</Text>
+      <ScrollView>
+        <Text>{podcastsView}</Text>
+      </ScrollView>
     </View>
   );
 };

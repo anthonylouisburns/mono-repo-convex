@@ -5,13 +5,14 @@ import {
   Text,
   Image,
   Dimensions,
-  TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useAuth, useUser } from '@clerk/clerk-expo';
 import { api } from '@packages/backend/convex/_generated/api';
 import { useQuery } from 'convex/react';
-import { EverwhzHeader, styles } from '../component/EverwhzHeader';
+import { styles } from '../component/Styles';
+import { EverwhzHeader, } from '../component/EverwhzHeader';
 import HTMLView from 'react-native-htmlview';
 import { timedisplay } from "@packages/backend/utilities/utility";
 import { Doc } from '@packages/backend/convex/_generated/dataModel';
@@ -29,15 +30,15 @@ const Timeline = ({ navigation }) => {
   const spans = useQuery(api.everwzh.timeline)
 
   function episodeView(episode: Doc<"episode">, podcast_name) {
-    if(!episode){
+    if (!episode) {
       return (<></>)
     }
     return (
       <>
         <Text style={styles.link} onPress={() => {
-          navigation.navigate('Episode', { page: "player", podcast_name: podcast_name, episode_id: episode._id })
+          navigation.navigate('Episode', { podcast_name: podcast_name, episode_id: episode._id })
         }}>
-        <HTMLView value={episode?.body.title ? episode?.body.title : ""} /></Text>
+          <HTMLView value={episode?.body.title ? episode?.body.title : ""} /></Text>
       </>
     )
   }
@@ -46,7 +47,7 @@ const Timeline = ({ navigation }) => {
     <View style={styles.container} key={span.span._id}>
       <Text style={styles.link}
         onPress={() =>
-          navigation.navigate('Episodes', { page: "episodes", podcast_id: span.podcast._id, podcast_name: span.podcast.name })
+          navigation.navigate('Episodes', { podcast_id: span.podcast._id, podcast_name: span.podcast.name })
         }
       >{span.podcast.name}</Text>
       {episodeView(span.episode, span.podcast.name)}
@@ -58,7 +59,9 @@ const Timeline = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <EverwhzHeader navigation={navigation} page={"timeline"} />
-      {spansView}
+      <ScrollView>
+        {spansView}
+      </ScrollView>
     </View>
   );
 };

@@ -18,6 +18,7 @@ export default function App() {
   const [sound, setSound] = useState<Audio.Sound>();
   const [episode_id, set_episode_id] = useState();
   const [podcast_name, set_podcast_name] = useState();
+  const [podcast_id, set_podcast_id] = useState();
   const [duration, set_duration] = useState("-");
   const [position, set_position] = useState("-");
 
@@ -34,9 +35,6 @@ export default function App() {
     MRegular: require('./src/assets/fonts/Montserrat-Regular.ttf'),
     MLight: require('./src/assets/fonts/Montserrat-Light.ttf'),
   });
-  if (!loaded) {
-    return false;
-  }
 
   const STATUS_BAR_HEIGHT =
     Platform.OS === 'ios' ? 50 : StatusBar.currentHeight;
@@ -59,6 +57,10 @@ export default function App() {
       : undefined;
   }, [sound]);
 
+  if (!loaded) {
+    return false;
+  }
+  
   return (
     <ConvexClientProvider>
       <View style={{ flex: 1 }}>
@@ -81,7 +83,9 @@ export default function App() {
               duration,
               set_duration,
               position,
-              set_position
+              set_position,
+              podcast_id,
+              set_podcast_id
             }}
           >
             <Navigation />
