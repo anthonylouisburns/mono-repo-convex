@@ -1,5 +1,6 @@
 import { View, Text, TextInput, } from "react-native";
-import { EverwhzHeader, styles } from "../component/EverwhzHeader";
+import { styles } from '../component/Styles';
+import { EverwhzHeader, } from "../component/EverwhzHeader";
 import { useAuth, useUser } from '@clerk/clerk-expo';
 // import TrackPlayer from 'react-native-track-player';
 // https://rntp.dev/docs/basics/getting-started
@@ -48,30 +49,40 @@ const Episode = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            <EverwhzHeader navigation={navigation} page="player" />
+            <EverwhzHeader navigation={navigation} page="episode" />
             <View style={styles.container_center}>
-                <Text style={styles.title}>{this_podcast_name}</Text>
-                <EpisodeView episode_id={this_episode_id} longView={true} navigation={navigation}/>
-                <Text style={styles.link} onPress={selectSong}>+</Text>
+                <Text style={styles.title}>{this_podcast_name}<Text style={styles.link} onPress={selectSong}>+</Text></Text>
+                <EpisodeView episode_id={this_episode_id} longView={true} navigation={navigation} podcast_name={this_podcast_name} />
             </View>
-
-
         </View>
     );
 }
 
 export default Episode;
 
-// TODO
-// 1. check everything works
-// 2. check everything in
-// 3. play audio
-// a. continue play in background change tab
+
+// [ ]: MINIMUM VIABLE PRODUCT
+// [x]:  3. play audio 
+// [x]:  b. scroll view - https://www.daily.co/blog/understanding-react-natives-flatlist-scrollview-and-sectionlist-components/
+// [ ]:  d. keep track of play position - play history
+// [x]:  4. clean up delete unused code
 
 
-// b. scroll view
-// d. keep track of play position
-// e. expand details
-// ....
-// 4. clean up delete unused code
-// 5. release
+// [ ]: RELEASE
+// [ ]:  check everything works - add tests
+// [ ]:  check everything in
+// [ ]: release - build EAS
+// [ ]: play in background - should work double check - continue play in background change tab - Expo Go app or Expo development build, the background audio mode will not work - https://dev.to/josie/how-to-add-background-audio-to-expo-apps-3fgc 
+// [ ]: tests
+// [ ] daily back ups
+// TO[ ]DO: development build
+
+
+// [ ]: NEW FEATURES
+// [ ] add apple login
+// [ ]:  e. expand details - timeline expand contract
+// [ ] use history
+// [ ] paginated queries
+
+
+

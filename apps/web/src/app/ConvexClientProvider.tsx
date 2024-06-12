@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { ConvexReactClient } from 'convex/react';
 import { ConvexProviderWithClerk } from 'convex/react-clerk';
 import { ClerkProvider, useAuth } from '@clerk/clerk-react';
-import { ErrorBoundary } from './ErrorBoundary';
+// import { ErrorBoundary } from './ErrorBoundary';
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
@@ -15,7 +15,7 @@ export default function ConvexClientProvider({
 }) {
   return (
     // NOTE: Once you get Clerk working you can remove this error boundary
-    <ErrorBoundary>
+    // <ErrorBoundary>
       <ClerkProvider
         publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!}
       >
@@ -23,6 +23,6 @@ export default function ConvexClientProvider({
           {children}
         </ConvexProviderWithClerk>
       </ClerkProvider>
-    </ErrorBoundary>
+    // </ErrorBoundary>
   );
 }

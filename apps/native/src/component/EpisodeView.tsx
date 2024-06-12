@@ -1,7 +1,8 @@
-import { styles } from "./EverwhzHeader"
+import { styles } from './Styles';
 import {
     View,
     Text,
+    ScrollView
 } from 'react-native';
 import HTMLView from 'react-native-htmlview';
 import { useQuery } from 'convex/react';
@@ -26,8 +27,13 @@ export const EpisodeView = ({ navigation, podcast_name, episode_id, longView }) 
     }
     return (
         <View style={styles.container} key={episode_id}>
-            <HTMLView value={episode?.body.title}  />
-            {details()}
+
+            <Text style={styles.link} onPress={() => {
+                navigation.navigate('Episode', { podcast_name: podcast_name, episode_id: episode._id })
+            }}><HTMLView value={episode?.body.title} /></Text>
+            <ScrollView>
+                {details()}
+            </ScrollView>
         </View>
     )
 }

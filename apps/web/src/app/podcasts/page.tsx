@@ -5,9 +5,11 @@ import { api } from '@packages/backend/convex/_generated/api';
 import { Button } from '@/components/common/button';
 import { Podcast } from './Podcast';
 import { useState } from 'react';
+import { useUser } from '@clerk/clerk-react';
 
 
 export default function Page() {
+    const user = useUser()
     const podcasts = useQuery(api.everwzh.podcasts);
     const refreshRssBody = useMutation(api.everwzh.updateRssData);
     const addPodcast = useMutation(api.everwzh.addPodcast);
@@ -27,6 +29,7 @@ export default function Page() {
           podcasts.map((podcast) => (
             <Podcast key="{podcast._id}" podcast={podcast} podcastColor='black' setName={setName} setRss={setRss}/>
           ))}
+          <div>{JSON.stringify(user)}</div>
     </div>
 }
 
