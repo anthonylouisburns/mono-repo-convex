@@ -4,6 +4,7 @@ import './globals.css';
 import ConvexClientProvider from './ConvexClientProvider';
 import Link from 'next/link';
 import { useRouter } from 'next/router'
+import EverwhzHeader from '@/components/EverwhzHeader';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,8 +21,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={inter.className}>
-      <Link href="/">everwzh</Link> | <Link href="/podcasts">podcasts</Link> | <Link href="/episodes">episodes</Link> | <Link href="/timeline">timeline</Link>
-        <ConvexClientProvider>hello{children}</ConvexClientProvider>
+        <ConvexClientProvider>{children}</ConvexClientProvider>
       </body>
     </html>
   );

@@ -1,16 +1,15 @@
 'use client';
 
-import Link from 'next/link';
+import EverwhzHeader from '@/components/EverwhzHeader';
 
 export default function Home() {
   return (
     <div>
-      <Link href="/">everwzh</Link><br/>
-      <Link href="/podcasts">podcasts</Link><br/>
-      <Link href="/episodes">episodes</Link>
+      <EverwhzHeader/>
+      <h1 className="header-center rainbow-text">
+      Explore Historical Podcasts
+      </h1>
     </div>
   );
 }
 
-// TODO: WEB - delete unused code
-// [ ] save user info https://docs.convex.dev/auth/database-auth

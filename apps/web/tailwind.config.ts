@@ -23,7 +23,7 @@ const config: Config = {
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
         lato: ['Lato', 'sans-serif'],
-        // montserrat : ['Montserrat', 'sans-serif'],
+        montserrat : ['Montserrat', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

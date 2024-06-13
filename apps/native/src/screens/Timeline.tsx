@@ -18,9 +18,6 @@ import { timedisplay } from "@packages/backend/utilities/utility";
 import { Doc } from '@packages/backend/convex/_generated/dataModel';
 
 const Timeline = ({ navigation }) => {
-  const user = useUser();
-  const imageUrl = user?.user?.imageUrl;
-  const firstName = user?.user?.firstName;
   const { isLoaded, signOut } = useAuth();
 
   if (!isLoaded) {

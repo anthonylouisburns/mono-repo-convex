@@ -98,16 +98,16 @@ export const timeline = query({
     handler: async (ctx) => {
         const timeSpans = await ctx.db.query("timespan").collect();
 
-        const data:Array<{span:Doc<"timespan">,podcast:Doc<"podcast"> | null,episode:Doc<"episode"> | null}> = []
+        const data: Array<{ span: Doc<"timespan">, podcast: Doc<"podcast"> | null, episode: Doc<"episode"> | null }> = []
 
-        if(!timeSpans){
+        if (!timeSpans) {
             return data
         }
 
-        for(const span of timeSpans){
+        for (const span of timeSpans) {
             const pod = await ctx.db.get(span.podcast_id)
-            const episode =  span.episode_id ? await ctx.db.get(span.episode_id) : null
-            data.push({span:span, podcast: pod, episode: episode})
+            const episode = span.episode_id ? await ctx.db.get(span.episode_id) : null
+            data.push({ span: span, podcast: pod, episode: episode })
         }
 
         return data
@@ -144,10 +144,10 @@ export const timespans = query({
     handler: async (ctx, args) => {
         if (args.episode_id) {
             const timeSpans = await ctx.db.query("timespan")
-                .withIndex("podcast_episode", (q) => q.eq("podcast_id", args.podcast_id).eq("episode_id", args.episode_id) )
+                .withIndex("podcast_episode", (q) => q.eq("podcast_id", args.podcast_id).eq("episode_id", args.episode_id))
                 .collect()
             return timeSpans
-        }else{
+        } else {
             const timeSpans = await ctx.db.query("timespan")
                 .withIndex("podcast_episode", (q) => q.eq("podcast_id", args.podcast_id))
                 .collect()
@@ -290,4 +290,37 @@ export const patchPodcastRssJson = mutation({
             ctx.db.delete(episode._id)
         }
     }
+});
+
+export const store = mutation({
+    args: {},
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("Called storeUser without authentication present");
+        }
+        
+        const user = await ctx.db
+            .query("user")
+            .withIndex("tokenIdentifier", (q) =>
+                q.eq("tokenIdentifier", identity.tokenIdentifier).eq("issuer", identity.issuer),
+            )
+            .unique();
+        if (user !== null) {
+            if (user.name !== identity.name) {
+                await ctx.db.patch(user._id, { name: identity.name });
+            }
+            if (user.email !== identity.email) {
+                await ctx.db.patch(user._id, { email: identity.email });
+            }
+            return user._id;
+        }
+        
+        return await ctx.db.insert("user", {
+            name: identity.name!,
+            tokenIdentifier: identity.tokenIdentifier,
+            issuer: identity.issuer,
+            email: identity.email!,
+        });
+    },
 });

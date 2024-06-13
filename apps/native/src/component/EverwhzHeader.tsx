@@ -11,16 +11,19 @@ import { useAuth, useUser } from '@clerk/clerk-expo';
 import Player from './Player';
 import { AudioContext } from '../../AudiContext'
 import { styles } from './Styles';
+import { useStoreUserEffect } from '../useUseStoreEffect';
+
 
 export const EverwhzHeader = ({ navigation, page }) => {
-  const user = useUser();
+  const user = useStoreUserEffect();
   const imageUrl = user?.user?.imageUrl;
   const firstName = user?.user?.firstName;
   const { signOut } = useAuth();
 
   const {
     episode_id,
-    podcast_id
+    podcast_id,
+    podcast_name
   } = useContext(AudioContext);
 
   function timeline() {
@@ -60,7 +63,7 @@ export const EverwhzHeader = ({ navigation, page }) => {
       if (podcast_id) {
         return (
           <><Text style={styles.link} onPress={() =>
-            navigation.navigate('Episodes', { podcast_id: podcast_id })
+            navigation.navigate('Episodes', { podcast_id: podcast_id, podcast_name: podcast_name })
           }>episodes</Text> | </>
         )
       } else {
@@ -74,18 +77,18 @@ export const EverwhzHeader = ({ navigation, page }) => {
   function episode() {
     if (page == 'episode') {
       return (
-        <><Text style={styles.selected}>episode</Text> </>
+        <><Text style={styles.selected}>episode</Text></>
       )
     } else {
       if (episode_id) {
         return (
           <><Text style={styles.link} onPress={() =>
             navigation.navigate('Episode', { episode_id: episode_id })
-          }>episode</Text> | </>
+          }>episode</Text></>
         )
       } else {
         return (
-          <><Text>episode</Text> | </>
+          <><Text>episode</Text></>
         )
       }
     }
@@ -95,8 +98,8 @@ export const EverwhzHeader = ({ navigation, page }) => {
     <>
       <View style={styles.yourNotesContainer}>
         {/* @ts-ignore, for css purposes */}
-        <Image style={styles.avatarSmall} />
-        <Text style={styles.title}>Everwhz</Text>
+        <Image style={styles.avatarSmall} source={require('../assets/icons/logo.png')}/>
+        <Text style={styles.rainbowText}>everwhz</Text>
         <TouchableOpacity
           onPress={() =>
             signOut()

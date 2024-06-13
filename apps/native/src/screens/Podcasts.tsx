@@ -11,9 +11,6 @@ import { styles } from '../component/Styles';
 import { EverwhzHeader, } from '../component/EverwhzHeader';
 
 const Podcasts = ({ navigation }) => {
-  const user = useUser();
-  const imageUrl = user?.user?.imageUrl;
-  const firstName = user?.user?.firstName;
   const { isLoaded, signOut } = useAuth();
   const podcasts = useQuery(api.everwzh.podcasts);
 
