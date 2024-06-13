@@ -10,8 +10,6 @@ import { AudioContext } from './AudiContext'
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS, } from 'expo-av';
 import { useEffect, useState } from 'react';
 
-
-
 export default function App() {
   LogBox.ignoreLogs(['Warning: ...']);
   LogBox.ignoreAllLogs();

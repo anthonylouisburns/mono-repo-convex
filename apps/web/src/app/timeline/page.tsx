@@ -2,16 +2,21 @@
 
 import { useQuery, } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
+import { Id } from "@packages/backend/convex/_generated/dataModel";
+import { useState } from "react";
+import { EpisodeSelect } from './EpisodesSelect';
+import { EpisodeById } from './EpisodeById';
 import { Doc, } from '@packages/backend/convex/_generated/dataModel';
 import { boxStyle, linkStyle, timedisplay } from "@packages/backend/utilities/utility";
 import Link from "next/link";
+import EverwhzHeader from '@/components/EverwhzHeader';
 
 
 function spanDisplay(span:Doc<"timespan">, episode:Doc<"episode">|null, podcast:Doc<"podcast">|null) {
 
   const podView = podcast?(
     <div><Link  href={{
-      pathname: '/pod_episodes',
+      pathname: '/episodes',
       query: { podcast_id: podcast._id },
     }} style={linkStyle}>{podcast.name}</Link></div>
    ):(
@@ -29,8 +34,29 @@ function spanDisplay(span:Doc<"timespan">, episode:Doc<"episode">|null, podcast:
 
 export default function About() {
   const spans = useQuery(api.everwzh.timeline)
+  const podcasts = useQuery(api.everwzh.podcasts);
+  const [selectedPodcast, setSelectedPod] = useState<Id<"podcast"> | null>(null);
+  const [selectedEpisode, setSelectedEpisode] = useState<Id<"episode"> | null>(null);
 
+  const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value;
+    setSelectedPod(value as Id<"podcast">);
+  };
+
+  const episode = selectedEpisode ? <EpisodeById episode_id={selectedEpisode} /> : ""
   return <div>
+    <EverwhzHeader/>
+    <select value={selectedPodcast || "-"} onChange={e => onChange(e)}>
+      <option>-</option>
+      {podcasts &&
+        podcasts.map((podcast) => (
+          <option id={podcast._id} value={podcast._id}>{podcast.name}-{podcast._id}</option>
+        ))}
+    </select>
+
+    <EpisodeSelect podcast_id={selectedPodcast} setSelectedEpisode={setSelectedEpisode} />
+    {episode}
+
     {spans && spans.map(({ span, episode, podcast }) => (
       <>
         {spanDisplay(span, episode, podcast)}

@@ -170,4 +170,11 @@ export const styles = StyleSheet.create({
       borderWidth: 0.5,
       borderColor: 'rgba(0, 0, 0, 0.59)',
     },
+    rainbowText: {
+      fontFamily: 'Courier New',
+      backgroundColor: 'linear',
+      textShadowColor: 'navy',
+      fontSize: 35,
+      fontWeight: 900
+    }
   });

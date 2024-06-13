@@ -15,7 +15,7 @@ export const Podcast = function Podcast({ podcast, podcastColor, setName, setRss
 
     return <div style={podcastStyle}>
         <Link style={linkStyle} href={{
-    pathname: '/pod_episodes',
+    pathname: '/episodes',
     query: { podcast_id: podcast._id },
   }}>{podcast.name}</Link> {podcast.number_of_episodes || 0} episodes <a style={redStyle} onClick={() => {
             setName(podcast.name)

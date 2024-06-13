@@ -30,6 +30,10 @@ const Episode = ({ route, navigation }) => {
 
     const episode = useQuery(api.everwzh.episode, { id: this_episode_id });
 
+    if(!episode_id){
+        set_episode_id(this_episode_id)
+        set_podcast_name(this_podcast_name)
+    }
 
     async function selectSong() {
         if (episode_id != this_episode_id) {
@@ -61,28 +65,35 @@ const Episode = ({ route, navigation }) => {
 export default Episode;
 
 
-// [ ]: MINIMUM VIABLE PRODUCT
-// [x]:  3. play audio 
-// [x]:  b. scroll view - https://www.daily.co/blog/understanding-react-natives-flatlist-scrollview-and-sectionlist-components/
-// [ ]:  d. keep track of play position - play history
-// [x]:  4. clean up delete unused code
+// [ ] MINIMUM VIABLE PRODUCT
+// [x]  play audio 
+// [x]  scroll view - https://www.daily.co/blog/understanding-react-natives-flatlist-scrollview-and-sectionlist-components/
+// [x] save user and email -  https://docs.convex.dev/auth/database-auth
+// [x] web save user info https://docs.convex.dev/auth/database-auth
+// [x] web navigation
+// [ ] keep track of play position - play history
+// [ ] web play track
+// [ ] WEB - delete unused code
+// [x]  4. clean up delete unused code
 
 
-// [ ]: RELEASE
-// [ ]:  check everything works - add tests
-// [ ]:  check everything in
-// [ ]: release - build EAS
-// [ ]: play in background - should work double check - continue play in background change tab - Expo Go app or Expo development build, the background audio mode will not work - https://dev.to/josie/how-to-add-background-audio-to-expo-apps-3fgc 
-// [ ]: tests
+// [ ] RELEASE
+// [x] enroll as Apple Developer
+// [ ]  check everything works - add tests
+// [ ]  check everything in
+// [ ] release - build EAS
+// [ ] play in background - should work double check - continue play in background change tab - Expo Go app or Expo development build, the background audio mode will not work - https://dev.to/josie/how-to-add-background-audio-to-expo-apps-3fgc 
+// [ ] tests
 // [ ] daily back ups
 // TO[ ]DO: development build
 
 
-// [ ]: NEW FEATURES
+// [ ] NEW FEATURES
 // [ ] add apple login
-// [ ]:  e. expand details - timeline expand contract
+// [ ]  e. expand details - timeline expand contract
 // [ ] use history
 // [ ] paginated queries
+// [ ] let podcast owner claim podcast - write instructions include public key
 
 
 

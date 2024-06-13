@@ -12,19 +12,17 @@ import { Episode } from '../timeline/Episode';
 
 export default function About() {
   const params = useSearchParams()
-  const podcast_id = params.get('podcast_id')
+  const episode_id = params.get('episode_id')
 
-  if (!podcast_id) {
-    return <>No such podcast</>
+  if (!episode_id) {
+    return <>No such episode</>
   }
-  const episodes = useQuery(api.everwzh.episodes, { podcast_id: podcast_id as Id<"podcast"> })
+  const episode = useQuery(api.everwzh.episode, { id: episode_id as Id<"episode"> })
 
   return <div>
     <EverwhzHeader />
-    {episodes &&
-      episodes.map((episode) => (
-        <Episode key="{episode._id}" episode={episode} />
-      ))}
+    <div className="heavy" dangerouslySetInnerHTML={{ __html: episode?.body.title }} />
+    <div dangerouslySetInnerHTML={{ __html: episode?.body["content:encoded"] }} />
   </div>
 }
 

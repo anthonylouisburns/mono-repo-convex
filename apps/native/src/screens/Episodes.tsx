@@ -15,13 +15,13 @@ import { AudioContext } from '../../AudiContext'
 
 
 const Episodes = ({ route, navigation }) => {
-  const user = useUser();
   const { isLoaded, } = useAuth();
   const { page, podcast_id, podcast_name } = route.params;
 
 
   const {
     set_podcast_id,
+    set_podcast_name
   } = useContext(AudioContext);
 
   if (!isLoaded) {
@@ -29,6 +29,8 @@ const Episodes = ({ route, navigation }) => {
   }
 
   set_podcast_id(podcast_id)
+  set_podcast_name(podcast_name)
+
 
   const episodes = useQuery(api.everwzh.episodes, { podcast_id: podcast_id as Id<"podcast"> })
   const itemView = episodes ? episodes.map((episode) => (

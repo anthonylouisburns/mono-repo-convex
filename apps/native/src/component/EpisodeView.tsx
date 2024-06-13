@@ -30,7 +30,7 @@ export const EpisodeView = ({ navigation, podcast_name, episode_id, longView }) 
 
             <Text style={styles.link} onPress={() => {
                 navigation.navigate('Episode', { podcast_name: podcast_name, episode_id: episode._id })
-            }}><HTMLView value={episode?.body.title} /></Text>
+            }}><HTMLView value={episode?.body.title}/></Text>
             <ScrollView>
                 {details()}
             </ScrollView>

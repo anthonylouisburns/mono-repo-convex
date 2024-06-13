@@ -1,0 +1,113 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="https://500songs.com/wp-content/plugins/seriously-simple-podcasting/templates/feed-stylesheet.xsl"?>
+<rss version="2.0"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+    xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+    xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+    xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+    xmlns:podcast="https://podcastindex.org/namespace/1.0"
+    xmlns:georss="http://www.georss.org/georss"
+    xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+>
+    <channel>
+        <title>A History of Rock Music in 500 Songs</title>
+        <atom:link href="https://500songs.com/feed/podcast/a-history-of-rock-music-in-500-songs/"
+            rel="self"
+            type="application/rss+xml" />
+        <link>https://500songs.com/series/a-history-of-rock-music-in-500-songs/</link>
+        <description>Andrew Hickey presents a history of rock music from 1938 to 1999, looking at
+            five
+            hundred songs that shaped the genre.</description>
+        <lastBuildDate>Fri, 24 May 2024 20:58:55 +0000</lastBuildDate>
+        <language>en-US</language>
+        <copyright>© 2021 A History of Rock Music in 500 Songs</copyright>
+        <itunes:subtitle></itunes:subtitle>
+        <itunes:author>Andrew Hickey</itunes:author>
+        <itunes:type>episodic</itunes:type>
+        <itunes:summary>Andrew Hickey presents a history of rock music from 1938 to 1999, looking at
+            five
+            hundred songs that shaped the genre.</itunes:summary>
+        <itunes:owner>
+            <itunes:name>Andrew Hickey</itunes:name>
+            <itunes:email>andrew@thenationalpep.co.uk</itunes:email>
+        </itunes:owner>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:image href="https://500songs.com/wp-content/uploads/2021/04/Logo.png"></itunes:image>
+        <image>
+            <url>https://500songs.com/wp-content/uploads/2021/04/Logo.png</url>
+            <title>A History of Rock Music in 500 Songs</title>
+            <link>https://500songs.com/series/a-history-of-rock-music-in-500-songs/</link>
+        </image>
+        <itunes:category text="Music">
+            <itunes:category text="Music History"></itunes:category>
+        </itunes:category>
+        <itunes:category text="Society &amp; Culture">
+            <itunes:category text="Documentary"></itunes:category>
+        </itunes:category>
+        <itunes:category text="History">
+</itunes:category>
+        <googleplay:author><![CDATA[Andrew Hickey]]></googleplay:author>
+        <googleplay:email>andrew@thenationalpep.co.uk</googleplay:email>
+        <googleplay:description>Andrew Hickey presents a history of rock music from 1938 to 1999,
+            looking at
+            five hundred songs that shaped the genre.</googleplay:description>
+        <googleplay:explicit>No</googleplay:explicit>
+        <googleplay:image href="https://500songs.com/wp-content/uploads/2021/04/Logo.png"></googleplay:image>
+        <podcast:guid>8568c498-4e2c-558e-ad04-965671d4c4eb</podcast:guid>
+
+        <!-- podcast_generator="SSP by Castos/3.4.0" Seriously Simple Podcasting plugin for
+        WordPress
+(https://wordpress.org/plugins/seriously-simple-podcasting/) -->
+
+        <site xmlns="com-wordpress:feed-additions:1">191929823</site>
+        <item>
+            <title>Song 174B: “I Heard it Through the Grapevine” Part Two, “It Takes Two”</title>
+            <link>
+                https://500songs.com/podcast/song-174b-i-heard-it-through-the-grapevine-part-two-it-takes-two/</link>
+            <pubDate>Fri, 24 May 2024 20:58:55 +0000</pubDate>
+            <dc:creator><![CDATA[Andrew Hickey]]></dc:creator>
+            <guid isPermaLink="false">https://500songs.com/?post_type=podcast&#038;p=2144</guid>
+            <description><![CDATA[<p>For those who haven’t heard <a href="https://500songs.com/podcast/announcement-regarding-schedule/">the announcement I posted</a> , songs from this point on will sometimes be split among multiple episodes, so this is the second part of a two-episode look at the song “I Heard it Through the Grapevine”. This week we&#8217;re looking at the career of Marvin Gaye from 1963 through 1970, as well as his duet partners Mary Wells, Kim Weston, and Tammi Terrell, whose tragically short life comes with a great many content warnings.</p>
+<p>Click the full post to read liner notes, links to more information, and a transcript of the episode.</p>
+<p>Patreon backers also have a twenty-minute bonus episode, on <a href="https://www.patreon.com/posts/104829172">&#8220;In-A-Gadda-Da-Vida&#8221; by Iron Butterfly</a></p>
+<p>And if you just can&#8217;t get enough of me talking, I&#8217;ve also guested this week, with Tilt and Gary from <em>The Sitcom Club</em>, on our friend Tyler&#8217;s podcast <em>Goon Pod</em>, <a href="https://spotifyanchor-web.app.link/e/sOWWGZEBNJb">talking about the 1974 film </a><em>Man About The House.</em></p>
+<p>Tilt Araiza has assisted invaluably by doing a first-pass edit, and will hopefully be doing so from now on. Check out Tilt’s irregular podcasts at <a href="http://www.podnose.com/jaffa-cakes-for-proust">http://www.podnose.com/jaffa-cakes-for-proust</a> and <a href="http://sitcomclub.com/">http://sitcomclub.com/</a>
+</p>
+<p> <a href="https://500songs.com/podcast/song-174b-i-heard-it-through-the-grapevine-part-two-it-takes-two/#more-2144" class="more-link">(more&hellip;)</a></p>]]></description>
+            <itunes:subtitle><![CDATA[For those who haven’t heard the announcement I posted , songs from this point on will sometimes be split among multiple episodes, so this is the second part of a two-episode look at the song “I Heard it Through the Grapevine”. This week we&#8217;re looki]]></itunes:subtitle>
+            <content:encoded><![CDATA[<p>For those who haven’t heard <a href="https://500songs.com/podcast/announcement-regarding-schedule/">the announcement I posted</a> , songs from this point on will sometimes be split among multiple episodes, so this is the second part of a two-episode look at the song “I Heard it Through the Grapevine”. This week we&#8217;re looking at the career of Marvin Gaye from 1963 through 1970, as well as his duet partners Mary Wells, Kim Weston, and Tammi Terrell, whose tragically short life comes with a great many content warnings.</p>
+<p>Click the full post to read liner notes, links to more information, and a transcript of the episode.</p>
+<p>Patreon backers also have a twenty-minute bonus episode, on <a href="https://www.patreon.com/posts/104829172">&#8220;In-A-Gadda-Da-Vida&#8221; by Iron Butterfly</a></p>
+<p>And if you just can&#8217;t get enough of me talking, I&#8217;ve also guested this week, with Tilt and Gary from <em>The Sitcom Club</em>, on our friend Tyler&#8217;s podcast <em>Goon Pod</em>, <a href="https://spotifyanchor-web.app.link/e/sOWWGZEBNJb">talking about the 1974 film </a><em>Man About The House.</em></p>
+<p>Tilt Araiza has assisted invaluably by doing a first-pass edit, and will hopefully be doing so from now on. Check out Tilt’s irregular podcasts at <a href="http://www.podnose.com/jaffa-cakes-for-proust">http://www.podnose.com/jaffa-cakes-for-proust</a> and <a href="http://sitcomclub.com/">http://sitcomclub.com/</a>
+</p>
+<p> <a href="https://500songs.com/podcast/song-174b-i-heard-it-through-the-grapevine-part-two-it-takes-two/#more-2144" class="more-link">(more&hellip;)</a></p>]]></content:encoded>
+            <enclosure
+                url="https://500songs.com/podcast-download/2144/song-174b-i-heard-it-through-the-grapevine-part-two-it-takes-two.mp3"
+                length="155460871" type="audio/mpeg"></enclosure>
+            <itunes:summary><![CDATA[For those who haven’t heard the announcement I posted , songs from this point on will sometimes be split among multiple episodes, so this is the second part of a two-episode look at the song “I Heard it Through the Grapevine”. This week we&#8217;re looking at the career of Marvin Gaye from 1963 through 1970, as well as his duet partners Mary Wells, Kim Weston, and Tammi Terrell, whose tragically short life comes with a great many content warnings.
+Click the full post to read liner notes, links to more information, and a transcript of the episode.
+Patreon backers also have a twenty-minute bonus episode, on &#8220;In-A-Gadda-Da-Vida&#8221; by Iron Butterfly
+And if you just can&#8217;t get enough of me talking, I&#8217;ve also guested this week, with Tilt and Gary from The Sitcom Club, on our friend Tyler&#8217;s podcast Goon Pod, talking about the 1974 film Man About The House.
+Tilt Araiza has assisted invaluably by doing a first-pass edit, and will hopefully be doing so from now on. Check out Tilt’s irregular podcasts at http://www.podnose.com/jaffa-cakes-for-proust and http://sitcomclub.com/
+
+ (more&hellip;)]]></itunes:summary>
+            <itunes:explicit>false</itunes:explicit>
+            <itunes:block>no</itunes:block>
+            <itunes:duration>0:00</itunes:duration>
+            <itunes:author><![CDATA[Andrew Hickey]]></itunes:author>
+            <googleplay:description><![CDATA[For those who haven’t heard the announcement I posted , songs from this point on will sometimes be split among multiple episodes, so this is the second part of a two-episode look at the song “I Heard it Through the Grapevine”. This week we&#8217;re looking at the career of Marvin Gaye from 1963 through 1970, as well as his duet partners Mary Wells, Kim Weston, and Tammi Terrell, whose tragically short life comes with a great many content warnings.
+Click the full post to read liner notes, links to more information, and a transcript of the episode.
+Patreon backers also have a twenty-minute bonus episode, on &#8220;In-A-Gadda-Da-Vida&#8221; by Iron Butterfly
+And if you just can&#8217;t get enough of me talking, I&#8217;ve also guested this week, with Tilt and Gary from The Sitcom Club, on our friend Tyler&#8217;s podcast Goon Pod, talking about the 1974 film Man About The House.
+Tilt Araiza has assisted invaluably by doing a first-pass edit, and will hopefully be doing so from now on. Ch]]></googleplay:description>
+            <googleplay:explicit>No</googleplay:explicit>
+            <googleplay:block>no</googleplay:block>
+        </item>
+    </channel>
+</rss>

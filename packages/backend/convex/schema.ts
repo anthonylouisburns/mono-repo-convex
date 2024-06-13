@@ -15,7 +15,7 @@ const schema = defineSchema({
     rss_body: v.optional(v.id("_storage")),
     number_of_episodes: v.optional(v.number()),
   })
-  .index("rss_url", ["rss_url"]),
+    .index("rss_url", ["rss_url"]),
   episode: defineTable({
     podcast_id: v.id("podcast"),
     episode_number: v.number(),
@@ -24,7 +24,7 @@ const schema = defineSchema({
     // media_url: v.string(),
     body: v.any(),
   })
-  .index("podcast_episode_number", ["podcast_id", "episode_number"]),
+    .index("podcast_episode_number", ["podcast_id", "episode_number"]),
   timespan: defineTable({
     podcast_id: v.id("podcast"),
     episode_id: v.optional(v.id("episode")),
@@ -32,7 +32,14 @@ const schema = defineSchema({
     start: v.string(),
     end: v.string(),
   })
-  .index("podcast_episode", ["podcast_id", "episode_id"]),
+    .index("podcast_episode", ["podcast_id", "episode_id"]),
+  user: defineTable({
+    tokenIdentifier: v.string(),
+    issuer: v.string(),
+    email: v.string(),
+    name: v.string(),
+  })
+  .index("tokenIdentifier", ["tokenIdentifier","issuer"])
 });
 console.log(schemaToMermaid(schema));
 export default schema;
