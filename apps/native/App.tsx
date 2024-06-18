@@ -14,9 +14,10 @@ export default function App() {
   LogBox.ignoreLogs(['Warning: ...']);
   LogBox.ignoreAllLogs();
   const [sound, setSound] = useState<Audio.Sound>();
-  const [episode_id, set_episode_id] = useState();
-  const [podcast_name, set_podcast_name] = useState();
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [player_podcast_name, set_player_podcast_name] = useState();
   const [podcast_id, set_podcast_id] = useState();
+  const [player_episode_id, set_player_episode_id] = useState();
   const [duration, set_duration] = useState("-");
   const [position, set_position] = useState("-");
 
@@ -54,6 +55,7 @@ export default function App() {
       }
       : undefined;
   }, [sound]);
+// TODO whats up with this code
 
   if (!loaded) {
     return false;
@@ -74,16 +76,18 @@ export default function App() {
             value={{
               sound,
               setSound,
-              episode_id,
-              set_episode_id,
-              podcast_name,
-              set_podcast_name,
+              player_podcast_name,
+              set_player_podcast_name,
               duration,
               set_duration,
               position,
               set_position,
               podcast_id,
-              set_podcast_id
+              set_podcast_id,
+              player_episode_id, 
+              set_player_episode_id,
+              isPlaying, 
+              setIsPlaying
             }}
           >
             <Navigation />

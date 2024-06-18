@@ -18,18 +18,19 @@ export default function Page() {
   const [rss, setRss] = useState('');
 
   return <div>
-    <EverwhzHeader />
-    <div><b>total episodes {total_episodes}</b></div>
-    <div><Button onClick={() => {
-      addPodcast({ name: name, rss_url: rss })
-    }}>+</Button>
-      name: <input type="text" value={name} onChange={e => setName(e.target.value)} id="podcast_name" />
-      rss: <input type="text" value={rss} onChange={e => setRss(e.target.value)} id="podcast_rss" /></div>
-    <Button onClick={() => refreshRssBody()}>podcasts refresh</Button>
-    {podcasts &&
-      podcasts.map((podcast) => (
-        <Podcast key="{podcast._id}" podcast={podcast} podcastColor='black' setName={setName} setRss={setRss} />
-      ))}
+    <div className="pagePadding">
+      <div><b>total episodes {total_episodes}</b></div>
+      <div><Button onClick={() => {
+        addPodcast({ name: name, rss_url: rss })
+      }}>+</Button>
+        name: <input type="text" value={name} onChange={e => setName(e.target.value)} id="podcast_name" />
+        rss: <input type="text" value={rss} onChange={e => setRss(e.target.value)} id="podcast_rss" /></div>
+      <Button onClick={() => refreshRssBody()}>podcasts refresh</Button>
+      {podcasts &&
+        podcasts.map((podcast) => (
+          <Podcast key="{podcast._id}" podcast={podcast} podcastColor='black' setName={setName} setRss={setRss} />
+        ))}
+    </div>
   </div>
 }
 

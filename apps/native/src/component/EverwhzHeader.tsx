@@ -8,7 +8,6 @@ import {
 
 import { useContext, } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-expo';
-import Player from './Player';
 import { AudioContext } from '../../AudiContext'
 import { styles } from './Styles';
 import { useStoreUserEffect } from '../useUseStoreEffect';
@@ -21,7 +20,6 @@ export const EverwhzHeader = ({ navigation, page }) => {
   const { signOut } = useAuth();
 
   const {
-    episode_id,
     podcast_id,
     podcast_name
   } = useContext(AudioContext);
@@ -80,17 +78,9 @@ export const EverwhzHeader = ({ navigation, page }) => {
         <><Text style={styles.selected}>episode</Text></>
       )
     } else {
-      if (episode_id) {
-        return (
-          <><Text style={styles.link} onPress={() =>
-            navigation.navigate('Episode', { episode_id: episode_id })
-          }>episode</Text></>
-        )
-      } else {
-        return (
-          <><Text>episode</Text></>
-        )
-      }
+      return (
+        <><Text>episode</Text></>
+      )
     }
   }
 
@@ -98,7 +88,7 @@ export const EverwhzHeader = ({ navigation, page }) => {
     <>
       <View style={styles.yourNotesContainer}>
         {/* @ts-ignore, for css purposes */}
-        <Image style={styles.avatarSmall} source={require('../assets/icons/logo.png')}/>
+        <Image style={styles.avatarSmall} source={require('../assets/icons/logo.png')} />
         <Text style={styles.rainbowText}>everwhz</Text>
         <TouchableOpacity
           onPress={() =>
@@ -119,7 +109,6 @@ export const EverwhzHeader = ({ navigation, page }) => {
           {episodes()}
           {episode()}
         </Text>
-        {episode_id ? <Player /> : <></>}
       </View>
     </>
   );

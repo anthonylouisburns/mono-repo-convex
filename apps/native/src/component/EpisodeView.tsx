@@ -28,9 +28,9 @@ export const EpisodeView = ({ navigation, podcast_name, episode_id, longView }) 
     return (
         <View style={styles.container} key={episode_id}>
 
-            <Text style={styles.link} onPress={() => {
+            <Text  onPress={() => {
                 navigation.navigate('Episode', { podcast_name: podcast_name, episode_id: episode._id })
-            }}><HTMLView value={episode?.body.title}/></Text>
+            }}><HTMLView style={styles.dangerousTitle} value={episode?.body.title}/></Text>
             <ScrollView>
                 {details()}
             </ScrollView>

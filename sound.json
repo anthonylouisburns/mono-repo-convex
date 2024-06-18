@@ -1,0 +1,103 @@
+{
+    "_coalesceStatusUpdatesInMillis": 100,
+    "_errorCallback": [Function anonymous
+    ],
+    "_eventEmitter": {
+        "_eventEmitter": {
+            "_nativeModule": [Object
+            ]
+        },
+        "_listenerCount": 3,
+        "_nativeModule": {
+            "Qualities": [Object
+            ],
+            "addListener": [Function anonymous
+            ],
+            "getAudioRecordingStatus": [Function anonymous
+            ],
+            "getAvailableInputs": [Function anonymous
+            ],
+            "getCurrentInput": [Function anonymous
+            ],
+            "getPermissionsAsync": [Function anonymous
+            ],
+            "getStatusForSound": [Function anonymous
+            ],
+            "getStatusForVideo": [Function anonymous
+            ],
+            "loadForSound": [Function anonymous
+            ],
+            "loadForVideo": [Function anonymous
+            ],
+            "pauseAudioRecording": [Function anonymous
+            ],
+            "prepareAudioRecorder": [Function anonymous
+            ],
+            "removeListeners": [Function anonymous
+            ],
+            "replaySound": [Function anonymous
+            ],
+            "replayVideo": [Function anonymous
+            ],
+            "requestPermissionsAsync": [Function anonymous
+            ],
+            "setAudioIsEnabled": [Function anonymous
+            ],
+            "setAudioMode": [Function anonymous
+            ],
+            "setInput": [Function anonymous
+            ],
+            "setStatusForSound": [Function anonymous
+            ],
+            "setStatusForVideo": [Function anonymous
+            ],
+            "startAudioRecording": [Function anonymous
+            ],
+            "stopAudioRecording": [Function anonymous
+            ],
+            "unloadAudioRecorder": [Function anonymous
+            ],
+            "unloadForSound": [Function anonymous
+            ],
+            "unloadForVideo": [Function anonymous
+            ]
+        }
+    },
+    "_internalErrorCallback": [Function anonymous
+    ],
+    "_internalMetadataUpdateCallback": [Function anonymous
+    ],
+    "_internalStatusUpdateCallback": [Function anonymous
+    ],
+    "_key": 6,
+    "_lastStatusUpdate": "{\"volume\":1,\"hasJustBeenInterrupted\":false,\"shouldCorrectPitch\":false,\"isPlaying\":false,\"isMuted\":false,\"positionMillis\":0,\"rate\":1,\"isBuffering\":false,\"pitchCorrectionQuality\":\"Varispeed\",\"uri\":\"https://500songs.com/podcast-download/141/sh-boom-by-the-chords.mp3\",\"durationMillis\":2443938,\"isLoaded\":true,\"didJustFinish\":false,\"playableDurationMillis\":1820121,\"progressUpdateIntervalMillis\":500,\"isLooping\":false,\"shouldPlay\":false}",
+    "_lastStatusUpdateTime": 2024-06-15T03: 43: 36.642Z,
+    "_loaded": true,
+    "_loading": false,
+    "_onAudioSampleReceived": null,
+    "_onMetadataUpdate": null,
+    "_onPlaybackStatusUpdate": [Function playStatus
+    ],
+    "_subscriptions": [
+        {
+            "@@nativeEmitterSubscription@@": [Object
+            ],
+            "remove": [Function remove
+            ]
+        },
+        {
+            "@@nativeEmitterSubscription@@": [Object
+            ],
+            "remove": [Function remove
+            ]
+        },
+        {
+            "@@nativeEmitterSubscription@@": [Object
+            ],
+            "remove": [Function remove
+            ]
+        }
+    ],
+    "getStatusAsync": [Function anonymous
+    ]
+}

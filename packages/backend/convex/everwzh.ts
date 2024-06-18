@@ -63,9 +63,13 @@ export const episodes = query({
 });
 
 export const episode = query({
-    args: { id: v.id("episode") },
+    //TODO should not be optional
+    args: { id: v.optional(v.id("episode")) },
 
     handler: async (ctx, args) => {
+        if (args.id == null) {
+            return null;
+        }
         return await ctx.db.get(args.id)
     },
 });
@@ -299,13 +303,14 @@ export const store = mutation({
         if (!identity) {
             throw new Error("Called storeUser without authentication present");
         }
-        
+
         const user = await ctx.db
             .query("user")
             .withIndex("tokenIdentifier", (q) =>
                 q.eq("tokenIdentifier", identity.tokenIdentifier).eq("issuer", identity.issuer),
             )
             .unique();
+
         if (user !== null) {
             if (user.name !== identity.name) {
                 await ctx.db.patch(user._id, { name: identity.name });
@@ -315,12 +320,64 @@ export const store = mutation({
             }
             return user._id;
         }
-        
+
         return await ctx.db.insert("user", {
             name: identity.name!,
             tokenIdentifier: identity.tokenIdentifier,
             issuer: identity.issuer,
             email: identity.email!,
         });
+    },
+});
+
+export const playStatus = mutation({
+    args: { id: v.id("episode"), position: v.number() },
+    handler: async (ctx, args) => {
+        const { id, position } = args;
+        const identity = await ctx.auth.getUserIdentity();
+        const tokenIdentifier = identity?.tokenIdentifier!;
+        console.log(id, tokenIdentifier, position)
+
+        const play_status = await ctx.db
+            .query("play_status")
+            .withIndex("token", (q) =>
+                q.eq("tokenIdentifier", tokenIdentifier).eq("episode_id", id),
+            )
+            .unique();
+
+        if (play_status !== null) {
+            await ctx.db.patch(play_status._id, { position: position });
+            return
+        }
+
+        return await ctx.db.insert("play_status", {
+            tokenIdentifier: tokenIdentifier,
+            episode_id: id,
+            position: position,
+        });
+    },
+});
+
+export const getPlayStatus = query({
+    args: { id: v.optional(v.id("episode")) },
+    handler: async (ctx, args) => {
+        const { id } = args;
+        if (id == null) {
+            return
+        }
+        // console.log("getPlayStatus id", id)
+        const identity = await ctx.auth.getUserIdentity();
+        const tokenIdentifier = identity?.tokenIdentifier!;
+        // console.log("getPlayStatus tokenIdentifier", tokenIdentifier)
+
+        const play_status = await ctx.db
+            .query("play_status")
+            .withIndex("token", (q) =>
+                q.eq("tokenIdentifier", tokenIdentifier).eq("episode_id", id),
+            )
+            .unique();
+        // console.log("getPlayStatus play_status", play_status)
+
+        return play_status
     },
 });

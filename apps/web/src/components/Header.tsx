@@ -31,7 +31,7 @@ export default function Header() {
             <div className='container px-2 sm:px-0'>
               <div className='relative flex h-16 items-center justify-between'>
                 <div className='flex sm:hidden flex-shrink-0 items-center'>
-                  <Logo isMobile={true} />
+                  <Logo />
                 </div>
                 <div className='sm:flex hidden flex-shrink-0 items-center'>
                   <Logo />
