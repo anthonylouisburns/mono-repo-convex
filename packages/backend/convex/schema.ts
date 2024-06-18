@@ -1,6 +1,7 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import { schemaToMermaid } from "convex-schema-mermaid";
+import { episode } from "./everwzh";
 
 const schema = defineSchema({
   notes: defineTable({
@@ -39,7 +40,13 @@ const schema = defineSchema({
     email: v.string(),
     name: v.string(),
   })
-  .index("tokenIdentifier", ["tokenIdentifier","issuer"])
+  .index("tokenIdentifier", ["tokenIdentifier","issuer"]),
+  play_status: defineTable({
+    tokenIdentifier: v.string(),
+    episode_id: v.id("episode"),
+    position: v.number()
+  })
+  .index("token", ["tokenIdentifier","episode_id"]),
 });
 console.log(schemaToMermaid(schema));
 export default schema;

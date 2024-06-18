@@ -112,7 +112,6 @@ export const styles = StyleSheet.create({
       padding: 20,
       borderBottomWidth: 0.5,
       borderBottomColor: 'rgba(0, 0, 0, 0.59)',
-  
       backgroundColor: '#F9FAFB',
     },
     noteText: {
@@ -176,5 +175,9 @@ export const styles = StyleSheet.create({
       textShadowColor: 'navy',
       fontSize: 35,
       fontWeight: 900
+    },
+    dangerousTitle: {
+      transform: 'scale(1.2)',
+      transformOrigin: 'top left'
     }
   });

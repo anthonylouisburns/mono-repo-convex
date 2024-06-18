@@ -21,7 +21,7 @@ const Episodes = ({ route, navigation }) => {
 
   const {
     set_podcast_id,
-    set_podcast_name
+    set_player_podcast_name
   } = useContext(AudioContext);
 
   if (!isLoaded) {
@@ -29,7 +29,7 @@ const Episodes = ({ route, navigation }) => {
   }
 
   set_podcast_id(podcast_id)
-  set_podcast_name(podcast_name)
+  set_player_podcast_name(podcast_name)
 
 
   const episodes = useQuery(api.everwzh.episodes, { podcast_id: podcast_id as Id<"podcast"> })

@@ -6,81 +6,91 @@ import { useAuth, useUser } from '@clerk/clerk-expo';
 
 //https://docs.expo.dev/versions/latest/sdk/audio/
 import { useContext, useEffect, useState } from 'react';
-import { AVPlaybackStatus, Audio, InterruptionModeAndroid, InterruptionModeIOS } from 'expo-av';
-import { EpisodeView } from "./EpisodeView";
-import { useQuery } from 'convex/react';
+import { AVPlaybackStatus, AVPlaybackStatusError, Audio, } from 'expo-av';
+import { useQuery, useMutation } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
 import { AudioContext } from '../../AudiContext'
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import HTMLView from 'react-native-htmlview';
+import { msToTime, timeToMs } from "../utilities";
 
 
 const Player = () => {
     const { isLoaded, } = useAuth();
+    const {
+        sound
+    }:{sound:Audio.Sound} = useContext(AudioContext);
 
     const {
-        sound,
         setSound,
-        episode_id,
-        podcast_name,
-        duration,
-        set_duration,
-        position,
-        set_position,
+        player_podcast_name,
+        player_episode_id,
+        setIsPlaying,
+        isPlaying
     } = useContext(AudioContext);
 
 
-    const [position1, setPosition] = useState("-");
+    const [position, setPosition] = useState("-");
+    const [duration, setDuration] = useState("-");
 
-    const episode = useQuery(api.everwzh.episode, { id: episode_id as Id<"episode"> });
+    const episode = useQuery(api.everwzh.episode, { id: player_episode_id as Id<"episode"> });
 
-    function playStatus(status: AVPlaybackStatus) {
-        if (status["isPlaying"]) {
-            setPosition(msToTime(status["positionMillis"]))
-            set_position(msToTime(status["positionMillis"]))
+
+    const set_play_status = useMutation(api.everwzh.playStatus);
+
+    function playStatus(playbackStatus: AVPlaybackStatus) {
+        if (!playbackStatus.isLoaded) {
+            // Update your UI for the unloaded state
+            if (playbackStatus["error"]) {
+                console.log(`Encountered a fatal error during playback: ${playbackStatus["error"]}`);
+                // Send Expo team the error on Slack or the forums so we can help you debug!
+            }
+        } else {
+            if (playbackStatus.isPlaying) {
+                const pos = playbackStatus.positionMillis
+                setPosition(msToTime(pos))
+                // [x] mutation save place
+                set_play_status({ id: player_episode_id, position: pos })
+            }
         }
     }
+
     function playStatusNoOp(status: AVPlaybackStatus) { }
 
     function positionFocus() {
+        console.log("focus")
         sound.setOnPlaybackStatusUpdate(playStatusNoOp);
     }
 
     function positionFocusOut() {
-        sound.setPositionAsync(timeToMs(position1))
-        sound.setOnPlaybackStatusUpdate(playStatus);
+        sound.setPositionAsync(timeToMs(position))
+        sound.setOnPlaybackStatusUpdate(playStatus)
     }
 
-    function msToTime(duration) {
-        const milliseconds = Math.floor((duration % 1000) / 10),
-            seconds = Math.floor((duration / 1000) % 60),
-            minutes = Math.floor((duration / (1000 * 60)) % 60),
-            hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
 
-        // var h = (hours < 10) ? "0" + hours : hours;
-        const h = hours;
-        const m = (minutes < 10) ? "0" + minutes : minutes;
-        const s = (seconds < 10) ? "0" + seconds : seconds;
-        // const ms = (milliseconds < 10) ? "0" + milliseconds : milliseconds;
-
-        return h + ":" + m + ":" + s;//+ "." + ms;
-    }
-
-    function timeToMs(positionString) {
-        const h = Number(positionString.slice(0, -6))
-        const m = Number(positionString.slice(-5, -3))
-        const s = Number(positionString.slice(-2))
-
-        const newPosition = (h * 1000 * 60 * 60) + (m * 1000 * 60) + (s * 1000);
-        return newPosition
-    }
 
     async function stopSound() {
         sound.stopAsync();
+        setIsPlaying(false)
     }
+
+    const getPlayStatus = useQuery(api.everwzh.getPlayStatus, { id: player_episode_id })
+
+    useEffect(() => {
+        if (!sound || !isPlaying) {
+            const new_position = getPlayStatus ? getPlayStatus.position : 0
+            setPosition(msToTime(new_position))
+            console.log("useEffect 2")
+        }
+        if(sound && !isPlaying){
+            const new_position = getPlayStatus ? getPlayStatus.position : 0
+            sound.setPositionAsync(new_position)
+        }
+    }, [getPlayStatus,]);
 
     async function playSound() {
         console.log('Loading Sound');
+        setIsPlaying(true)
         // const mp3_link = "https://500songs.com/podcast-download/2144/song-174b-i-heard-it-through-the-grapevine-part-two-it-takes-two.mp3"
 
         const mp3_link = episode?.body.enclosure["@_url"]
@@ -90,25 +100,22 @@ const Player = () => {
             await Audio.Sound.createAsync(source, { positionMillis: timeToMs(position) }, playStatus) :
             await Audio.Sound.createAsync(source, {}, playStatus);
 
-        set_duration(msToTime(status["durationMillis"]))
+        setDuration(msToTime(status["durationMillis"]))
         setSound(sound);
 
         console.log('Playing Sound');
         await sound.playAsync();
     }
 
-
-
-
-    if (!isLoaded) {
-        return <Text>hello</Text>;
+    if (!isLoaded || !player_episode_id) {
+        return <></>;
     }
-
 
     return (
         <View style={styles.player_center}  >
             <View style={styles.player}>
-                <Text style={styles.podcast_name}>{podcast_name}:</Text>
+                <Text>{msToTime(getPlayStatus ? getPlayStatus.position : 0)}</Text>
+                <Text style={styles.podcast_name}>{player_podcast_name}:</Text>
             </View>
             <View style={styles.player}>
                 <HTMLView value={episode?.body.title} />

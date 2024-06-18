@@ -1,4 +1,5 @@
 {
+  "name": "everwhz",
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
@@ -9,6 +10,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"
   },
   "devDependencies": {
+    "@types/react": "^18",
     "prettier": "^3.1.0",
     "turbo": "latest"
   },
@@ -20,6 +22,18 @@
     "packages/*"
   ],
   "dependencies": {
-    "@packages/backend": "^1.0.0"
-  }
+    "@packages/backend": "^1.0.0",
+    "clerk-react": "^0.1.9",
+    "react": "^18.3.1"
+  },
+  "resolutions": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "expo": "51.0.9",
+    "expo-web-browser": "13.0.3",
+    "@babel/core": "7.22.0",
+    "@babel/preset-env": "7.24.6",
+    "@react-native/codegen": "0.74.83"
+  },
+  "packageManager": "yarn@4.3.0"
 }

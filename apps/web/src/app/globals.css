@@ -80,3 +80,12 @@
   color: green;
   font-weight: 600;
 }
+
+.pagePadding {
+  padding: 0;
+  margin: 20px;
+}
+
+.dangerous p {
+  padding: 10px;
+}

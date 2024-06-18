@@ -29,6 +29,7 @@ export default function Header() {
       return "navigation-selected"
     }else if(["episode","episodes"].includes(target)){
       return "navigation-off"
+      //TODO remove link when navigation-off, remember last choosen
     }else{
       return "navigation"
     }
@@ -61,13 +62,13 @@ export default function Header() {
         ) : (
           <div className=''>
             <Link
-              href='/notes'
+              href='/'
               className='border rounded-lg border-solid border-[#2D2D2D] text-[#2D2D2D] text-center text-xl not-italic font-normal leading-[normal] font-montserrat px-[22px] py-2.5'
             >
               Sign in
             </Link>
             <Link
-              href='/notes'
+              href='/'
               className=' text-white text-center text-xl not-italic font-normal leading-[normal] font-montserrat px-[22px] py-[11px] button'
             >
               Get Started
