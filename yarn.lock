@@ -6140,6 +6140,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"convex@npm:^1.12.2":
+  version: 1.12.2
+  resolution: "convex@npm:1.12.2"
+  dependencies:
+    esbuild: "npm:^0.17.5"
+    jwt-decode: "npm:^3.1.2"
+    node-fetch: "npm:^2.6.1"
+    prettier: "npm:3.2.5"
+  peerDependencies:
+    "@auth0/auth0-react": ^2.0.1
+    "@clerk/clerk-react": ^4.12.8 || ^5.0.0
+    react: ^17.0.2 || ^18.0.0
+    react-dom: ^17.0.2 || ^18.0.0
+  peerDependenciesMeta:
+    "@auth0/auth0-react":
+      optional: true
+    "@clerk/clerk-react":
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  bin:
+    convex: bin/main.js
+  checksum: 10c0/a287ce9e7bb0b479764c2f85bb8aebaa65999ba347fb84fefa048e2f9e18a3bb8b90cbef537a2993011afa41087299975eefcf4f3a628890b1081da82d662f7e
+  languageName: node
+  linkType: hard
+
 "cookie@npm:0.5.0":
   version: 0.5.0
   resolution: "cookie@npm:0.5.0"
@@ -7364,6 +7392,7 @@ __metadata:
     "@packages/backend": "npm:^1.0.0"
     "@types/react": "npm:^18"
     clerk-react: "npm:^0.1.9"
+    convex: "npm:^1.12.2"
     prettier: "npm:^3.1.0"
     react: "npm:^18.3.1"
     turbo: "npm:latest"
