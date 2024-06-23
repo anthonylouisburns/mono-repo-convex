@@ -9,13 +9,15 @@ import { useContext, useEffect, useState } from 'react';
 import { AVPlaybackStatus, AVPlaybackStatusError, Audio, } from 'expo-av';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
-import { AudioContext } from '../../AudiContext'
+import { AudioContext } from '../../AudioContext'
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import HTMLView from 'react-native-htmlview';
 import { msToTime, timeToMs } from "../utilities";
 
 
 const Player = () => {
+    const UPDATE_DELAY_SECONDS = 20
+    const [lastUpdatePos, setLastUpdatePos] = useState(0)
     const { isLoaded, } = useAuth();
     const {
         sound
@@ -48,9 +50,14 @@ const Player = () => {
         } else {
             if (playbackStatus.isPlaying) {
                 const pos = playbackStatus.positionMillis
-                setPosition(msToTime(pos))
-                // [x] mutation save place
-                set_play_status({ id: player_episode_id, position: pos })
+                if(pos - timeToMs(position) > 1000){
+                    setPosition(msToTime(pos))
+                    // [x] mutation save place
+                    if(Math.abs(pos-lastUpdatePos) > UPDATE_DELAY_SECONDS*1000){
+                        set_play_status({ id: player_episode_id, position: pos })
+                        setLastUpdatePos(pos)
+                    }
+                }
             }
         }
     }

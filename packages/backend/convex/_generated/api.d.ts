@@ -14,6 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as audioProxy from "../audioProxy.js";
 import type * as everwzh from "../everwzh.js";
 import type * as notes from "../notes.js";
 import type * as openai from "../openai.js";
@@ -28,6 +29,7 @@ import type * as utils from "../utils.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  audioProxy: typeof audioProxy;
   everwzh: typeof everwzh;
   notes: typeof notes;
   openai: typeof openai;

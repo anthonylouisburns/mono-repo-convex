@@ -1,9 +1,8 @@
 "use client";
 
-import { Doc, Id } from "@packages/backend/convex/_generated/dataModel";
+import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { api } from '@packages/backend/convex/_generated/api';
-import { useQuery, useMutation } from 'convex/react';
-import { TimeSpans } from "../TimeSpans";
+import { useQuery,  } from 'convex/react';
 import { Episode } from './Episode';
 
 export const EpisodeById = function EpisodeById({ episode_id }: { episode_id: Id<"episode"> }): JSX.Element {

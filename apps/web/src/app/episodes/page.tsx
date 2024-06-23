@@ -7,7 +7,7 @@ import { Id } from '@packages/backend/convex/_generated/dataModel';
 import EverwhzHeader from '@/components/EverwhzHeader';
 import { Episode } from '../timeline/Episode';
 
-export default function About() {
+export default function Page() {
   const params = useSearchParams()
   const podcast_id = params.get('podcast_id')
   const episodes = useQuery(api.everwzh.episodes, { podcast_id: podcast_id as Id<"podcast"> })
@@ -20,7 +20,7 @@ export default function About() {
     <div className="pagePadding">
       {episodes &&
         episodes.map((episode) => (
-          <Episode key="{episode._id}" episode={episode} />
+          <Episode key={episode._id} episode={episode} />
         ))}
     </div>
   </div>

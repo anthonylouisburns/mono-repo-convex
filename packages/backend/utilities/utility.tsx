@@ -1,7 +1,4 @@
 
-export const boxStyle = { border: 'solid navy', margin: 5 }
-export const linkStyle = { color: 'blue', fontWeight: 500 }
-export const selectPage = { color: 'green', fontWeight: 500 }
 
 export function timedisplay(dateString: string) {
     const y = dateString.slice(0, -4)

@@ -8,7 +8,7 @@ import {
 
 import { useContext, } from 'react';
 import { useAuth, useUser } from '@clerk/clerk-expo';
-import { AudioContext } from '../../AudiContext'
+import { AudioContext } from '../../AudioContext'
 import { styles } from './Styles';
 import { useStoreUserEffect } from '../useUseStoreEffect';
 

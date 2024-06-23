@@ -33,7 +33,9 @@ const schema = defineSchema({
     start: v.string(),
     end: v.string(),
   })
-    .index("podcast_episode", ["podcast_id", "episode_id"]),
+  .index("podcast_episode", ["podcast_id", "episode_id"])
+  .index("start", ["start"])
+  .index("end", ["end"]),
   user: defineTable({
     tokenIdentifier: v.string(),
     issuer: v.string(),
