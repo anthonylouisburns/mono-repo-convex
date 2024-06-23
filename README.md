@@ -162,7 +162,7 @@ Everything scales automatically, and it’s [free to start](https://www.convex.d
 [ ] WEB - delete unused code
 [x] sort timeline
 [x] add links from timeline to update edit box at top
-[ ] reformat podcast page - remove add spans from that page? maybe
+[x] reformat podcast page - remove add spans from that page? maybe
 [x] native delay mutation
 [x]  4. clean up delete unused code
 
@@ -188,6 +188,8 @@ TO[ ]DO: development build
 [ ] use history
 [ ] paginated queries
 [ ] let podcast owner claim podcast - write instructions include public key 
+[ ] security only I can delete podcast
+[ ] only creator(and me) can see rss url before resolved
 -->
 
 

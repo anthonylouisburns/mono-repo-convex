@@ -6,6 +6,7 @@ import {
 } from "convex/react";
 import { AudioContext } from '@/components/AudioContext'
 import { useState } from "react";
+import EverwhzHeader from "@/components/EverwhzHeader";
 
 
 export default function Base({
@@ -23,6 +24,7 @@ export default function Base({
                     </AudioContext.Provider>
                 </Authenticated>
                 <Unauthenticated>
+                    <EverwhzHeader />
                     <div>
                         <h1 className="header-center rainbow-text">
                             Explore Historical Podcasts, login above
