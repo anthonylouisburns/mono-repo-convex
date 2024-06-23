@@ -7,46 +7,42 @@
 * {
   font-family: 'Montserrat', sans-serif;
 }
+
 .font-montserrat {
   font-family: 'Montserrat', sans-serif;
 }
 
 .linear_gradient {
-  background: linear-gradient(
-    267deg,
-    #fff -9.43%,
-    #040218 -9.42%,
-    #fff 4.63%,
-    #d2e4f2 127.55%
-  );
+  background: linear-gradient(267deg,
+      #fff -9.43%,
+      #040218 -9.42%,
+      #fff 4.63%,
+      #d2e4f2 127.55%);
 }
 
 .bg_image {
   background:
-    linear-gradient(
-      181deg,
+    linear-gradient(181deg,
       rgba(255, 255, 255, 0) 57.92%,
       #fff 97.09%,
-      rgba(255, 255, 255, 0) 127.09%
-    ),
+      rgba(255, 255, 255, 0) 127.09%),
     url('/images/background.png'),
     lightgray 0% 0% / 261.2499952316284px 261.2499952316284px repeat;
 }
+
 .button {
   border-radius: 8px;
-  background: linear-gradient(
-    267deg,
-    #0983df -9.43%,
-    #040218 -9.42%,
-    #0d87e1 4.63%,
-    #0983df 127.55%
-  );
+  background: linear-gradient(267deg,
+      #0983df -9.43%,
+      #040218 -9.42%,
+      #0d87e1 4.63%,
+      #0983df 127.55%);
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
 .rainbow-text {
   /* background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red); */
-  background-image: linear-gradient(navy,aqua);
+  background-image: linear-gradient(navy, aqua);
   font-family: "Courier New", monospace;
   font-size: 50px;
   font-weight: 1000;
@@ -89,3 +85,40 @@
 .dangerous p {
   padding: 10px;
 }
+
+.boxStyle {
+  border-top: dashed navy;
+  margin-top: 15px;
+  padding-bottom: 10px;
+}
+
+.boxPaddi {
+  padding: 0;
+  margin: 20px;
+}
+
+.linkStyle {
+  color: blue;
+  font-weight: 500;
+}
+
+.linkStyle1 {
+  color: navy;
+  font-weight: 500;
+}
+
+.linkStyle2 {
+  color: darkcyan;
+  font-weight: 500;
+}
+
+.linkStyle3 {
+  color: royalblue;
+  font-weight: 500;
+}
+
+.selectPage {
+  color: green;
+  font-weight: 500;
+}
+

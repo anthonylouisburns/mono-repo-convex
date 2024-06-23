@@ -10,8 +10,7 @@ import { useContext, useEffect } from 'react';
 import { EpisodeView } from "../component/EpisodeView";
 import { useQuery } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
-import { AudioContext } from '../../AudiContext'
-import { Sound } from "expo-av/build/Audio";
+import { AudioContext } from '../../AudioContext'
 
 
 const Episode = ({ route, navigation, }) => {
@@ -64,40 +63,4 @@ const Episode = ({ route, navigation, }) => {
 }
 
 export default Episode;
-
-
-// [ ] MINIMUM VIABLE PRODUCT
-// [x]  play audio 
-// [x]  scroll view - https://www.daily.co/blog/understanding-react-natives-flatlist-scrollview-and-sectionlist-components/
-// [x] save user and email -  https://docs.convex.dev/auth/database-auth
-// [x] web save user info https://docs.convex.dev/auth/database-auth
-// [x] web navigation
-// [x] keep track of play position - play history
-// [ ] web play track
-// [ ] WEB - delete unused code
-// [ ] sort timeline
-// [ ] add links from timeline to update edit box at top
-// [x]  4. clean up delete unused code
-
-
-// [ ] RELEASE
-// [x] enroll as Apple Developer
-// [ ]  check everything works - add tests
-// [ ]  check everything in
-// [ ] release - build EAS
-// [ ] play in background - should work double check - continue play in background change tab - Expo Go app or Expo development build, the background audio mode will not work - https://dev.to/josie/how-to-add-background-audio-to-expo-apps-3fgc 
-// [ ] tests
-// [ ] daily back ups
-// TO[ ]DO: development build
-
-
-// [ ] NEW FEATURES
-// [ ] AI suggestions
-// [ ] add apple login
-// [ ]  e. expand details - timeline expand contract
-// [ ] use history
-// [ ] paginated queries
-// [ ] let podcast owner claim podcast - write instructions include public key
-
-
 

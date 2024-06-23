@@ -1,44 +1,39 @@
+
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import './globals.css';
 import ConvexClientProvider from './ConvexClientProvider';
 import EverwhzHeader from '@/components/EverwhzHeader';
-import Player from '@/components/Player'; import {
-  Authenticated,
-  Unauthenticated,
-} from "convex/react";
+import Player from '@/components/Player';
+import Base from './Base';
+import Head from 'next/head';
+import { useState } from 'react';
+import PlayerHolder from '@/components/PlayerHolder';
 
-const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Everwhz',
+  title: 'everwhz!',
   description: 'as it everwhz',
+  icons: {
+    icon: '/images/icons8-nautilus-96.png',
+  },
 };
+
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html lang='en'>
       <body>
         <ConvexClientProvider>
-          <EverwhzHeader />
-
-          <Authenticated>
-            <Player />
+          <Base>
+            <EverwhzHeader />
+            <PlayerHolder/>
             {children}
-          </Authenticated>
-          <Unauthenticated>
-            return (
-            <div>
-              <EverwhzHeader />
-              <h1 className="header-center rainbow-text">
-                login and Explore Historical Podcasts
-              </h1>
-            </div>
-          </Unauthenticated>
+          </Base>
         </ConvexClientProvider>
       </body>
     </html>

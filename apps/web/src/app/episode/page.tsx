@@ -4,20 +4,35 @@ import { useQuery, } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
 import { useSearchParams } from 'next/navigation'
 import { Id } from '@packages/backend/convex/_generated/dataModel';
-import EverwhzHeader from '@/components/EverwhzHeader';
+import { useContext } from 'react';
+import { AudioContext } from '@/components/AudioContext'
+import { Button } from '@/components/common/button';
 
-export default function About() {
+export default function About({ set_player_episode_id }: { set_player_episode_id: Id<"episode"> }) {
   const params = useSearchParams()
   const episode_id = params.get('episode_id')
-  const episode = useQuery(api.everwzh.episode, { id: episode_id as Id<"episode"> })
 
+  const episodeName =  useQuery(api.everwzh.episodeName, { id: episode_id as Id<"episode"> });
+  const {episode, podcast} = episodeName?episodeName:{ episode: null, podcast: null }
+  const player_podcast_name = podcast?.name
+  
+  const {
+    setPlayerEpisodeId
+  } = useContext(AudioContext);
+
+
+  async function selectEpisode() {
+    setPlayerEpisodeId(episode_id as Id<"episode">)
+  }
   if (!episode_id) {
     return <>No such episode</>
   }
 
   return <div>
     <div className="pagePadding">
+      {player_podcast_name}
       <div className="heavy" dangerouslySetInnerHTML={{ __html: episode?.body.title }} />
+      <Button onClick={() => selectEpisode()}>+</Button>
       <div className="dangerous" dangerouslySetInnerHTML={{ __html: episode?.body["content:encoded"] }} />
     </div>
   </div>

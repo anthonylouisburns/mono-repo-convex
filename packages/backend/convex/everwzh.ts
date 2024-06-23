@@ -62,6 +62,24 @@ export const episodes = query({
     },
 });
 
+export const episodeName = query({
+    //TODO should not be optional
+    args: { id: v.optional(v.id("episode")) },
+
+    handler: async (ctx, args):Promise<{episode:Doc<"episode"> | null, podcast:Doc<"podcast"> | null}> => {
+        if (args.id == null) {
+            return { episode: null, podcast: null };
+        }
+        const episode = await ctx.db.get(args.id)
+        if(!episode){
+            return { episode: null, podcast: null }
+        }
+        const podcast = await ctx.db.get(episode.podcast_id)
+
+        return { episode: episode, podcast: podcast }
+    },
+});
+
 export const episode = query({
     //TODO should not be optional
     args: { id: v.optional(v.id("episode")) },
@@ -100,7 +118,10 @@ export const deletePodcast = mutation({
 
 export const timeline = query({
     handler: async (ctx) => {
-        const timeSpans = await ctx.db.query("timespan").collect();
+        const timeSpans = await ctx.db.query("timespan")
+        .withIndex("start")
+        .order("asc")
+        .collect();
 
         const data: Array<{ span: Doc<"timespan">, podcast: Doc<"podcast"> | null, episode: Doc<"episode"> | null }> = []
 

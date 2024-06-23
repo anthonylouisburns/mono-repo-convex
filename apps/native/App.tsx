@@ -6,7 +6,7 @@ import ConvexClientProvider from './ConvexClientProvider';
 
 import { SignedIn, SignedOut } from '@clerk/clerk-expo';
 import LoginScreen from './src/screens/LoginScreen';
-import { AudioContext } from './AudiContext'
+import { AudioContext } from './AudioContext'
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS, } from 'expo-av';
 import { useEffect, useState } from 'react';
 

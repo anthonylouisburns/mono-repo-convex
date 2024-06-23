@@ -11,7 +11,7 @@ import { styles } from '../component/Styles';
 import { EverwhzHeader, } from '../component/EverwhzHeader';
 import { Id } from '@packages/backend/convex/_generated/dataModel';
 import { EpisodeView } from '../component/EpisodeView';
-import { AudioContext } from '../../AudiContext'
+import { AudioContext } from '../../AudioContext'
 
 
 const Episodes = ({ route, navigation }) => {
