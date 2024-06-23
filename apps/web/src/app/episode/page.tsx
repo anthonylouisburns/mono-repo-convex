@@ -8,7 +8,7 @@ import { useContext } from 'react';
 import { AudioContext } from '@/components/AudioContext'
 import { Button } from '@/components/common/button';
 
-export default function About({ set_player_episode_id }: { set_player_episode_id: Id<"episode"> }) {
+export default function About(): JSX.Element {
   const params = useSearchParams()
   const episode_id = params.get('episode_id')
 
