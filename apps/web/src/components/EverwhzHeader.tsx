@@ -62,16 +62,10 @@ export default function Header() {
         ) : (
           <div className=''>
             <Link
-              href='/'
+              href='/timeline'
               className='border rounded-lg border-solid border-[#2D2D2D] text-[#2D2D2D] text-center text-xl not-italic font-normal leading-[normal] font-montserrat px-[22px] py-2.5'
             >
               Sign in
-            </Link>
-            <Link
-              href='/'
-              className=' text-white text-center text-xl not-italic font-normal leading-[normal] font-montserrat px-[22px] py-[11px] button'
-            >
-              Get Started
             </Link>
           </div>
         )}
