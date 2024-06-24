@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 import { useContext, } from 'react';
-import { useAuth, useUser } from '@clerk/clerk-expo';
+import { useAuth,  } from '@clerk/clerk-expo';
 import { AudioContext } from '../../AudioContext'
 import { styles } from './Styles';
 import { useStoreUserEffect } from '../useUseStoreEffect';

@@ -2,7 +2,6 @@
 
 
 import Link from 'next/link';
-import { useUser } from '@clerk/clerk-react';
 import { UserNav } from './common/UserNav';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
@@ -14,10 +13,6 @@ type NavigationItem = {
   current: boolean;
 };
 
-const navigation: NavigationItem[] = [
-  { name: 'Benefits', href: '#Benefits', current: true },
-  { name: 'Reviews', href: '#reviews', current: false },
-];
 
 
 export default function Header() {
