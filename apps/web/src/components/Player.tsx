@@ -38,7 +38,7 @@ export default function Player({ player_episode_id }: { player_episode_id: Id<"e
             setCurrentTime(0)
             setDuration(0)
         }
-    }, [player_episode_id])
+    }, [player_episode_id, sound, stopSound])
 
     const [currentTime, setCurrentTime] = useState<number>(0)
     const [duration, setDuration] = useState<number>(0)
@@ -62,7 +62,7 @@ export default function Player({ player_episode_id }: { player_episode_id: Id<"e
         return () => {
             clearInterval(timerInterval)
         }
-    }, [sound])
+    }, [sound,lastUpdatePos, player_episode_id, set_play_status])
 
 
     async function playSound() {
