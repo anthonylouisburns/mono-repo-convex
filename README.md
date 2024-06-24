@@ -190,6 +190,9 @@ TO[ ]DO: development build
 [ ] let podcast owner claim podcast - write instructions include public key 
 [ ] security only I can delete podcast
 [ ] only creator(and me) can see rss url before resolved
+
+
+original command cd ../.. && turbo run build --filter={/apps/web}...
 -->
 
 
