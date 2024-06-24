@@ -14,9 +14,6 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as audioProxy from "../audioProxy.js";
-import type * as everwzh from "../everwzh.js";
-import type * as utils from "../utils.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,11 +23,7 @@ import type * as utils from "../utils.js";
  * const myFunctionReference = api.myModule.myFunction;
  * ```
  */
-declare const fullApi: ApiFromModules<{
-  audioProxy: typeof audioProxy;
-  everwzh: typeof everwzh;
-  utils: typeof utils;
-}>;
+declare const fullApi: ApiFromModules<{}>;
 export declare const api: FilterApi<
   typeof fullApi,
   FunctionReference<any, "public">
