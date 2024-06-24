@@ -11,9 +11,7 @@ import {
 } from './dropdown-menu';
 import Link from 'next/link';
 import { useClerk } from '@clerk/clerk-react';
-import {
-  Image,
-} from 'react-native';
+import Image from 'next/image';
 
 export function UserNav({
   image,
@@ -33,7 +31,7 @@ export function UserNav({
           <Avatar className="h-10 w-10">
             <AvatarImage src={image} alt={name} />
             <AvatarFallback>
-              <Image source={require('../images/profile.png')} alt={name} />
+              <Image src={'/images/profile.png'} alt={name}  />
             </AvatarFallback>
           </Avatar>
         </Button>
