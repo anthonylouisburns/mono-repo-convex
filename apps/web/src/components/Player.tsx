@@ -38,9 +38,9 @@ export default function Player({ player_episode_id }: { player_episode_id: Id<"e
             setCurrentTime(0)
             setDuration(0)
         }
-    }, [player_episode_id, sound])
+    }, [player_episode_id])
 
-    
+
     const [currentTime, setCurrentTime] = useState<number>(0)
     const [duration, setDuration] = useState<number>(0)
     useEffect(() => {
