@@ -24,7 +24,6 @@
   "dependencies": {
     "@packages/backend": "^1.0.0",
     "clerk-react": "^0.1.9",
-    "convex": "^1.12.2",
     "react": "^18.3.1"
   },
   "resolutions": {
