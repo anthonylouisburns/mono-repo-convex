@@ -7,10 +7,6 @@ import { ClerkProvider, useAuth } from '@clerk/clerk-react';
 // import { ErrorBoundary } from './ErrorBoundary';
 
 function getProd(){
-  console.log("CONVEX_URL", process.env.CONVEX_URL)
-  console.log("CLERK_PUBLISHABLE_KEY", process.env.CLERK_PUBLISHABLE_KEY)
-  console.log("NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY", process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY)
-  console.log("NEXT_PUBLIC_CONVEX_URL", process.env.NEXT_PUBLIC_CONVEX_URL)
  return new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 }
 const convex = getProd()
