@@ -1,15 +1,7 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { schemaToMermaid } from "convex-schema-mermaid";
-import { episode } from "./everwzh";
 
 const schema = defineSchema({
-  notes: defineTable({
-    userId: v.string(),
-    title: v.string(),
-    content: v.string(),
-    summary: v.optional(v.string()),
-  }),
   podcast: defineTable({
     name: v.string(),
     rss_url: v.string(),
@@ -50,5 +42,4 @@ const schema = defineSchema({
   })
   .index("token", ["tokenIdentifier","episode_id"]),
 });
-console.log(schemaToMermaid(schema));
 export default schema;
