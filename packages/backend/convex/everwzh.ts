@@ -63,7 +63,7 @@ export const episodes = query({
 });
 
 export const episodeName = query({
-    //TODO should not be optional
+    //TODO should not be optional!!
     args: { id: v.optional(v.id("episode")) },
 
     handler: async (ctx, args):Promise<{episode:Doc<"episode"> | null, podcast:Doc<"podcast"> | null}> => {
