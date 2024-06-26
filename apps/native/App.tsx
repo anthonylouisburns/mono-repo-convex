@@ -9,6 +9,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import { AudioContext } from './AudioContext'
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS, } from 'expo-av';
 import { useEffect, useState } from 'react';
+import React from 'react';
 
 export default function App() {
   LogBox.ignoreLogs(['Warning: ...']);

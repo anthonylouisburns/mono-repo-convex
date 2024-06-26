@@ -190,6 +190,7 @@ TO[ ]DO: development build
 [ ] let podcast owner claim podcast - write instructions include public key 
 [ ] security only I can delete podcast
 [ ] only creator(and me) can see rss url before resolved
+[ ] iphone store  no logo
 
 
 original command cd ../.. && turbo run build --filter={/apps/web}...
@@ -199,4 +200,18 @@ native .env.local
 -->
 
 
+# Build Native
+1. build for release
+    1. eas build --platform all 
+    2. eas build --platform android (need to finish registration and find android device)
+    3. eas build --platform ios (crashes in testflight)
+2. build for simulator
+    1. eas build -p all --profile preview (haven't tried)
+    1. eas build -p ios --profile preview (crashes in simulator)
+    1. eas build -p android --profile preview
+3. build locally for simulator
+    1. eas build -p ios --profile preview --local 
+    2. eas build -p android --profile preview --local
 
+
+    eas secret:push --scope project --env-file .env
