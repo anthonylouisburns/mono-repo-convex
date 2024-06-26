@@ -1,0 +1,25 @@
+{
+  "cli": {
+    "version": ">= 10.0.2"
+  },
+  "build": {
+    "development": {
+      "node": "21.6.2"
+    },
+    "preview": {
+      "node": "21.6.2",
+      "ios": {
+        "simulator": true
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "node": "21.6.2"
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
