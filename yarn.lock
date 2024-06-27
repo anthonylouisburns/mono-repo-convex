@@ -10249,6 +10249,7 @@ __metadata:
     react: "npm:18.2.0"
     react-dom: "npm:^18.3.1"
     react-native: "npm:0.74.2"
+    react-native-error-boundary: "npm:^1.2.4"
     react-native-keyboard-aware-scroll-view: "npm:^0.9.5"
     react-native-responsive-fontsize: "npm:^0.5.1"
     react-native-safe-area-context: "npm:4.10.1"
@@ -11459,6 +11460,20 @@ __metadata:
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
   checksum: 10c0/2bdb6b93fbb1820b024b496042cce405c57e2f85e777c9aabd55f9b26d145408f9f74f5934676ffdc46f3dcff656d78413a6e43968e7b3f92eea35b3052e9053
+  languageName: node
+  linkType: hard
+
+"react-native-error-boundary@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "react-native-error-boundary@npm:1.2.4"
+  peerDependencies:
+    "@types/react-native": ">=0.57.7"
+    react: ">=16.6.0"
+    react-native: ">=0.57.7"
+  peerDependenciesMeta:
+    "@types/react-native":
+      optional: true
+  checksum: 10c0/455bf57b0ef99b2e4c3bfca8e7a0f3244446de1ad84342a22c34bcec6b70c7a6bcb6f295076197817a18b62e6a05c4db55a1bf796e93c2c87f090041612c4a39
   languageName: node
   linkType: hard
 
