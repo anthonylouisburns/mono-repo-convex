@@ -3,6 +3,14 @@
     "version": ">= 10.0.2"
   },
   "build": {
+    "development-simulator": {
+      "node": "22.3.0",
+      "developmentClient": true,
+      "distribution": "internal",
+      "ios": {
+        "simulator": true
+      }
+    },
     "development": {
       "node": "21.6.2"
     },
