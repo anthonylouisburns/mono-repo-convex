@@ -1,22 +1,19 @@
 import { View, Text, TextInput, } from "react-native";
 import { styles } from './Styles';
-import { useAuth, useUser } from '@clerk/clerk-expo';
-// import TrackPlayer from 'react-native-track-player';
-// https://rntp.dev/docs/basics/getting-started
-
-//https://docs.expo.dev/versions/latest/sdk/audio/
+import { useAuth } from '@clerk/clerk-expo';
 import { useContext, useEffect, useState } from 'react';
-import { AVPlaybackStatus, AVPlaybackStatusError, Audio, } from 'expo-av';
+import { AVPlaybackStatus, Audio, } from 'expo-av';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
 import { AudioContext } from '../../AudioContext'
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import HTMLView from 'react-native-htmlview';
 import { msToTime, timeToMs } from "../utilities";
+import React from "react";
 
 
 const Player = () => {
-    const UPDATE_DELAY_SECONDS = 20
+    const UPDATE_DELAY_SECONDS = 5
     const [lastUpdatePos, setLastUpdatePos] = useState(0)
     const { isLoaded, } = useAuth();
     const {
@@ -98,14 +95,16 @@ const Player = () => {
     async function playSound() {
         console.log('Loading Sound');
         setIsPlaying(true)
-        // const mp3_link = "https://500songs.com/podcast-download/2144/song-174b-i-heard-it-through-the-grapevine-part-two-it-takes-two.mp3"
 
         const mp3_link = episode?.body.enclosure["@_url"]
         const source = { uri: mp3_link };
 
+        console.log('Loading Sound at:', mp3_link, position.length);
         const { sound, status } = (position.length > 1) ?
             await Audio.Sound.createAsync(source, { positionMillis: timeToMs(position) }, playStatus) :
             await Audio.Sound.createAsync(source, {}, playStatus);
+
+        console.log('110 Sound', status["durationMillis"]);
 
         setDuration(msToTime(status["durationMillis"]))
         setSound(sound);

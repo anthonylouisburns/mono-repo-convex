@@ -13,3 +13,4 @@ export const CustomFallback = (props: { error: Error, resetError: Function }) =>
       {/* <Button onPress={props.resetError} title={'Try again'} /> */}
     </View>
   )
+  

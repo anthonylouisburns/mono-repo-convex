@@ -24,7 +24,8 @@
       }
     },
     "production": {
-      "node": "21.6.2"
+      "node": "21.6.2",
+      "autoIncrement": true
     }
   },
   "submit": {
