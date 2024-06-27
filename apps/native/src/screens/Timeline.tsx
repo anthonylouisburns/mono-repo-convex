@@ -1,14 +1,10 @@
 import React from 'react';
 import {
-  StyleSheet,
   View,
   Text,
-  Image,
-  Dimensions,
   ScrollView,
-} from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { useAuth, useUser } from '@clerk/clerk-expo';
+} from 'react-native'
+import { useAuth, } from '@clerk/clerk-expo';
 import { api } from '@packages/backend/convex/_generated/api';
 import { useQuery } from 'convex/react';
 import { styles } from '../component/Styles';
@@ -18,7 +14,7 @@ import { timedisplay } from "@packages/backend/utilities/utility";
 import { Doc } from '@packages/backend/convex/_generated/dataModel';
 
 const Timeline = ({ navigation }) => {
-  const { isLoaded, signOut } = useAuth();
+  const { isLoaded } = useAuth();
 
   if (!isLoaded) {
     return null;

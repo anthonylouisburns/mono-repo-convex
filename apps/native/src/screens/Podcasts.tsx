@@ -24,6 +24,7 @@ const Podcasts = ({ navigation }) => {
       onPress={() =>
         navigation.navigate('Episodes', { podcast_id: podcast._id, podcast_name: podcast.name })
       }
+      key={podcast._id}
     >{podcast.name}</Text>
   )) : []
 

@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 
 
 export default function Player({ player_episode_id }: { player_episode_id: Id<"episode"> | undefined }) {
-    const UPDATE_DELAY_SECONDS = 20
+    const UPDATE_DELAY_SECONDS = 5
     const [lastUpdatePos, setLastUpdatePos] = useState(0)
     const [sound, setSound] = useState<Howl>()
     const episodeName =  useQuery(api.everwzh.episodeName, { id: player_episode_id });

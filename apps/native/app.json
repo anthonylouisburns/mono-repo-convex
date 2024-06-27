@@ -22,7 +22,8 @@
           "audio"
         ]
       },
-      "bundleIdentifier": "com.burnstony.everwhz"
+      "bundleIdentifier": "com.burnstony.everwhz",
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {

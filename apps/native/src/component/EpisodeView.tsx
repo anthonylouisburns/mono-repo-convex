@@ -7,6 +7,7 @@ import {
 import HTMLView from 'react-native-htmlview';
 import { useQuery } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
+import React from 'react';
 
 export const EpisodeView = ({ navigation, podcast_name, episode_id, longView }) => {
     const episode = useQuery(api.everwzh.episode, { id: episode_id });
@@ -30,7 +31,9 @@ export const EpisodeView = ({ navigation, podcast_name, episode_id, longView }) 
 
             <Text  onPress={() => {
                 navigation.navigate('Episode', { podcast_name: podcast_name, episode_id: episode._id })
-            }}><HTMLView style={styles.dangerousTitle} value={episode?.body.title}/></Text>
+            }}>
+                <HTMLView style={'<div>'+styles.dangerousTitle+'</div>'} value={episode?.body.title}/>
+            </Text>
             <ScrollView>
                 {details()}
             </ScrollView>
