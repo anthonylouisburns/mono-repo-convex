@@ -40,10 +40,10 @@ const Timeline = ({ navigation }) => {
     <View style={styles.container} key={span.span._id}>
       <Text style={styles.link}
         onPress={() =>
-          navigation.navigate('Episodes', { podcast_id: span.podcast._id, podcast_name: span.podcast.name })
+          navigation.navigate('Episodes', { podcast_id: span.podcast._id, podcast_name: span.podcast.title })
         }
-      >{span.podcast.name}</Text>
-      {episodeView(span.episode, span.podcast.name)}
+      >{span.podcast.title}</Text>
+      {episodeView(span.episode, span.podcast.title)}
       <Text>{timedisplay(span.span.start)} to {timedisplay(span.span.end)} {span.span.name}</Text>
     </View>
   )) : []

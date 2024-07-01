@@ -22,10 +22,10 @@ const Podcasts = ({ navigation }) => {
   const podcastsView = podcasts ? podcasts.map((podcast) => (
     <Text style={styles.link}
       onPress={() =>
-        navigation.navigate('Episodes', { podcast_id: podcast._id, podcast_name: podcast.name })
+        navigation.navigate('Episodes', { podcast_id: podcast._id, podcast_name: podcast.title })
       }
       key={podcast._id}
-    >{podcast.name}</Text>
+    >{podcast.title}</Text>
   )) : []
 
   return (

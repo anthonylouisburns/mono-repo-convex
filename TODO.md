@@ -1,9 +1,9 @@
 
 FeatureRequest
-[ ] remove title from create podcast
+[x] remove title from create podcast
 [ ] AI suggestions
-[ ] reformat buttons
-[ ] reformat text box
+[x] reformat buttons
+[x] reformat text box
 BUG
 [ ] web google icon not showing custom image
 [ ] iphone store no logo

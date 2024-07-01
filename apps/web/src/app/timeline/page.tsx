@@ -46,7 +46,7 @@ export default function Timeline() {
         pathname: '/episodes',
         query: { podcast_id: podcast._id },
       }} className="linkStyle1">
-        {podcast.name}
+        {podcast.title}
       </Link></div>
     ) : (
       <></>
@@ -83,7 +83,7 @@ export default function Timeline() {
           <option key="-">-</option>
           {podcasts &&
             podcasts.map((podcast) => (
-              <option id={podcast._id} value={podcast._id} key={podcast._id}>{podcast.name}</option>
+              <option id={podcast._id} value={podcast._id} key={podcast._id}>{podcast.title}</option>
             ))}
         </select>
 
