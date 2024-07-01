@@ -147,59 +147,6 @@ There are built-in features for
 Everything scales automatically, and it’s [free to start](https://www.convex.dev/plans).
 
 
-<!-- 
-[ ] MINIMUM VIABLE PRODUCT
-[x]  play audio 
-[x]  scroll view - https://www.daily.co/blog/understanding-react-natives-flatlist-scrollview-and-sectionlist-components/
-[x] save user and email -  https://docs.convex.dev/auth/database-auth
-[x] web save user info https://docs.convex.dev/auth/database-auth
-[x] web navigation
-[x] keep track of play position - play history
-[x] web play track
-[x] web change tracks
-[x] web save play position
-[x] add spans on timeline page - not on podcast page
-[ ] WEB - delete unused code
-[x] sort timeline
-[x] add links from timeline to update edit box at top
-[x] reformat podcast page - remove add spans from that page? maybe
-[x] native delay mutation
-[x]  4. clean up delete unused code
-
-
-[ ] RELEASE
-[x] enroll as Apple Developer
-[ ]  check everything works - add tests
-[ ]  check everything in
-[ ] release - build EAS
-[ ] play in background - should work double check - continue play in background change tab - Expo Go app or Expo development build, the background audio mode will not work - https://dev.to/josie/how-to-add-background-audio-to-expo-apps-3fgc 
-[ ] tests
-[ ] daily back ups
-TO[ ]DO: development build
-
-
-[ ] NEW FEATURES
-[ ] load position before start - safe duration to backend
-[ ] remove title from create podcast
-[ ] change query to be more efficient
-[ ] AI suggestions
-[ ] add apple login
-[ ]  e. expand details - timeline expand contract
-[ ] use history
-[ ] paginated queries
-[ ] let podcast owner claim podcast - write instructions include public key 
-[ ] security only I can delete podcast
-[ ] only creator(and me) can see rss url before resolved
-[ ] iphone store  no logo
-
-
-original command cd ../.. && turbo run build --filter={/apps/web}...
-
-
-native .env.local
--->
-
-
 # Build Native
 1. build for release
     1. eas build --platform all 
@@ -215,3 +162,14 @@ native .env.local
 
 
     eas secret:push --scope project --env-file .env
+
+<!-- 
+
+
+original command cd ../.. && turbo run build --filter={/apps/web}...
+
+
+native .env.local
+-->
+
+

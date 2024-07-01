@@ -18,13 +18,4 @@ export const EditSpans = function Episode({ podcast_id, episode_id }: { podcast_
             <TimeSpans spans={timespans} podcast_id={podcast_id} episode_id={undefined} />
         )
     }
-    // return <div>
-    //     <Link className="navigation-light" href={{
-    //         pathname: "/episode",
-    //         query: { episode_id: episode._id }
-    //     }}>
-    //         <div dangerouslySetInnerHTML={{ __html: episode?.body.title }} />
-    //     </Link>
-    //     <TimeSpans spans={timespans} podcast_id={episode.podcast_id} episode_id={episode._id} />
-    // </div>
 }

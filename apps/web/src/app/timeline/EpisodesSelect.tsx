@@ -28,6 +28,7 @@ export const EpisodeSelect = function EpisodeSelect({ podcast_id, selectedOption
     optionList.unshift(FIRST_ELEMENT)
 
     return <Select
+     className="text-input"
         options={optionList}
         onChange={(e) => {
             if(e){

@@ -1,0 +1,42 @@
+
+FeatureRequest
+[ ] remove title from create podcast
+[ ] AI suggestions
+[ ] reformat buttons
+[ ] reformat text box
+BUG
+[ ] web google icon not showing custom image
+[ ] iphone store no logo
+[ ] privacy statement
+[ ] merge all branches together
+
+FEATURE_REQUEST 
+[ ] STORE RELEASE
+[ ] ios
+[ ] android
+
+[ ] TESTING and RELEASE PIPELINE
+[ ] tests
+[ ] turn on preview builds
+
+[ ] NEW FEATURES
+PHASE I
+[ ] scheduled updates to podcasts
+[ ] let podcast owner claim podcast - write instructions include public key 
+PHASE II
+[ ] expand details - timeline expand contract
+[ ] use history
+[ ] paginated queries
+[ ] security only I can delete podcast 
+
+[ ] WEB - delete unused code
+[ ] tests
+[ ] daily back ups
+[ ]  check everything works - add tests
+[ ] load position before start - safe duration to backend
+[ ] change query to be more efficient
+[ ] add apple login
+[ ] only creator(and me) can see rss url before resolved
+[ ] run aab in simulator and android device - share from EAS
+
+

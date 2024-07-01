@@ -32,7 +32,7 @@ export default function About(): JSX.Element {
     <div className="pagePadding">
       {player_podcast_name}
       <div className="heavy" dangerouslySetInnerHTML={{ __html: episode?.body.title }} />
-      <Button onClick={() => selectEpisode()}>+</Button>
+      <button className='navigation-button' onClick={() => selectEpisode()}>+</button>
       <div className="dangerous" dangerouslySetInnerHTML={{ __html: episode?.body["content:encoded"] }} />
     </div>
   </div>
