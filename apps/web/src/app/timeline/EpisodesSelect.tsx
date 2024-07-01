@@ -8,13 +8,13 @@ import { useQuery, useMutation } from 'convex/react';
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Select from 'react-select'
 
-export const FIRST_ELEMENT = { label: "-", value: null, key:"-" }
+export const FIRST_ELEMENT = { label: "-", value: null, key: "-" }
 
 export const EpisodeSelect = function EpisodeSelect({ podcast_id, selectedOption, setSelectedOption, setSelectedEpisode }:
     {
         podcast_id: Id<"podcast"> | null,
-        selectedOption: { label: string, value: string | null, key: string | null }|null ,
-        setSelectedOption: Dispatch<SetStateAction<{ label: string, value: string | null, key: string | null }| null>>,
+        selectedOption: { label: string, value: string | null, key: string | null } | null,
+        setSelectedOption: Dispatch<SetStateAction<{ label: string, value: string | null, key: string | null } | null>>,
         setSelectedEpisode: Dispatch<SetStateAction<Id<"episode"> | null>>
     }): JSX.Element {
     const episodes = useQuery(api.everwzh.episodes, { podcast_id: (podcast_id) });
@@ -28,12 +28,12 @@ export const EpisodeSelect = function EpisodeSelect({ podcast_id, selectedOption
     optionList.unshift(FIRST_ELEMENT)
 
     return <Select
-     className="text-input"
+        className="text-input"
         options={optionList}
         onChange={(e) => {
-            if(e){
-            setSelectedEpisode(e?.value as Id<"episode">)
-            setSelectedOption(e)
+            if (e) {
+                setSelectedEpisode(e?.value as Id<"episode">)
+                setSelectedOption(e)
             }
         }}
         value={selectedOption}

@@ -68,7 +68,6 @@ export const TimeSpans = function TimeSpans({ spans, podcast_id, episode_id }:
     }
 
     function deleteSpan(index: number) {
-        alert(spans[index].name)
         setName(spans[index].name)
         setStart(spans[index].start)
         setEnd(spans[index].end)

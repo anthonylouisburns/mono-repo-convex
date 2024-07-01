@@ -14,7 +14,7 @@ export default function About(): JSX.Element {
 
   const episodeName =  useQuery(api.everwzh.episodeName, { id: episode_id as Id<"episode"> });
   const {episode, podcast} = episodeName?episodeName:{ episode: null, podcast: null }
-  const player_podcast_name = podcast?.name
+  const player_podcast_name = podcast?.title
   
   const {
     setPlayerEpisodeId

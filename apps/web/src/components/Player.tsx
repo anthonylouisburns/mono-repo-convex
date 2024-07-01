@@ -19,7 +19,7 @@ export default function Player({ player_episode_id }: { player_episode_id: Id<"e
     const {episode, podcast} = episodeName?episodeName:{ episode: null, podcast: null }
     const getPlayStatus = useQuery(api.everwzh.getPlayStatus, { id: player_episode_id })
     const set_play_status = useMutation(api.everwzh.playStatus);
-    const player_podcast_name = podcast?.name
+    const player_podcast_name = podcast?.title
     const { Howl, Howler } = require('howler');
 
     async function stopSound() {
