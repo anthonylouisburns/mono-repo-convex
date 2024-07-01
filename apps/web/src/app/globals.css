@@ -57,6 +57,21 @@
   align-items: center;
 }
 
+.text-input {
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.navigation-button {
+  font-weight: 600;
+  border-width: 1px;
+  border-radius: 5px;
+  border-color: navy;
+  color: navy;
+  padding: 2px;
+  margin: 5px;
+}
+
 .navigation {
   color: blue;
   font-weight: 600;

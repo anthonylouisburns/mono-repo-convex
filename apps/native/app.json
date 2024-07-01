@@ -23,14 +23,15 @@
         ]
       },
       "bundleIdentifier": "com.burnstony.everwhz",
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.burnstony.everwhz"
+      "package": "com.burnstony.everwhz",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -73,11 +73,13 @@ export default function Timeline() {
     )
   }
 
-  const editSpansView = selectedPodcast ? <EditSpans podcast_id={selectedPodcast} episode_id={selectedEpisode?selectedEpisode:undefined} /> : ""
+  const editSpansView = selectedPodcast ? <EditSpans podcast_id={selectedPodcast} episode_id={selectedEpisode ? selectedEpisode : undefined} /> : ""
   return (
     <div>
       <div className="pagePadding">
-        <select value={selectedPodcast || "-"} onChange={e => onChange(e)}>
+        <select
+          className="text-input"
+          value={selectedPodcast || "-"} onChange={e => onChange(e)}>
           <option key="-">-</option>
           {podcasts &&
             podcasts.map((podcast) => (
