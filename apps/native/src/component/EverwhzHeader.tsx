@@ -14,9 +14,9 @@ import { useStoreUserEffect } from '../useUseStoreEffect';
 
 
 export const EverwhzHeader = ({ navigation, page }) => {
-  const user = useStoreUserEffect();
-  const imageUrl = user?.user?.imageUrl;
-  const firstName = user?.user?.firstName;
+  const { user } = useStoreUserEffect();
+  const imageUrl = user?.imageUrl;
+  const firstName = user?.firstName;
   const { signOut } = useAuth();
 
   const {

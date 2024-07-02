@@ -57,6 +57,21 @@
   align-items: center;
 }
 
+.text-input {
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.navigation-button {
+  font-weight: 600;
+  border-width: 1px;
+  border-radius: 5px;
+  border-color: navy;
+  color: navy;
+  padding: 2px;
+  margin: 5px;
+}
+
 .navigation {
   color: blue;
   font-weight: 600;
@@ -120,5 +135,23 @@
 .selectPage {
   color: green;
   font-weight: 500;
+}
+
+.everwhzFooter {
+  font-size: 10px;
+  float: right;
+  font: Courier;
+  bottom:10;
+  right:0;
+  padding:0px;
+  padding-right:10px;
+  margin:0px;
+}
+.everwhzFooterLink {
+  font-size: 10px;
+  font-weight: 700;
+  color:blue;
+  padding:0px;
+  margin:0px;
 }
 
