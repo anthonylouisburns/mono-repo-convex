@@ -97,8 +97,8 @@ export default function Player({ player_episode_id }: { player_episode_id: Id<"e
             <div>
                 {player_podcast_name}
                 <div className="heavy" dangerouslySetInnerHTML={{ __html: episode?.body.title }} />
-                <Button onClick={() => playSound()}>play</Button>
-                <Button onClick={() => stopSound()}>stop</Button>
+                <button className="navigation-button" onClick={() => playSound()}>play</button>
+                <button className="navigation-button" onClick={() => stopSound()}>stop</button>
                 {msToTime(currentTime ? currentTime * 1000 : 0)} / {msToTime(duration)}
             </div>
         </div>
