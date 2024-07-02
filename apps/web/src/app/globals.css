@@ -137,3 +137,20 @@
   font-weight: 500;
 }
 
+.everwhzFooter {
+  font-size: 10px;
+  float: right;
+  font: Courier;
+  bottom:10;
+  right:0;
+  padding:0px;
+  margin:0px;
+}
+.everwhzFooterLink {
+  font-size: 10px;
+  font-weight: 700;
+  color:blue;
+  padding:0px;
+  margin:0px;
+}
+
