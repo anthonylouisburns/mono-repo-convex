@@ -15,7 +15,8 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as audioProxy from "../audioProxy.js";
-import type * as everwzh from "../everwzh.js";
+import type * as everwhz from "../everwhz.js";
+import type * as everwhz_ai from "../everwhz_ai.js";
 import type * as utils from "../utils.js";
 
 /**
@@ -28,7 +29,8 @@ import type * as utils from "../utils.js";
  */
 declare const fullApi: ApiFromModules<{
   audioProxy: typeof audioProxy;
-  everwzh: typeof everwzh;
+  everwhz: typeof everwhz;
+  everwhz_ai: typeof everwhz_ai;
   utils: typeof utils;
 }>;
 export declare const api: FilterApi<

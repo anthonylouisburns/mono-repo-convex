@@ -16,8 +16,8 @@ import { EditSpans } from './EditSpans';
 
 
 export default function Timeline() {
-  const spans = useQuery(api.everwzh.timeline)
-  const podcasts = useQuery(api.everwzh.podcasts);
+  const spans = useQuery(api.everwhz.timeline)
+  const podcasts = useQuery(api.everwhz.podcasts);
   const [selectedPodcast, setSelectedPod] = useState<Id<"podcast"> | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<Id<"episode"> | null>(null);
   const [selectedOption, setSelectedOption] = useState<{ label: string, value: string | null, key: string | null } | null>(null);
@@ -46,7 +46,7 @@ export default function Timeline() {
         pathname: '/episodes',
         query: { podcast_id: podcast._id },
       }} className="linkStyle1">
-        {podcast.name}
+        {podcast.title}
       </Link></div>
     ) : (
       <></>
@@ -73,15 +73,17 @@ export default function Timeline() {
     )
   }
 
-  const editSpansView = selectedPodcast ? <EditSpans podcast_id={selectedPodcast} episode_id={selectedEpisode?selectedEpisode:undefined} /> : ""
+  const editSpansView = selectedPodcast ? <EditSpans podcast_id={selectedPodcast} episode_id={selectedEpisode ? selectedEpisode : undefined} /> : ""
   return (
     <div>
       <div className="pagePadding">
-        <select value={selectedPodcast || "-"} onChange={e => onChange(e)}>
+        <select
+          className="text-input"
+          value={selectedPodcast || "-"} onChange={e => onChange(e)}>
           <option key="-">-</option>
           {podcasts &&
             podcasts.map((podcast) => (
-              <option id={podcast._id} value={podcast._id} key={podcast._id}>{podcast.name}</option>
+              <option id={podcast._id} value={podcast._id} key={podcast._id}>{podcast.title}</option>
             ))}
         </select>
 

@@ -20,8 +20,8 @@ export const TimeSpans = function TimeSpans({ spans, podcast_id, episode_id }:
     const [errorStr, setError] = useState<string>()
 
 
-    const addTimeSpan = useMutation(api.everwzh.addTimeSpan);
-    const deleteTimeSpan = useMutation(api.everwzh.deleteTimeSpan);
+    const addTimeSpan = useMutation(api.everwhz.addTimeSpan);
+    const deleteTimeSpan = useMutation(api.everwhz.deleteTimeSpan);
 
     function add() {
         if (!start || !end || !name) {
@@ -68,7 +68,6 @@ export const TimeSpans = function TimeSpans({ spans, podcast_id, episode_id }:
     }
 
     function deleteSpan(index: number) {
-        alert(spans[index].name)
         setName(spans[index].name)
         setStart(spans[index].start)
         setEnd(spans[index].end)
@@ -77,15 +76,15 @@ export const TimeSpans = function TimeSpans({ spans, podcast_id, episode_id }:
     }
 
     const spanDivs = spans.map((span, index) => {
-        return <div key={spans[index]._id}><Button onClick={() => deleteSpan(index)}>-</Button>{timedisplay(span.start)} to {timedisplay(span.end)} {span.name}</div>
+        return <div key={spans[index]._id}><button className="navigation-button" onClick={() => deleteSpan(index)}>-</button>{timedisplay(span.start)} to {timedisplay(span.end)} {span.name}</div>
     })
     return <div>
-        <Button onClick={() => add()}>+</Button>
-        <input type="text" placeholder="YYYYMMDD start" onChange={e => {
+        <button className="navigation-button" onClick={() => add()}>+</button>
+        <input className="text-input" type="text" placeholder="YYYYMMDD start" onChange={e => {
             setStart(e.target.value)
         }} value={start} />
-        <input type="text" placeholder="YYYYMMDD end" onChange={e => setEnd(e.target.value)} value={end} />
-        <input type="text" placeholder="span name" onChange={e => setName(e.target.value)} value={name} />
+        <input className="text-input" type="text" placeholder="YYYYMMDD end" onChange={e => setEnd(e.target.value)} value={end} />
+        <input className="text-input" type="text" placeholder="span name" onChange={e => setName(e.target.value)} value={name} />
         <div style={errorStyle}>{errorStr}</div>
         {spanDivs}
     </div>

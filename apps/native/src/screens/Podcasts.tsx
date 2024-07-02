@@ -12,7 +12,7 @@ import { EverwhzHeader, } from '../component/EverwhzHeader';
 
 const Podcasts = ({ navigation }) => {
   const { isLoaded, signOut } = useAuth();
-  const podcasts = useQuery(api.everwzh.podcasts);
+  const podcasts = useQuery(api.everwhz.podcasts);
 
   if (!isLoaded) {
     return null;
@@ -22,9 +22,10 @@ const Podcasts = ({ navigation }) => {
   const podcastsView = podcasts ? podcasts.map((podcast) => (
     <Text style={styles.link}
       onPress={() =>
-        navigation.navigate('Episodes', { podcast_id: podcast._id, podcast_name: podcast.name })
+        navigation.navigate('Episodes', { podcast_id: podcast._id, podcast_name: podcast.title })
       }
-    >{podcast.name}</Text>
+      key={podcast._id}
+    >{podcast.title}</Text>
   )) : []
 
   return (
