@@ -31,11 +31,11 @@
   "resolutions": {
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "expo": "51.0.9",
+    "expo": "51.0.14",
     "expo-web-browser": "13.0.3",
-    "@babel/core": "7.22.0",
+    "@babel/core": "7.24.0",
     "@babel/preset-env": "7.24.6",
     "@react-native/codegen": "0.74.83"
   },
-  "packageManager": "yarn@4.3.0"
+  "packageManager": "yarn@4.3.1"
 }

@@ -31,8 +31,12 @@ export default function Header() {
   }
   function navigation(target: string, label?: string) {
     const label_string: string = label ? label : target
-
-    return <Link className={getStyle(target)} href={target}>{label_string}</Link>
+    const style = getStyle(target)
+    if(style == 'navigation-off'){
+      return <>{label_string}</>
+    }else{
+      return <Link className={style} href={target}>{label_string}</Link>
+    }
   }
 
   return (
@@ -43,7 +47,7 @@ export default function Header() {
         </Link>
         <Link href="/">
           <h1 className="rainbow-text">
-            everwzh
+            everwhz
           </h1>
         </Link>
         {user ? (

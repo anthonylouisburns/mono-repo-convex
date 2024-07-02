@@ -2,8 +2,14 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 const schema = defineSchema({
+  pending_podcast: defineTable({
+    rss_url: v.string(),
+    user_id: v.id("user")
+  })
+    .index("rss_user", ["user_id", "rss_url"]),
   podcast: defineTable({
-    name: v.string(),
+    name: v.optional(v.string()),
+    title: v.optional(v.string()),
     rss_url: v.string(),
     rss_body: v.optional(v.id("_storage")),
     number_of_episodes: v.optional(v.number()),
@@ -12,7 +18,7 @@ const schema = defineSchema({
   episode: defineTable({
     podcast_id: v.id("podcast"),
     episode_number: v.number(),
-    // title: v.string(),
+    title: v.optional(v.string()),
     // pud_date: v.string(),
     // media_url: v.string(),
     body: v.any(),
@@ -41,5 +47,9 @@ const schema = defineSchema({
     position: v.number()
   })
   .index("token", ["tokenIdentifier","episode_id"]),
+  podcast_suggestions: defineTable({
+    suggestions: v.array(v.string()),
+  }),
+
 });
 export default schema;

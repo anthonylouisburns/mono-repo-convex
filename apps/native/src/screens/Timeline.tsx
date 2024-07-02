@@ -1,14 +1,10 @@
 import React from 'react';
 import {
-  StyleSheet,
   View,
   Text,
-  Image,
-  Dimensions,
   ScrollView,
-} from 'react-native';
-import { RFValue } from 'react-native-responsive-fontsize';
-import { useAuth, useUser } from '@clerk/clerk-expo';
+} from 'react-native'
+import { useAuth, } from '@clerk/clerk-expo';
 import { api } from '@packages/backend/convex/_generated/api';
 import { useQuery } from 'convex/react';
 import { styles } from '../component/Styles';
@@ -18,13 +14,13 @@ import { timedisplay } from "@packages/backend/utilities/utility";
 import { Doc } from '@packages/backend/convex/_generated/dataModel';
 
 const Timeline = ({ navigation }) => {
-  const { isLoaded, signOut } = useAuth();
+  const { isLoaded } = useAuth();
 
   if (!isLoaded) {
     return null;
   }
 
-  const spans = useQuery(api.everwzh.timeline)
+  const spans = useQuery(api.everwhz.timeline)
 
   function episodeView(episode: Doc<"episode">, podcast_name) {
     if (!episode) {
@@ -44,10 +40,10 @@ const Timeline = ({ navigation }) => {
     <View style={styles.container} key={span.span._id}>
       <Text style={styles.link}
         onPress={() =>
-          navigation.navigate('Episodes', { podcast_id: span.podcast._id, podcast_name: span.podcast.name })
+          navigation.navigate('Episodes', { podcast_id: span.podcast._id, podcast_name: span.podcast.title })
         }
-      >{span.podcast.name}</Text>
-      {episodeView(span.episode, span.podcast.name)}
+      >{span.podcast.title}</Text>
+      {episodeView(span.episode, span.podcast.title)}
       <Text>{timedisplay(span.span.start)} to {timedisplay(span.span.end)} {span.span.name}</Text>
     </View>
   )) : []

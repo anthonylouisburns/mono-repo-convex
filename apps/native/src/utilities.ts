@@ -13,7 +13,7 @@ export function msToTime(duration:number) {
     return h + ":" + m + ":" + s;//+ "." + ms;
 }
 
-export function timeToMs(positionStrin:string) {
+export function timeToMs(positionString:string) {
     const h = Number(positionString.slice(0, -6))
     const m = Number(positionString.slice(-5, -3))
     const s = Number(positionString.slice(-2))

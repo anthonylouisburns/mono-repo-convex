@@ -11,7 +11,7 @@ export function useStoreUserEffect() {
   // When this state is set we know the server
   // has stored the user.
   const [userId, setUserId] = useState<Id<"user"> | null>(null);
-  const storeUser = useMutation(api.everwzh.store);
+  const storeUser = useMutation(api.everwhz.store);
   // Call the `storeUser` mutation function to store
   // the current user in the `users` table and return the `Id` value.
   useEffect(() => {
