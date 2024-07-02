@@ -17,7 +17,7 @@ export const EpisodeSelect = function EpisodeSelect({ podcast_id, selectedOption
         setSelectedOption: Dispatch<SetStateAction<{ label: string, value: string | null, key: string | null } | null>>,
         setSelectedEpisode: Dispatch<SetStateAction<Id<"episode"> | null>>
     }): JSX.Element {
-    const episodes = useQuery(api.everwzh.episodes, { podcast_id: (podcast_id) });
+    const episodes = useQuery(api.everwhz.episodes, { podcast_id: (podcast_id) });
 
 
     var optionList: Array<{ label: string, value: string | null, key: string | null }> = episodes ? episodes?.map((episode) => {

@@ -20,7 +20,7 @@ const Timeline = ({ navigation }) => {
     return null;
   }
 
-  const spans = useQuery(api.everwzh.timeline)
+  const spans = useQuery(api.everwhz.timeline)
 
   function episodeView(episode: Doc<"episode">, podcast_name) {
     if (!episode) {

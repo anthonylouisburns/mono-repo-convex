@@ -23,8 +23,10 @@ FEATURE_REQUEST
 [ ] NEW FEATURES
 PHASE I
 [ ] scheduled updates to podcasts
+[ ] change settings to env variables - openai model, etc.
+[ ] change convex interanl functions to internal from api
 [ ] let podcast owner claim podcast - write instructions include public key 
-[ ] show failked pending podcasts
+[ ] show failed pending podcasts
 PHASE II
 [ ] expand details - timeline expand contract
 [ ] use history

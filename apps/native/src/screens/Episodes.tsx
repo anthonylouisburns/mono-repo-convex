@@ -21,7 +21,7 @@ const Episodes = ({ route, navigation }) => {
     return null;
   }
 
-  const episodes = useQuery(api.everwzh.episodes, { podcast_id: podcast_id as Id<"podcast"> })
+  const episodes = useQuery(api.everwhz.episodes, { podcast_id: podcast_id as Id<"podcast"> })
   const itemView = episodes ? episodes.map((episode) => (
     <View style={styles.episode} key={episode._id}>
       <EpisodeView episode_id={episode._id} podcast_name={podcast_name} longView={false} navigation={navigation} />

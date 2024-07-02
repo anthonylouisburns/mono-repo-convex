@@ -6,9 +6,9 @@ import { Dispatch, SetStateAction } from "react";
 import Link from "next/link";
 
 export const Podcast = function Podcast({ podcast, podcastColor, setName, setRss }: { podcast: Doc<"podcast">, podcastColor: string, setName: Dispatch<SetStateAction<string>>, setRss: Dispatch<SetStateAction<string>> }): JSX.Element {
-    const deletePodcast = useMutation(api.everwzh.deletePodcast);
+    const deletePodcast = useMutation(api.everwhz.deletePodcast);
     const redStyle = { color: "red" }
-    const updatePodcastRssData = useMutation(api.everwzh.updatePodcastRssData);
+    const updatePodcastRssData = useMutation(api.everwhz.updatePodcastRssData);
 
     return <div className="boxStyle">
         <Link className="linkStyle" href={{

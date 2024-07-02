@@ -1,6 +1,6 @@
 import { query, action, mutation } from './_generated/server';
 import { v } from "convex/values";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import { Doc, Id } from "./_generated/dataModel";
 const { XMLParser } = require("fast-xml-parser");
 
@@ -63,7 +63,7 @@ export const addPendingPodcast = mutation({
 
         console.log("added pending podcast {id} {args.name}");
 
-        await ctx.scheduler.runAfter(0, api.everwzh.downloadPendingRssBody, {
+        await ctx.scheduler.runAfter(0, api.everwhz.downloadPendingRssBody, {
             pending_id: id,
             rss: args.rss_url,
         });
@@ -71,7 +71,6 @@ export const addPendingPodcast = mutation({
         return id
     },
 });
-
 
 export const downloadPendingRssBody = action({
     args: {
@@ -86,7 +85,7 @@ export const downloadPendingRssBody = action({
 
         const storageId: Id<"_storage"> = await ctx.storage.store(body);
 
-        await ctx.runMutation(api.everwzh.insertPodcast, {
+        await ctx.runMutation(api.everwhz.insertPodcast, {
             rss_body: storageId,
             rss_url: args.rss
         });
@@ -117,11 +116,12 @@ export const insertPodcast = mutation({
 
         console.log("added podcast {id} {args.name}");
 
-        await ctx.scheduler.runAfter(0, api.everwzh.parseXml, {
+        await ctx.scheduler.runAfter(0, api.everwhz.parseXml, {
             storageId: args.rss_body,
             pod_id: id,
         });
 
+        await ctx.scheduler.runAfter(0, internal.everwhz_ai.getSuggestions);
         return id
     },
 });
@@ -149,7 +149,7 @@ export const addPodcast = mutation({
         });
 
         console.log("added podcast {id} {args.name}");
-        await ctx.scheduler.runAfter(0, api.everwzh.downloadRssBody, {
+        await ctx.scheduler.runAfter(0, api.everwhz.downloadRssBody, {
             id: id,
             rss: args.rss_url,
         });
@@ -314,7 +314,7 @@ export const updatePodcastRssData = mutation({
 
         if(podcast){
             console.log("updating podcast {id}");
-            await ctx.scheduler.runAfter(0, api.everwzh.downloadRssBody, {
+            await ctx.scheduler.runAfter(0, api.everwhz.downloadRssBody, {
                 id: podcast._id,
                 rss: podcast.rss_url,
             });
@@ -331,7 +331,7 @@ export const updateRssData = mutation({
 
         for (var podcast of podcasts) {
             console.log("updating podcast {id} {args.name}");
-            await ctx.scheduler.runAfter(0, api.everwzh.downloadRssBody, {
+            await ctx.scheduler.runAfter(0, api.everwhz.downloadRssBody, {
                 id: podcast._id,
                 rss: podcast.rss_url,
             });
@@ -352,7 +352,7 @@ export const downloadRssBody = action({
 
         const storageId: Id<"_storage"> = await ctx.storage.store(body);
 
-        await ctx.runMutation(api.everwzh.patchPodcastRss, {
+        await ctx.runMutation(api.everwhz.patchPodcastRss, {
             id: args.id,
             rss_body: storageId,
         });
@@ -365,7 +365,7 @@ export const patchPodcastRss = mutation({
         const { id, rss_body } = args;
         const updateId = await ctx.db.patch(id, { rss_body: rss_body });
 
-        await ctx.scheduler.runAfter(0, api.everwzh.parseXml, {
+        await ctx.scheduler.runAfter(0, api.everwhz.parseXml, {
             storageId: rss_body,
             pod_id: id,
         });
@@ -397,7 +397,7 @@ export const parseXml = action({
         console.log("doc parsed")
 
         console.log("done")
-        await ctx.runMutation(api.everwzh.patchPodcastRssJson, {
+        await ctx.runMutation(api.everwhz.patchPodcastRssJson, {
             id: args.pod_id,
             rss_json: doc,
         });

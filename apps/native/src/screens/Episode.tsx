@@ -26,7 +26,7 @@ const Episode = ({ route, navigation, }) => {
         setIsPlaying
     } = useContext(AudioContext);
 
-    const episode = useQuery(api.everwzh.episode, { id: episode_id });
+    const episode = useQuery(api.everwhz.episode, { id: episode_id });
 
     async function selectSong() {
         console.log("selectSong start")

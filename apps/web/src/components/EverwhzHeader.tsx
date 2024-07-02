@@ -47,7 +47,7 @@ export default function Header() {
         </Link>
         <Link href="/">
           <h1 className="rainbow-text">
-            everwzh
+            everwhz
           </h1>
         </Link>
         {user ? (

@@ -12,7 +12,7 @@ const Logo = () => {
       <div className="flex gap-2 items-center">
         <Image src={'/images/icons8-nautilus-96.png'} width={40} height={40} alt="logo" />
           <h1 className="rainbow-text">
-            everwzh
+            everwhz
           </h1>
       </div>
     </Link>

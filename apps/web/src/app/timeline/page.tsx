@@ -16,8 +16,8 @@ import { EditSpans } from './EditSpans';
 
 
 export default function Timeline() {
-  const spans = useQuery(api.everwzh.timeline)
-  const podcasts = useQuery(api.everwzh.podcasts);
+  const spans = useQuery(api.everwhz.timeline)
+  const podcasts = useQuery(api.everwhz.podcasts);
   const [selectedPodcast, setSelectedPod] = useState<Id<"podcast"> | null>(null);
   const [selectedEpisode, setSelectedEpisode] = useState<Id<"episode"> | null>(null);
   const [selectedOption, setSelectedOption] = useState<{ label: string, value: string | null, key: string | null } | null>(null);

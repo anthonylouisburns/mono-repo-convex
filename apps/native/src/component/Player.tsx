@@ -32,10 +32,10 @@ const Player = () => {
     const [position, setPosition] = useState("-");
     const [duration, setDuration] = useState("-");
 
-    const episode = useQuery(api.everwzh.episode, { id: player_episode_id as Id<"episode"> });
+    const episode = useQuery(api.everwhz.episode, { id: player_episode_id as Id<"episode"> });
 
 
-    const set_play_status = useMutation(api.everwzh.playStatus);
+    const set_play_status = useMutation(api.everwhz.playStatus);
 
     function playStatus(playbackStatus: AVPlaybackStatus) {
         if (!playbackStatus.isLoaded) {
@@ -78,7 +78,7 @@ const Player = () => {
         setIsPlaying(false)
     }
 
-    const getPlayStatus = useQuery(api.everwzh.getPlayStatus, { id: player_episode_id })
+    const getPlayStatus = useQuery(api.everwhz.getPlayStatus, { id: player_episode_id })
 
     useEffect(() => {
         if (!sound || !isPlaying) {

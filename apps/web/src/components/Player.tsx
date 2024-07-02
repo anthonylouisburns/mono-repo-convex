@@ -3,7 +3,7 @@
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
 import { Id } from '@packages/backend/convex/_generated/dataModel';
-import { getPlayStatus } from '@packages/backend/convex/everwzh';
+import { getPlayStatus } from '@packages/backend/convex/everwhz';
 import { msToTime } from '../../utilities';
 import { Howl, Howler } from 'howler';
 import { Button } from './common/button';
@@ -15,10 +15,10 @@ export default function Player({ player_episode_id }: { player_episode_id: Id<"e
     const UPDATE_DELAY_SECONDS = 5
     const [lastUpdatePos, setLastUpdatePos] = useState(0)
     const [sound, setSound] = useState<Howl>()
-    const episodeName =  useQuery(api.everwzh.episodeName, { id: player_episode_id });
+    const episodeName =  useQuery(api.everwhz.episodeName, { id: player_episode_id });
     const {episode, podcast} = episodeName?episodeName:{ episode: null, podcast: null }
-    const getPlayStatus = useQuery(api.everwzh.getPlayStatus, { id: player_episode_id })
-    const set_play_status = useMutation(api.everwzh.playStatus);
+    const getPlayStatus = useQuery(api.everwhz.getPlayStatus, { id: player_episode_id })
+    const set_play_status = useMutation(api.everwhz.playStatus);
     const player_podcast_name = podcast?.title
     const { Howl, Howler } = require('howler');
 

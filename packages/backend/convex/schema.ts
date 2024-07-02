@@ -47,5 +47,9 @@ const schema = defineSchema({
     position: v.number()
   })
   .index("token", ["tokenIdentifier","episode_id"]),
+  podcast_suggestions: defineTable({
+    suggestions: v.array(v.string()),
+  }),
+
 });
 export default schema;

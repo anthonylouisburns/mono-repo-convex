@@ -10,7 +10,7 @@ import { api } from '@packages/backend/convex/_generated/api';
 import React from 'react';
 
 export const EpisodeView = ({ navigation, podcast_name, episode_id, longView }) => {
-    const episode = useQuery(api.everwzh.episode, { id: episode_id });
+    const episode = useQuery(api.everwhz.episode, { id: episode_id });
 
     if (!episode) {
         return (
