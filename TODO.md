@@ -5,9 +5,9 @@ FeatureRequest
 [x] reformat buttons
 [x] reformat text box
 BUG
-[ ] web google icon not showing custom image
-[ ] iphone store no logo
-[ ] privacy statement
+[x] web google icon not showing custom image - false positive it works for some but not if you have a clerk account?
+[x] iphone store no logo
+[x] privacy statement
 [ ] merge all branches together
 
 FEATURE_REQUEST 
@@ -17,6 +17,7 @@ FEATURE_REQUEST
 
 [ ] TESTING and RELEASE PIPELINE
 [ ] tests
+[ ] learn to debug
 [ ] turn on preview builds
 
 [ ] NEW FEATURES
