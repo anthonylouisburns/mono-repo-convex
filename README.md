@@ -151,7 +151,7 @@ Everything scales automatically, and it’s [free to start](https://www.convex.d
 1. build for release
     1. eas build --platform all 
     2. eas build --platform android (need to finish registration and find android device)
-    3. eas build --platform ios (crashes in testflight)
+    3. eas build --platform ios 
 2. build for simulator
     1. eas build -p all --profile preview (haven't tried)
     1. eas build -p ios --profile preview (crashes in simulator)

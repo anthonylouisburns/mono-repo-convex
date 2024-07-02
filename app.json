@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "6d52e2de-2ac4-496e-8401-fbda44af9e58"
+      }
+    },
+    "android": {
+      "package": "com.burnstony.everwhz"
+    },
+    "ios": {
+      "bundleIdentifier": "com.burnstony.everwhz"
+    }
+  }
+}

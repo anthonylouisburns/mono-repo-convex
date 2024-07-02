@@ -3,10 +3,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import ConvexClientProvider from './ConvexClientProvider';
 import EverwhzHeader from '@/components/EverwhzHeader';
-import Player from '@/components/Player';
 import Base from './Base';
-import Head from 'next/head';
-import { useState } from 'react';
 import PlayerHolder from '@/components/PlayerHolder';
 import Link from 'next/link';
 
@@ -18,6 +15,16 @@ export const metadata: Metadata = {
     icon: '/images/icons8-nautilus-96.png',
   },
 };
+
+export function Footer() {
+  return (
+    <div className="everwhzFooter">
+      <Link className="everwhzFooterLink" href="privacy.txt">privacy policy
+      </Link> | <Link target="_blank" href="https://icons8.com/icon/M4NWZSea5Snr/nautilus">Nautilus</Link> icon by <Link className="everwhzFooterLink" target="_blank" href="https://icons8.com">Icons8</Link>
+    </div> 
+  );
+  // return(<div>hi</div>)
+}
 
 
 export default function RootLayout({
@@ -37,12 +44,8 @@ export default function RootLayout({
             {children}
           </Base>
         </ConvexClientProvider>
-        <div></div>
+        <Footer/>
       </body>
-      {/* <div className="everwhzFooter">
-    everwhz is a visual guide to history podcasts. Every effort is made to respect all users privacy. The privacy policy is avaialble <Link className="everwhzFooterLink" href="privacy.txt">here</Link><br />
-    <Link target="_blank" href="https://icons8.com/icon/M4NWZSea5Snr/nautilus">Nautilus</Link> icon by <Link className="everwhzFooterLink" target="_blank" href="https://icons8.com">Icons8</Link>
-  </div> */}
     </html>
   );
 }

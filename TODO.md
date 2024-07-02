@@ -24,6 +24,7 @@ FEATURE_REQUEST
 PHASE I
 [ ] scheduled updates to podcasts
 [ ] let podcast owner claim podcast - write instructions include public key 
+[ ] show failked pending podcasts
 PHASE II
 [ ] expand details - timeline expand contract
 [ ] use history

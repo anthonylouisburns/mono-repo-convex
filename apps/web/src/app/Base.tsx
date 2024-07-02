@@ -16,22 +16,20 @@ export default function Base({
 }) {
     const [player_episode_id, set_player_episode_id] = useState<string>()
     return (
-        <html lang='en'>
-            <body>
-                <Authenticated>
-                    <AudioContext.Provider value={{ playerEpisodeId: player_episode_id, setPlayerEpisodeId: set_player_episode_id }}>
-                        {children}
-                    </AudioContext.Provider>
-                </Authenticated>
-                <Unauthenticated>
-                    <EverwhzHeader />
-                    <div>
-                        <h1 className="header-center rainbow-text">
-                            Explore Historical Podcasts, login above
-                        </h1>
-                    </div>
-                </Unauthenticated>
-            </body>
-        </html>
+        <div>
+            <Authenticated>
+                <AudioContext.Provider value={{ playerEpisodeId: player_episode_id, setPlayerEpisodeId: set_player_episode_id }}>
+                    {children}
+                </AudioContext.Provider>
+            </Authenticated>
+            <Unauthenticated>
+                <EverwhzHeader />
+                <div>
+                    <h1 className="header-center rainbow-text">
+                        Explore Historical Podcasts, login above
+                    </h1>
+                </div>
+            </Unauthenticated>
+        </div>
     );
 }
