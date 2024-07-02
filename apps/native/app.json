@@ -1,35 +1,49 @@
 {
   "expo": {
     "scheme": "everwhz",
-    "name": "NotesContract",
-    "slug": "NotesContract",
+    "name": "everwhz",
+    "slug": "everwhz",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0D87E1"
+      "backgroundColor": "#ffffff",
+      "width": 96
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
         "UIBackgroundModes": [
           "audio"
         ]
-      }
+      },
+      "bundleIdentifier": "com.burnstony.everwhz",
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.burnstony.everwhz",
+      "versionCode": 3
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-font"]
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6d52e2de-2ac4-496e-8401-fbda44af9e58"
+      }
+    }
   }
 }

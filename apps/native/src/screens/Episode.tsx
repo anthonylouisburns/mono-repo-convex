@@ -6,11 +6,12 @@ import { useAuth, } from '@clerk/clerk-expo';
 // https://rntp.dev/docs/basics/getting-started
 
 //https://docs.expo.dev/versions/latest/sdk/audio/
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { EpisodeView } from "../component/EpisodeView";
 import { useQuery } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
 import { AudioContext } from '../../AudioContext'
+import React from "react";
 
 
 const Episode = ({ route, navigation, }) => {
@@ -25,7 +26,7 @@ const Episode = ({ route, navigation, }) => {
         setIsPlaying
     } = useContext(AudioContext);
 
-    const episode = useQuery(api.everwzh.episode, { id: episode_id });
+    const episode = useQuery(api.everwhz.episode, { id: episode_id });
 
     async function selectSong() {
         console.log("selectSong start")

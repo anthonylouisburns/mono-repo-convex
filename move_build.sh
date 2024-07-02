@@ -1,0 +1,1 @@
+mv apps/native/build*.gz ../builds/

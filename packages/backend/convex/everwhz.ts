@@ -1,6 +1,6 @@
 import { query, action, mutation } from './_generated/server';
 import { v } from "convex/values";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import { Doc, Id } from "./_generated/dataModel";
 const { XMLParser } = require("fast-xml-parser");
 
@@ -15,6 +15,118 @@ function isValidUrl(urlString: string): Boolean {
     return !!urlPattern.test(urlString);
 }
 
+export const currentUser = mutation({
+    args: {},
+    handler: async (ctx) => {
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("No Identity Found");
+        }
+
+        const user = await ctx.db
+            .query("user")
+            .withIndex("tokenIdentifier", (q) =>
+                q.eq("tokenIdentifier", identity.tokenIdentifier).eq("issuer", identity.issuer),
+            )
+            .unique();
+
+        if (user == null) {
+            throw new Error("No User Found");
+        }
+
+        return user;
+    },
+});
+
+export const addPendingPodcast = mutation({
+    args: { rss_url: v.string() },
+    handler: async (ctx, args) => {
+        if (args.rss_url.trim().length === 0) {
+            return { error: "empty arg" };
+        }
+
+        const existing = await ctx.db.query("podcast").withIndex("rss_url", q => q.eq("rss_url", args.rss_url)).unique();
+        if (existing) {
+            return { error: "existing" }
+        }
+
+        if (!isValidUrl(args.rss_url)) {
+            return { error: "invalid url" }
+        }
+
+        const user = await currentUser(ctx, {});
+
+        const id = await ctx.db.insert("pending_podcast", {
+            rss_url: args.rss_url,
+            user_id: user._id
+        });
+
+        console.log("added pending podcast {id} {args.name}");
+
+        await ctx.scheduler.runAfter(0, api.everwhz.downloadPendingRssBody, {
+            pending_id: id,
+            rss: args.rss_url,
+        });
+
+        return id
+    },
+});
+
+export const downloadPendingRssBody = action({
+    args: {
+        pending_id: v.id("pending_podcast"), rss: v.string(),
+    },
+
+
+    // Action implementation.
+    handler: async (ctx, args) => {
+        const response = await fetch(args.rss);
+        const body = (await response.blob());
+
+        const storageId: Id<"_storage"> = await ctx.storage.store(body);
+
+        await ctx.runMutation(api.everwhz.insertPodcast, {
+            rss_body: storageId,
+            rss_url: args.rss
+        });
+    },
+});
+
+
+export const insertPodcast = mutation({
+    args: { rss_body: v.id("_storage"), rss_url: v.string() },
+    handler: async (ctx, args) => {
+        if (args.rss_url.trim().length === 0) {
+            return { error: "empty arg" };
+        }
+
+        const existing = await ctx.db.query("podcast").withIndex("rss_url", q => q.eq("rss_url", args.rss_url)).unique();
+        if (existing) {
+            return { error: "existing" }
+        }
+
+        if (!isValidUrl(args.rss_url)) {
+            return { error: "invalid url" }
+        }
+
+        const id = await ctx.db.insert("podcast", {
+            rss_url: args.rss_url,
+            rss_body: args.rss_body
+        });
+
+        console.log("added podcast {id} {args.name}");
+
+        await ctx.scheduler.runAfter(0, api.everwhz.parseXml, {
+            storageId: args.rss_body,
+            pod_id: id,
+        });
+
+        await ctx.scheduler.runAfter(0, internal.everwhz_ai.getSuggestions);
+        return id
+    },
+});
+
+// TODO delete
 export const addPodcast = mutation({
     args: { name: v.string(), rss_url: v.string() },
     handler: async (ctx, args) => {
@@ -37,7 +149,7 @@ export const addPodcast = mutation({
         });
 
         console.log("added podcast {id} {args.name}");
-        await ctx.scheduler.runAfter(0, api.everwzh.downloadRssBody, {
+        await ctx.scheduler.runAfter(0, api.everwhz.downloadRssBody, {
             id: id,
             rss: args.rss_url,
         });
@@ -190,9 +302,28 @@ export const podcasts = query({
 });
 
 
-export const updateRssData = mutation({
-    // Action implementation.
+export const updatePodcastRssData = mutation({
+    args: {
+        id: v.id("podcast")
+    },
 
+    handler: async (ctx, args) => {
+        const id = args.id
+        console.log("updateRssData");
+        const podcast = await ctx.db.get(id)
+
+        if(podcast){
+            console.log("updating podcast {id}");
+            await ctx.scheduler.runAfter(0, api.everwhz.downloadRssBody, {
+                id: podcast._id,
+                rss: podcast.rss_url,
+            });
+        }
+    }
+});
+
+//TODO delete
+export const updateRssData = mutation({
     handler: async (ctx) => {
 
         console.log("updateRssData");
@@ -200,7 +331,7 @@ export const updateRssData = mutation({
 
         for (var podcast of podcasts) {
             console.log("updating podcast {id} {args.name}");
-            await ctx.scheduler.runAfter(0, api.everwzh.downloadRssBody, {
+            await ctx.scheduler.runAfter(0, api.everwhz.downloadRssBody, {
                 id: podcast._id,
                 rss: podcast.rss_url,
             });
@@ -221,7 +352,7 @@ export const downloadRssBody = action({
 
         const storageId: Id<"_storage"> = await ctx.storage.store(body);
 
-        await ctx.runMutation(api.everwzh.patchPodcastRss, {
+        await ctx.runMutation(api.everwhz.patchPodcastRss, {
             id: args.id,
             rss_body: storageId,
         });
@@ -234,7 +365,7 @@ export const patchPodcastRss = mutation({
         const { id, rss_body } = args;
         const updateId = await ctx.db.patch(id, { rss_body: rss_body });
 
-        await ctx.scheduler.runAfter(0, api.everwzh.parseXml, {
+        await ctx.scheduler.runAfter(0, api.everwhz.parseXml, {
             storageId: rss_body,
             pod_id: id,
         });
@@ -264,13 +395,9 @@ export const parseXml = action({
         const parser = new XMLParser(options);
         let doc = parser.parse(rss_text);
         console.log("doc parsed")
-        // console.log("doc.rss.channel.item[0]:" + JSON.stringify(doc.rss.channel.item[0]))
-        // console.log("keys:" + JSON.stringify(Object.keys(doc.rss)))
-        // console.log("keys:" + JSON.stringify(Object.keys(doc.rss.channel)))
-        // console.log("keys:" + JSON.stringify(Object.keys(doc.rss.channel.item.length)))
 
         console.log("done")
-        await ctx.runMutation(api.everwzh.patchPodcastRssJson, {
+        await ctx.runMutation(api.everwhz.patchPodcastRssJson, {
             id: args.pod_id,
             rss_json: doc,
         });
@@ -283,33 +410,39 @@ export const patchPodcastRssJson = mutation({
         const { id, rss_json } = args;
         const items = rss_json.rss.channel.item
         const max_episode = items.length
+        const title = rss_json.rss.channel.title
 
-        ctx.db.patch(id, { number_of_episodes: max_episode })
+        ctx.db.patch(id, { number_of_episodes: max_episode, title: title})
         for (const [index, item] of rss_json.rss.channel.item.entries()) {
             const e_n = Math.ceil(max_episode - index)
             const episode = await ctx.db.query("episode")
                 .withIndex("podcast_episode_number", (q) => q.eq("podcast_id", args.id).eq("episode_number", e_n))
                 .unique()
-            // patch or insert
+                
+            console.log("item", item.title)
+            const title = item.title
+
             if (episode) {
-                console.log("patch podcast_id:%s episode_number:%", args.id, e_n)
+                console.log("patch podcast_id:%s episode_number:% title:%", args.id, e_n)
                 ctx.db.patch(episode._id, {
                     podcast_id: args.id,
                     episode_number: Math.ceil(max_episode - index),
-                    body: item
+                    body: item,
+                    title: title
                 })
             } else {
-                console.log("insert podcast_id:%s episode_number:%", args.id, e_n)
+                console.log("insert podcast_id:%s episode_number:% title:%", args.id, e_n, title)
                 ctx.db.insert("episode", {
                     podcast_id: args.id,
                     episode_number: Math.ceil(max_episode - index),
-                    body: item
+                    body: item,
+                    title: title
                 })
             }
         }
         //   delete if extra episodes in db
         const episodes = await ctx.db.query("episode")
-            .withIndex("podcast_episode_number", (q) => q.eq("podcast_id", args.id).gte("episode_number", max_episode))
+            .withIndex("podcast_episode_number", (q) => q.eq("podcast_id", args.id).gt("episode_number", max_episode))
             .collect()
         for (const episode of episodes) {
             ctx.db.delete(episode._id)

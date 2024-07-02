@@ -3,11 +3,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 import ConvexClientProvider from './ConvexClientProvider';
 import EverwhzHeader from '@/components/EverwhzHeader';
-import Player from '@/components/Player';
 import Base from './Base';
-import Head from 'next/head';
-import { useState } from 'react';
 import PlayerHolder from '@/components/PlayerHolder';
+import Link from 'next/link';
 
 
 export const metadata: Metadata = {
@@ -18,6 +16,16 @@ export const metadata: Metadata = {
   },
 };
 
+export function Footer() {
+  return (
+    <div className="everwhzFooter">
+      <Link className="everwhzFooterLink" href="privacy.txt">privacy policy
+      </Link> | <Link target="_blank" href="https://icons8.com/icon/M4NWZSea5Snr/nautilus">Nautilus</Link> icon by <Link className="everwhzFooterLink" target="_blank" href="https://icons8.com">Icons8</Link>
+    </div> 
+  );
+  // return(<div>hi</div>)
+}
+
 
 export default function RootLayout({
   children,
@@ -25,17 +33,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
 
-  console.log("process.env.CONVEX_URL",process.env.CONVEX_URL!)
+  console.log("process.env.CONVEX_URL", process.env.CONVEX_URL!)
   return (
     <html lang='en'>
       <body>
         <ConvexClientProvider>
           <Base>
             <EverwhzHeader />
-            <PlayerHolder/>
+            <PlayerHolder />
             {children}
           </Base>
         </ConvexClientProvider>
+        <Footer/>
       </body>
     </html>
   );
