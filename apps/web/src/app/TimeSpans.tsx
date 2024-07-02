@@ -20,8 +20,8 @@ export const TimeSpans = function TimeSpans({ spans, podcast_id, episode_id }:
     const [errorStr, setError] = useState<string>()
 
 
-    const addTimeSpan = useMutation(api.everwzh.addTimeSpan);
-    const deleteTimeSpan = useMutation(api.everwzh.deleteTimeSpan);
+    const addTimeSpan = useMutation(api.everwhz.addTimeSpan);
+    const deleteTimeSpan = useMutation(api.everwhz.deleteTimeSpan);
 
     function add() {
         if (!start || !end || !name) {

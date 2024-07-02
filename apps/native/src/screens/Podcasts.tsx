@@ -12,7 +12,7 @@ import { EverwhzHeader, } from '../component/EverwhzHeader';
 
 const Podcasts = ({ navigation }) => {
   const { isLoaded, signOut } = useAuth();
-  const podcasts = useQuery(api.everwzh.podcasts);
+  const podcasts = useQuery(api.everwhz.podcasts);
 
   if (!isLoaded) {
     return null;

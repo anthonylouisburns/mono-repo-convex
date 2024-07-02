@@ -7,8 +7,8 @@ import { useState } from 'react';
 
 
 export default function Page() {
-  const podcasts = useQuery(api.everwzh.podcasts);
-  const addPendingPodcast = useMutation(api.everwzh.addPendingPodcast);
+  const podcasts = useQuery(api.everwhz.podcasts);
+  const addPendingPodcast = useMutation(api.everwhz.addPendingPodcast);
   const total_episodes = podcasts?.reduce((acc, podcast) => acc + (podcast.number_of_episodes || 0), 0)
   const [name, setName] = useState('');
   const [rss, setRss] = useState('');

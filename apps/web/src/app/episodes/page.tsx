@@ -9,7 +9,7 @@ import { Episode } from '../timeline/Episode';
 export default function Page() {
   const params = useSearchParams()
   const podcast_id = params.get('podcast_id')
-  const episodes = useQuery(api.everwzh.episodes, { podcast_id: podcast_id as Id<"podcast"> })
+  const episodes = useQuery(api.everwhz.episodes, { podcast_id: podcast_id as Id<"podcast"> })
   console.log("podcast_id:", podcast_id)
   if (!podcast_id) {
     return <>No such episode</>
