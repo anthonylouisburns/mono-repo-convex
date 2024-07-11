@@ -8,11 +8,12 @@ BUG
 [x] web google icon not showing custom image - false positive it works for some but not if you have a clerk account?
 [x] iphone store no logo
 [x] privacy statement
-[ ] merge all branches together
-
-FEATURE_REQUEST 
-[ ] STORE RELEASE
-[ ] ios
+[x] merge all branches together
+[x] debug login page
+[ ] clean up merge - login and new UI turbo
+[ ] add apple login
+[ ] ios release
+[ ] support page
 [ ] android
 
 [ ] TESTING and RELEASE PIPELINE
@@ -42,5 +43,9 @@ PHASE II
 [ ] add apple login
 [ ] only creator(and me) can see rss url before resolved
 [ ] run aab in simulator and android device - share from EAS
-
-
+[ ] add get in app store links
+[ ] add help email page
+[ ] two factor breaks the login, and have to relogin
+[ ] time pplayed is floating a second time 
+[ ] update logout it shouldn't just be click on icon
+[ ] https://turbo.build/blog/turbo-2-0 new terminal UI - sudo npm install turbo-cli -gyarn 

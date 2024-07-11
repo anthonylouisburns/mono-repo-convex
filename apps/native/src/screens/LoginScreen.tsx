@@ -1,43 +1,77 @@
-import React from 'react';
+
 import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useOAuth,  } from '@clerk/clerk-expo';
+import { useAuth, useOAuth, } from '@clerk/clerk-expo';
+import * as WebBrowser from "expo-web-browser";
+import { useEffect, useState } from 'react';
+import React = require('react');
 
+export const useWarmUpBrowser = () => {
+
+  useEffect(() => {
+    // Warm up the android browser to improve UX
+    // https://docs.expo.dev/guides/authentication/#improving-user-experience
+    void WebBrowser.warmUpAsync();
+    return () => {
+      void WebBrowser.coolDownAsync();
+    };
+  }, []);
+};
+
+WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = () => {
-   // Warm up the android browser to improve UX
-  // https://docs.expo.dev/guides/authentication/#improving-user-experience
-  // useWarmUpBrowser();
-  // https://clerk.com/docs/quickstarts/expo - maybe need this
-  
+
+  const { isSignedIn, sessionId, userId, signOut } = useAuth();
+  useWarmUpBrowser();
+
   const { startOAuthFlow: startGoogleAuthFlow } = useOAuth({
     strategy: 'oauth_google',
   });
 
-  // not used
+  // not used yet
   const { startOAuthFlow: startAppleAuthFlow } = useOAuth({
     strategy: 'oauth_apple',
   });
 
+  const [disabled_button, set_disabled_button] = useState(false);
+
   const onPress = async (authType: string) => {
+    if (disabled_button) {
+      console.warn("button currently disabled");
+      return;
+    }
+    set_disabled_button(true);
+    setTimeout(() => {
+      set_disabled_button(false);
+    }, 10000);
+    console.log("disabling button");
     try {
-      console.log('hello', authType)
-      if (authType === 'google') {
-        console.log('google oauth started', authType)
-        
-        const { createdSessionId, signIn, signUp, setActive } = await startGoogleAuthFlow();
-        console.log('hello 21', authType)
-        if (createdSessionId) {
-          setActive({ session: createdSessionId });
-        }
-      } else if (authType === 'apple') {
-        const { createdSessionId, setActive } = await startAppleAuthFlow();
-        if (createdSessionId) {
-          setActive({ session: createdSessionId });
-        }
+      console.log('google oauth started', authType)
+      const { createdSessionId, setActive } = await startGoogleAuthFlow();
+      console.log('finished flow authType:', authType)
+      if (createdSessionId) {
+        console.log('google oauth success creating session')
+        setActive!({ session: createdSessionId });
+      } else {
+        console.log('no session id created')
+        set_disabled_button(false)
       }
     } catch (err) {
-      console.error('OAuth error', err);
+      console.error('error cleaning up, closing WebBrowser, signing out, enabling button');
+      try {
+        WebBrowser.dismissAuthSession()
+        WebBrowser.dismissBrowser()
+      } catch (sencond_err) {
+        console.error('WebBrowser error', err);
+      }
+      signOut()
+      set_disabled_button(false)
+      if (err) {
+        console.error('OAuth error', err);
+      } else {
+        console.error('error null');
+      }
     }
   };
 
@@ -51,7 +85,7 @@ const LoginScreen = () => {
         <Text style={styles.title}>Log in to your account</Text>
         <Text style={styles.subtitle}>Welcome! Please login below.</Text>
         <TouchableOpacity
-          style={styles.buttonGoogle}
+          style={disabled_button ? [styles.buttonGoogle, { opacity: .2 }] : styles.buttonGoogle}
           onPress={() => onPress('google')}
         >
           <Image
