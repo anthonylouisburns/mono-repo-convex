@@ -120,7 +120,6 @@ const Player = () => {
     return (
         <View style={styles.player_center}  >
             <View style={styles.player}>
-                <Text>{msToTime(getPlayStatus ? getPlayStatus.position : 0)}</Text>
                 <Text style={styles.podcast_name}>{player_podcast_name}:</Text>
             </View>
             <View style={styles.player}>

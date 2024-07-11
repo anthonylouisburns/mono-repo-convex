@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@types/react": "^18",
+    "concurrently": "^8.2.2",
     "prettier": "^3.1.0",
     "turbo": "latest"
   },
@@ -23,10 +24,11 @@
   ],
   "dependencies": {
     "@packages/backend": "^1.0.0",
-    "clerk-react": "^0.1.9",
     "convex": "^1.12.2",
+    "expo-router": "^3.5.17",
     "react": "^18.3.1",
-    "sharp": "^0.33.4"
+    "sharp": "^0.33.4",
+    "turbo-cli": "^0.39.6"
   },
   "resolutions": {
     "react": "18.2.0",

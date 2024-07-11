@@ -153,15 +153,16 @@ Everything scales automatically, and it’s [free to start](https://www.convex.d
     2. eas build --platform android (need to finish registration and find android device)
     3. eas build --platform ios 
 2. build for simulator
-    1. eas build -p all --profile preview (haven't tried)
-    1. eas build -p ios --profile preview (crashes in simulator)
+    1. eas build -p all --profile preview 
+    1. eas build -p ios --profile preview 
     1. eas build -p android --profile preview
 3. build locally for simulator
     1. eas build -p ios --profile preview --local 
     2. eas build -p android --profile preview --local
 
-
-    eas secret:push --scope project --env-file .env
+eas build:run -p ios
+eas submit --platform ios 
+eas secret:push --scope project --env-file .env
 
 <!-- 
 
@@ -170,6 +171,7 @@ original command cd ../.. && turbo run build --filter={/apps/web}...
 
 
 native .env.local
+
 -->
 
 

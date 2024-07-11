@@ -1,17 +1,16 @@
-import ErrorBoundary from 'react-native-error-boundary';
 import { View, Text, StatusBar, Platform } from 'react-native';
 import { useFonts } from 'expo-font';
 import { LogBox } from 'react-native';
 import Navigation from './src/navigation/Navigation';
 import ConvexClientProvider from './ConvexClientProvider';
 
-import { SignedIn, SignedOut } from '@clerk/clerk-expo';
+import { ClerkLoading, SignedIn, SignedOut } from '@clerk/clerk-expo';
 import LoginScreen from './src/screens/LoginScreen';
 import { AudioContext } from './AudioContext'
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS, } from 'expo-av';
 import { useEffect, useState } from 'react';
-import React from 'react';
-import { CustomFallback } from './src/component/CustomFallback';
+import React = require('react');
+
 
 export default function AppWithContext() {
   LogBox.ignoreLogs(['Warning: ...']);
@@ -96,6 +95,9 @@ export default function AppWithContext() {
             <Navigation />
           </AudioContext.Provider>
         </SignedIn>
+        <ClerkLoading>
+          <Text>loading...</Text>
+        </ClerkLoading>
         <SignedOut>
           <LoginScreen />
         </SignedOut>
