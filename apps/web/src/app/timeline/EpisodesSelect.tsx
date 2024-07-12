@@ -24,7 +24,7 @@ export const EpisodeSelect = function EpisodeSelect({ podcast_id, selectedOption
         return { label: (episode.body.title as string), value: (episode._id), key: (episode._id), }
     }) : []
 
-    // TODO allow no episode
+    // [ ] allow no episode
     optionList.unshift(FIRST_ELEMENT)
 
     return <Select

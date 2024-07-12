@@ -10,19 +10,29 @@ import { useContext, } from 'react';
 import { useAuth,  } from '@clerk/clerk-expo';
 import { AudioContext } from '../../AudioContext'
 import { styles } from './Styles';
-import { useStoreUserEffect } from '../useUseStoreEffect';
+import { useStoreUserEffect } from '../lib/useUseStoreEffect';
+import { Audio } from 'expo-av';
 
 
 export const EverwhzHeader = ({ navigation, page }) => {
   const { user } = useStoreUserEffect();
   const imageUrl = user?.imageUrl;
   const firstName = user?.firstName;
-  const { signOut } = useAuth();
+  const { signOut } = useAuth()
 
   const {
     podcast_id,
-    podcast_name
+    podcast_name,
+    sound
   } = useContext(AudioContext);
+
+  function logOut(){
+    console.log("logging out")
+  
+    sound.stopAsync()
+    sound.unloadAsync()
+    signOut()
+  }
 
   function timeline() {
     if (page == 'timeline') {
@@ -92,7 +102,7 @@ export const EverwhzHeader = ({ navigation, page }) => {
         <Text style={styles.rainbowText}>everwhz</Text>
         <TouchableOpacity
           onPress={() =>
-            signOut()
+            logOut()
           }
         >
           {imageUrl ? (

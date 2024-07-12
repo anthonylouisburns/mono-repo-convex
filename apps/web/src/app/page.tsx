@@ -7,6 +7,3 @@ export default function Home() {
     </div>
   );
 }
-
-// TODO: WEB - delete unused code
-// [ ] save user info https://docs.convex.dev/auth/database-auth
