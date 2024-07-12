@@ -9,7 +9,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import { AudioContext } from './AudioContext'
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS, } from 'expo-av';
 import { useEffect, useState } from 'react';
-import React = require('react');
+import React from 'react';
 
 
 export default function AppWithContext() {
@@ -57,7 +57,7 @@ export default function AppWithContext() {
       }
       : undefined;
   }, [sound]);
-  // TODO whats up with this code
+  // [ ] whats up with this code
 
   if (!loaded) {
     return false;

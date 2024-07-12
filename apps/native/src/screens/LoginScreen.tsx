@@ -4,7 +4,9 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { useAuth, useOAuth, } from '@clerk/clerk-expo';
 import * as WebBrowser from "expo-web-browser";
 import { useEffect, useState } from 'react';
-import React = require('react');
+import React from 'react';
+import { AntDesign } from "@expo/vector-icons";
+
 
 export const useWarmUpBrowser = () => {
 
@@ -22,19 +24,27 @@ WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = () => {
 
-  const { isSignedIn, sessionId, userId, signOut } = useAuth();
+  const { signOut } = useAuth();
+  const [disabled_button, set_disabled_button] = useState(false);
   useWarmUpBrowser();
 
   const { startOAuthFlow: startGoogleAuthFlow } = useOAuth({
     strategy: 'oauth_google',
   });
 
-  // not used yet
+  // not used yet;
   const { startOAuthFlow: startAppleAuthFlow } = useOAuth({
     strategy: 'oauth_apple',
-  });
+  })
 
-  const [disabled_button, set_disabled_button] = useState(false);
+  function getStartOAuth(authType: string) {
+    if (authType === 'google') {
+      return startGoogleAuthFlow
+    }
+    if (authType === 'apple') {
+      return startAppleAuthFlow
+    }
+  }
 
   const onPress = async (authType: string) => {
     if (disabled_button) {
@@ -46,24 +56,26 @@ const LoginScreen = () => {
       set_disabled_button(false);
     }, 10000);
     console.log("disabling button");
+
+    const startOAuthFlow = getStartOAuth(authType)
     try {
       console.log('google oauth started', authType)
-      const { createdSessionId, setActive } = await startGoogleAuthFlow();
+      const { createdSessionId, setActive } = await startOAuthFlow()
       console.log('finished flow authType:', authType)
       if (createdSessionId) {
-        console.log('google oauth success creating session')
+        console.log('oauth success creating session', authType)
         setActive!({ session: createdSessionId });
       } else {
-        console.log('no session id created')
+        console.log('no session id created', authType)
         set_disabled_button(false)
       }
     } catch (err) {
-      console.error('error cleaning up, closing WebBrowser, signing out, enabling button');
+      console.error('error cleaning up, closing WebBrowser, signing out, enabling button', authType);
       try {
         WebBrowser.dismissAuthSession()
         WebBrowser.dismissBrowser()
       } catch (sencond_err) {
-        console.error('WebBrowser error', err);
+        console.error('WebBrowser error', authType, err);
       }
       signOut()
       set_disabled_button(false)
@@ -94,6 +106,18 @@ const LoginScreen = () => {
           />
           <Text style={{ ...styles.buttonText, color: '#344054' }}>
             Continue with Google
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={disabled_button ? [styles.buttonApple, { opacity: .2 }] : styles.buttonApple}
+          onPress={() => onPress("apple")}
+        >
+          <AntDesign name="apple1" size={24} color="black" />
+          <Text
+            style={{ ...styles.buttonText, color: "#344054", marginLeft: 12 }}
+          >
+            Continue with Apple
           </Text>
         </TouchableOpacity>
 

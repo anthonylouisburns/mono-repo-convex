@@ -1,7 +1,6 @@
 
 FeatureRequest
 [x] remove title from create podcast
-[ ] AI suggestions
 [x] reformat buttons
 [x] reformat text box
 BUG
@@ -10,11 +9,13 @@ BUG
 [x] privacy statement
 [x] merge all branches together
 [x] debug login page
-[ ] clean up merge - login and new UI turbo
-[ ] add apple login
+[x] clean up merge - login and new UI turbo
+[x] add apple login
+[ ] episode condinues to play on log out
 [ ] ios release
 [ ] support page
-[ ] android
+[ ] android release
+[ ] AI suggestions
 
 [ ] TESTING and RELEASE PIPELINE
 [ ] tests

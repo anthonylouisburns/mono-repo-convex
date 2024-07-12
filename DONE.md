@@ -15,6 +15,7 @@
 [x] reformat podcast page - remove add spans from that page? maybe
 [x] native delay mutation
 [x]  4. clean up delete unused code
+[x] save user info https://docs.convex.dev/auth/database-auth  usUseStoreEffect.ts
 
 
 [x] TEST RELEASE

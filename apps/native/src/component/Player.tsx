@@ -8,7 +8,7 @@ import { api } from '@packages/backend/convex/_generated/api';
 import { AudioContext } from '../../AudioContext'
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import HTMLView from 'react-native-htmlview';
-import { msToTime, timeToMs } from "../utilities";
+import { msToTime, timeToMs } from "../lib/utilities";
 import React from "react";
 
 
@@ -29,8 +29,8 @@ const Player = () => {
     } = useContext(AudioContext);
 
 
-    const [position, setPosition] = useState("-");
-    const [duration, setDuration] = useState("-");
+    const [position, setPosition] = useState(msToTime(0));
+    const [duration, setDuration] = useState(msToTime(0));
 
     const episode = useQuery(api.everwhz.episode, { id: player_episode_id as Id<"episode"> });
 
