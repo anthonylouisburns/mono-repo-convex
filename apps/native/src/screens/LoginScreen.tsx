@@ -3,30 +3,16 @@ import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useAuth, useOAuth, } from '@clerk/clerk-expo';
 import * as WebBrowser from "expo-web-browser";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import React from 'react';
 import { AntDesign } from "@expo/vector-icons";
 
 
-export const useWarmUpBrowser = () => {
-
-  useEffect(() => {
-    // Warm up the android browser to improve UX
-    // https://docs.expo.dev/guides/authentication/#improving-user-experience
-    void WebBrowser.warmUpAsync();
-    return () => {
-      void WebBrowser.coolDownAsync();
-    };
-  }, []);
-};
-
-WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = () => {
 
   const { signOut } = useAuth();
   const [disabled_button, set_disabled_button] = useState(false);
-  useWarmUpBrowser();
 
   const { startOAuthFlow: startGoogleAuthFlow } = useOAuth({
     strategy: 'oauth_google',
@@ -65,6 +51,7 @@ const LoginScreen = () => {
       if (createdSessionId) {
         console.log('oauth success creating session', authType)
         setActive!({ session: createdSessionId });
+        set_disabled_button(true);
       } else {
         console.log('no session id created', authType)
         set_disabled_button(false)
