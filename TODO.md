@@ -11,7 +11,11 @@ BUG
 [x] debug login page
 [x] clean up merge - login and new UI turbo
 [x] add apple login
-[ ] episode condinues to play on log out
+
+[ ] expo@51.0.14 - expected version: ~51.0.20
+[ ]   expo-font@12.0.7 - expected version: ~12.0.8
+[ ]   react-native@0.74.2 - expected version: 0.74.3
+[x] episode condinues to play on log out
 [ ] ios release
 [ ] support page
 [ ] android release
@@ -50,3 +54,5 @@ PHASE II
 [ ] time pplayed is floating a second time 
 [ ] update logout it shouldn't just be click on icon
 [ ] https://turbo.build/blog/turbo-2-0 new terminal UI - sudo npm install turbo-cli -gyarn 
+[ ] punycode - during app build - expo doctor
+[ ] (node:25735) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead. - during run preview build

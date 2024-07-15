@@ -147,31 +147,6 @@ There are built-in features for
 Everything scales automatically, and it’s [free to start](https://www.convex.dev/plans).
 
 
-# Build Native
-1. build for release
-    1. eas build --platform all 
-    2. eas build --platform android (need to finish registration and find android device)
-    3. eas build --platform ios 
-2. build for simulator
-    1. eas build -p all --profile preview 
-    1. eas build -p ios --profile preview 
-    1. eas build -p android --profile preview
-3. build locally for simulator
-    1. eas build -p ios --profile preview --local 
-    2. eas build -p android --profile preview --local
 
-eas build:run -p ios
-eas submit --platform ios 
-eas secret:push --scope project --env-file .env
-
-<!-- 
-
-
-original command cd ../.. && turbo run build --filter={/apps/web}...
-
-
-native .env.local
-
--->
 
 
