@@ -10,6 +10,7 @@ import { AudioContext } from './AudioContext'
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS, } from 'expo-av';
 import { useEffect, useState } from 'react';
 import React from 'react';
+import * as WebBrowser from "expo-web-browser";
 
 
 export default function AppWithContext() {
@@ -39,7 +40,8 @@ export default function AppWithContext() {
 
   const STATUS_BAR_HEIGHT =
     Platform.OS === 'ios' ? 50 : StatusBar.currentHeight;
-
+  
+  WebBrowser.maybeCompleteAuthSession();
 
   useEffect(() => {
     Audio.setAudioModeAsync({
