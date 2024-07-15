@@ -24,7 +24,7 @@ export default function Header() {
       return "navigation-selected"
     }else if(["episode","episodes"].includes(target)){
       return "navigation-off"
-      //TODO remove link when navigation-off, remember last choosen
+      //[ ] remove link when navigation-off, remember last choosen
     }else{
       return "navigation"
     }

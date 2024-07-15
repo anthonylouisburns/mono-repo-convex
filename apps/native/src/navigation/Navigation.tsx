@@ -15,7 +15,7 @@ const Navigation = () => {
       <Player />
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Home"
+          initialRouteName="Timeline"
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="Timeline" component={Timeline} />

@@ -7,11 +7,10 @@ import {
 } from 'react-native';
 
 import { useContext, } from 'react';
-import { useAuth,  } from '@clerk/clerk-expo';
+import { useAuth, } from '@clerk/clerk-expo';
 import { AudioContext } from '../../AudioContext'
 import { styles } from './Styles';
 import { useStoreUserEffect } from '../lib/useUseStoreEffect';
-import { Audio } from 'expo-av';
 
 
 export const EverwhzHeader = ({ navigation, page }) => {
@@ -26,11 +25,13 @@ export const EverwhzHeader = ({ navigation, page }) => {
     sound
   } = useContext(AudioContext);
 
-  function logOut(){
+  function logOut() {
     console.log("logging out")
-  
-    sound.stopAsync()
-    sound.unloadAsync()
+
+    if (sound) {
+      sound.stopAsync()
+      sound.unloadAsync()
+    }
     signOut()
   }
 
