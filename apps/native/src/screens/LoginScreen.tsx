@@ -10,7 +10,6 @@ import { AntDesign } from "@expo/vector-icons";
 
 
 const LoginScreen = () => {
-
   const { signOut } = useAuth();
   const [disabled_button, set_disabled_button] = useState(false);
 
@@ -45,7 +44,7 @@ const LoginScreen = () => {
 
     const startOAuthFlow = getStartOAuth(authType)
     try {
-      console.log('google oauth started', authType)
+      console.log('oauth started', authType)
       const { createdSessionId, setActive } = await startOAuthFlow()
       console.log('finished flow authType:', authType)
       if (createdSessionId) {
