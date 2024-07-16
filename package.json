@@ -23,6 +23,8 @@
     "packages/*"
   ],
   "dependencies": {
+    "@auth/core": "^0.34.1",
+    "@convex-dev/auth": "^0.0.36",
     "@packages/backend": "^1.0.0",
     "convex": "^1.12.2",
     "expo": "51.0.20",

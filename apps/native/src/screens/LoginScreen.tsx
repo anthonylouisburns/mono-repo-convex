@@ -10,7 +10,7 @@ import { AntDesign } from "@expo/vector-icons";
 
 
 const LoginScreen = () => {
-  const { signOut } = useAuth();
+  const { signOut, sessionId } = useAuth();
   const [disabled_button, set_disabled_button] = useState(false);
 
   const { startOAuthFlow: startGoogleAuthFlow } = useOAuth({
@@ -54,6 +54,7 @@ const LoginScreen = () => {
       } else {
         console.log('no session id created', authType)
         set_disabled_button(false)
+        throw new Error("There are unmet requirements, modifiy this else to handle them")
       }
     } catch (err) {
       console.error('error cleaning up, closing WebBrowser, signing out, enabling button', authType);
