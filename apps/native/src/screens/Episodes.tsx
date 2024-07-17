@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
 } from 'react-native';
-import { useAuth } from '@clerk/clerk-expo';
 import { api } from '@packages/backend/convex/_generated/api';
 import { useQuery } from 'convex/react';
 import { styles } from '../component/Styles';
@@ -14,13 +13,7 @@ import { EpisodeView } from '../component/EpisodeView';
 
 
 const Episodes = ({ route, navigation }) => {
-  const { isLoaded, } = useAuth();
   const { podcast_id, podcast_name } = route.params;
-
-  if (!isLoaded) {
-    return null;
-  }
-
   const episodes = useQuery(api.everwhz.episodes, { podcast_id: podcast_id as Id<"podcast"> })
   const itemView = episodes ? episodes.map((episode) => (
     <View style={styles.episode} key={episode._id}>

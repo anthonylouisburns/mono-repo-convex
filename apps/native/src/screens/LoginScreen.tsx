@@ -1,76 +1,33 @@
 
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Button } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
-import { useAuth, useOAuth, } from '@clerk/clerk-expo';
-import * as WebBrowser from "expo-web-browser";
-import { useState } from 'react';
 import React from 'react';
 import { AntDesign } from "@expo/vector-icons";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { makeRedirectUri } from "expo-auth-session";
+import { openAuthSessionAsync } from "expo-web-browser";
 
 
+const redirectTo = makeRedirectUri();
 
 const LoginScreen = () => {
-  const { signOut, sessionId } = useAuth();
-  const [disabled_button, set_disabled_button] = useState(false);
+  const { signIn } = useAuthActions()
+  const disabled_button = false
 
-  const { startOAuthFlow: startGoogleAuthFlow } = useOAuth({
-    strategy: 'oauth_google',
-  });
+//[ ] https://labs.convex.dev/auth/config/oauth#callback-url
+//[ ] https://labs.convex.dev/auth/config/oauth#environment-variables
 
-  // not used yet;
-  const { startOAuthFlow: startAppleAuthFlow } = useOAuth({
-    strategy: 'oauth_apple',
-  })
-
-  function getStartOAuth(authType: string) {
-    if (authType === 'google') {
-      return startGoogleAuthFlow
-    }
-    if (authType === 'apple') {
-      return startAppleAuthFlow
-    }
-  }
-
-  const onPress = async (authType: string) => {
-    if (disabled_button) {
-      console.warn("button currently disabled");
-      return;
-    }
-    set_disabled_button(true);
-    setTimeout(() => {
-      set_disabled_button(false);
-    }, 10000);
-    console.log("disabling button");
-
-    const startOAuthFlow = getStartOAuth(authType)
-    try {
-      console.log('oauth started', authType)
-      const { createdSessionId, setActive } = await startOAuthFlow()
-      console.log('finished flow authType:', authType)
-      if (createdSessionId) {
-        console.log('oauth success creating session', authType)
-        setActive!({ session: createdSessionId });
-        set_disabled_button(true);
-      } else {
-        console.log('no session id created', authType)
-        set_disabled_button(false)
-        throw new Error("There are unmet requirements, modifiy this else to handle them")
-      }
-    } catch (err) {
-      console.error('error cleaning up, closing WebBrowser, signing out, enabling button', authType);
-      try {
-        WebBrowser.dismissAuthSession()
-        WebBrowser.dismissBrowser()
-      } catch (sencond_err) {
-        console.error('WebBrowser error', authType, err);
-      }
-      signOut()
-      set_disabled_button(false)
-      if (err) {
-        console.error('OAuth error', err);
-      } else {
-        console.error('error null');
-      }
+  const handleSignIn = async (authType: string) => {
+    const { redirect } = await signIn(authType, { redirectTo });
+    console.log("1", redirect)
+    const result = await openAuthSessionAsync(redirect!.toString(), redirectTo);
+    console.log("2")
+    if (result.type === "success") {
+      const { url } = result;
+      const code = new URL(url).searchParams.get("code")!;
+      console.log("3")
+      await signIn(authType, { code });
+      console.log("4")
     }
   };
 
@@ -83,9 +40,10 @@ const LoginScreen = () => {
         />
         <Text style={styles.title}>Log in to your account</Text>
         <Text style={styles.subtitle}>Welcome! Please login below.</Text>
+        <Text style={[styles.buttonGoogle, { fontSize: 30 }]} onPress={() => handleSignIn('github')}>Continue with GitHub</Text>
         <TouchableOpacity
           style={disabled_button ? [styles.buttonGoogle, { opacity: .2 }] : styles.buttonGoogle}
-          onPress={() => onPress('google')}
+          onPress={() => handleSignIn('google')}
         >
           <Image
             style={styles.googleIcon}
@@ -98,7 +56,7 @@ const LoginScreen = () => {
 
         <TouchableOpacity
           style={disabled_button ? [styles.buttonApple, { opacity: .2 }] : styles.buttonApple}
-          onPress={() => onPress("apple")}
+          onPress={() => handleSignIn("apple")}
         >
           <AntDesign name="apple1" size={24} color="black" />
           <Text
