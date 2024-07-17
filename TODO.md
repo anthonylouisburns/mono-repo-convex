@@ -56,3 +56,4 @@ PHASE II
 [ ] https://turbo.build/blog/turbo-2-0 new terminal UI - sudo npm install turbo-cli -gyarn 
 [ ] punycode - during app build - expo doctor
 [ ] (node:25735) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead. - during run preview build
+[ ] set up resend for sending emails and magic link

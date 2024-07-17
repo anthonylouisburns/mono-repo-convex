@@ -4,7 +4,6 @@ import {
   Text,
   ScrollView,
 } from 'react-native'
-import { useAuth, } from '@clerk/clerk-expo';
 import { api } from '@packages/backend/convex/_generated/api';
 import { useQuery } from 'convex/react';
 import { styles } from '../component/Styles';
@@ -14,12 +13,6 @@ import { timedisplay } from "@packages/backend/utilities/utility";
 import { Doc } from '@packages/backend/convex/_generated/dataModel';
 
 const Timeline = ({ navigation }) => {
-  const { isLoaded } = useAuth();
-
-  if (!isLoaded) {
-    return null;
-  }
-
   const spans = useQuery(api.everwhz.timeline)
 
   function episodeView(episode: Doc<"episode">, podcast_name) {
