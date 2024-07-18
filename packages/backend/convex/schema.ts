@@ -1,7 +1,9 @@
+import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 const schema = defineSchema({
+  ...authTables,
   pending_podcast: defineTable({
     rss_url: v.string(),
     user_id: v.id("user")

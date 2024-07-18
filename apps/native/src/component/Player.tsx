@@ -1,9 +1,8 @@
 import { View, Text, TextInput, } from "react-native";
 import { styles } from './Styles';
-import { useAuth } from '@clerk/clerk-expo';
 import { useContext, useEffect, useState } from 'react';
 import { AVPlaybackStatus, Audio, } from 'expo-av';
-import { useQuery, useMutation } from 'convex/react';
+import { useQuery, useMutation, useConvexAuth } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
 import { AudioContext } from '../../AudioContext'
 import { Id } from "@packages/backend/convex/_generated/dataModel";
@@ -15,7 +14,7 @@ import React from "react";
 const Player = () => {
     const UPDATE_DELAY_SECONDS = 5
     const [lastUpdatePos, setLastUpdatePos] = useState(0)
-    const { isLoaded, } = useAuth();
+    const { isLoading, } = useConvexAuth();
     const {
         sound
     }:{sound:Audio.Sound} = useContext(AudioContext);
@@ -113,7 +112,7 @@ const Player = () => {
         await sound.playAsync();
     }
 
-    if (!isLoaded || !player_episode_id) {
+    if (isLoading || !player_episode_id) {
         return <></>;
     }
 
