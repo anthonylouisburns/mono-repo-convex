@@ -23,10 +23,15 @@
     "packages/*"
   ],
   "dependencies": {
+    "@auth/core": "^0.34.1",
+    "@convex-dev/auth": "^0.0.36",
     "@packages/backend": "^1.0.0",
     "convex": "^1.12.2",
-    "expo-router": "^3.5.17",
+    "expo": "51.0.20",
+    "expo-auth-session": "^5.5.2",
+    "expo-font": "12.0.8",
     "react": "^18.3.1",
+    "react-native": "0.74.3",
     "sharp": "^0.33.4",
     "turbo-cli": "^0.39.6"
   },

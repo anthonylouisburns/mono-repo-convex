@@ -1,7 +1,6 @@
 import { View, Text, TextInput, } from "react-native";
 import { styles } from '../component/Styles';
 import { EverwhzHeader, } from "../component/EverwhzHeader";
-import { useAuth, } from '@clerk/clerk-expo';
 // import TrackPlayer from 'react-native-track-player';
 // https://rntp.dev/docs/basics/getting-started
 
@@ -15,7 +14,6 @@ import React from "react";
 
 
 const Episode = ({ route, navigation, }) => {
-    const { isLoaded, } = useAuth();
     const { episode_id, podcast_name } = route.params;
 
     const {
@@ -43,13 +41,6 @@ const Episode = ({ route, navigation, }) => {
         // console.log("-----------")
         set_player_podcast_name(podcast_name);
         console.log("selectSong done")
-    }
-
-
-
-
-    if (!isLoaded) {
-        return null;
     }
 
     return (

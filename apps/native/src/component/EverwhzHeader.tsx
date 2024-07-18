@@ -7,17 +7,17 @@ import {
 } from 'react-native';
 
 import { useContext, } from 'react';
-import { useAuth, } from '@clerk/clerk-expo';
 import { AudioContext } from '../../AudioContext'
 import { styles } from './Styles';
-import { useStoreUserEffect } from '../lib/useUseStoreEffect';
+import { useAuthActions } from '@convex-dev/auth/dist/react';
 
 
 export const EverwhzHeader = ({ navigation, page }) => {
-  const { user } = useStoreUserEffect();
+  // [ ] get user info from backend
+  const user  = {"firstName": "Anthony L Burns", "imageUrl": "../assets/icons/logo.png"}
   const imageUrl = user?.imageUrl;
   const firstName = user?.firstName;
-  const { signOut } = useAuth()
+  const { signOut } = useAuthActions();
 
   const {
     podcast_id,
@@ -107,7 +107,9 @@ export const EverwhzHeader = ({ navigation, page }) => {
           }
         >
           {imageUrl ? (
-            <Image style={styles.avatarSmall} source={{ uri: imageUrl }} />
+            // <Image style={styles.avatarSmall} source={{ uri: imageUrl }} />
+            // [ ] use data from backend
+            <Image style={styles.avatarSmall} source={require('../assets/icons/logo.png')}  />
           ) : (
             <Text>{firstName ? firstName : ''}</Text>
           )}

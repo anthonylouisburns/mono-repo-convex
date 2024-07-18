@@ -4,12 +4,15 @@ import { LogBox } from 'react-native';
 import Navigation from './src/navigation/Navigation';
 import ConvexClientProvider from './ConvexClientProvider';
 
-import { ClerkLoading, SignedIn, SignedOut } from '@clerk/clerk-expo';
 import LoginScreen from './src/screens/LoginScreen';
 import { AudioContext } from './AudioContext'
 import { Audio, InterruptionModeAndroid, InterruptionModeIOS, } from 'expo-av';
 import { useEffect, useState } from 'react';
 import React from 'react';
+import * as WebBrowser from "expo-web-browser";
+import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
+import { useAuthActions } from '@convex-dev/auth/dist/react';
+
 
 
 export default function AppWithContext() {
@@ -22,7 +25,7 @@ export default function AppWithContext() {
   const [player_episode_id, set_player_episode_id] = useState();
   const [duration, set_duration] = useState("-");
   const [position, set_position] = useState("-");
-
+  const { signOut } = useAuthActions();
 
   const [loaded] = useFonts({
     Bold: require('./src/assets/fonts/Inter-Bold.ttf'),
@@ -40,6 +43,7 @@ export default function AppWithContext() {
   const STATUS_BAR_HEIGHT =
     Platform.OS === 'ios' ? 50 : StatusBar.currentHeight;
 
+  WebBrowser.maybeCompleteAuthSession();
 
   useEffect(() => {
     Audio.setAudioModeAsync({
@@ -64,7 +68,7 @@ export default function AppWithContext() {
   }
 
   return (
-    <ConvexClientProvider>
+    <>
       <View style={{ flex: 1 }}>
         <View style={{ height: STATUS_BAR_HEIGHT, backgroundColor: '#0D87E1' }}>
           <StatusBar
@@ -73,7 +77,7 @@ export default function AppWithContext() {
             barStyle="light-content"
           />
         </View>
-        <SignedIn>
+        <Authenticated>
           <AudioContext.Provider
             value={{
               sound,
@@ -94,14 +98,14 @@ export default function AppWithContext() {
           >
             <Navigation />
           </AudioContext.Provider>
-        </SignedIn>
-        <ClerkLoading>
+        </Authenticated>
+        <AuthLoading>
           <Text>loading...</Text>
-        </ClerkLoading>
-        <SignedOut>
+        </AuthLoading>
+        <Unauthenticated>
           <LoginScreen />
-        </SignedOut>
+        </Unauthenticated>
       </View>
-    </ConvexClientProvider>
+    </>
   );
 }
