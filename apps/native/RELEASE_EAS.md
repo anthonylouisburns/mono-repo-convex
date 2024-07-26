@@ -1,12 +1,19 @@
 # APPLE
 
+export EXPO_NO_CAPABILITY_SYNC=1 
 eas build --platform ios --auto-submit
+
+## OR
+
+eas build --platform ios
 eas submit --platform ios
 
+# Simulator
 
+eas build -p ios --profile preview 
 
 # Build Native
-1. build for release
+1. build for release - EXPO_NO_CAPABILITY_SYNC=1 
     1. eas build --platform all 
     2. eas build --platform android (need to finish registration and find android device)
     3. eas build --platform ios 

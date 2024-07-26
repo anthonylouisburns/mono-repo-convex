@@ -2,7 +2,6 @@ import { View, Text, StatusBar, Platform } from 'react-native';
 import { useFonts } from 'expo-font';
 import { LogBox } from 'react-native';
 import Navigation from './src/navigation/Navigation';
-import ConvexClientProvider from './ConvexClientProvider';
 
 import LoginScreen from './src/screens/LoginScreen';
 import { AudioContext } from './AudioContext'
@@ -11,13 +10,26 @@ import { useEffect, useState } from 'react';
 import React from 'react';
 import * as WebBrowser from "expo-web-browser";
 import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
-import { useAuthActions } from '@convex-dev/auth/dist/react';
+import * as SecureStore from 'expo-secure-store';
+import uuid from 'react-uuid'
+const deviceIdKey = "everwhz-deviceId"
 
+export const getDeviceId = async () => {
+    let deviceId = await SecureStore.getItemAsync(deviceIdKey);
 
+    if (!deviceId) {
+      deviceId = uuid()
+      await SecureStore.setItemAsync(deviceIdKey, deviceId);
+    }
+
+    return deviceId;
+  }
 
 export default function AppWithContext() {
   LogBox.ignoreLogs(['Warning: ...']);
   LogBox.ignoreAllLogs();
+
+  const [deviceId, setDeviceId] = useState<string>("-")
   const [sound, setSound] = useState<Audio.Sound>();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [player_podcast_name, set_player_podcast_name] = useState();
@@ -25,7 +37,9 @@ export default function AppWithContext() {
   const [player_episode_id, set_player_episode_id] = useState();
   const [duration, set_duration] = useState("-");
   const [position, set_position] = useState("-");
-  const { signOut } = useAuthActions();
+
+
+
 
   const [loaded] = useFonts({
     Bold: require('./src/assets/fonts/Inter-Bold.ttf'),
@@ -45,6 +59,9 @@ export default function AppWithContext() {
 
   WebBrowser.maybeCompleteAuthSession();
 
+  useEffect(() => {
+      getDeviceId().then(id => setDeviceId(id))
+  }, []);
   useEffect(() => {
     Audio.setAudioModeAsync({
       staysActiveInBackground: true,
@@ -103,7 +120,7 @@ export default function AppWithContext() {
           <Text>loading...</Text>
         </AuthLoading>
         <Unauthenticated>
-          <LoginScreen />
+          <LoginScreen deviceId={deviceId} />
         </Unauthenticated>
       </View>
     </>
