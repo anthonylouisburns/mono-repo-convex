@@ -6,28 +6,33 @@ import { AntDesign } from "@expo/vector-icons";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { makeRedirectUri } from "expo-auth-session";
 import { openAuthSessionAsync } from "expo-web-browser";
-
+import { useConvexAuth } from 'convex/react';
+import OsLogger from 'react-native-os-logger'
 
 const redirectTo = makeRedirectUri();
 
-const LoginScreen = () => {
+const LoginScreen = ({ deviceId }: { deviceId: string }) => {
   const { signIn } = useAuthActions()
   const disabled_button = false
+  const { isLoading, isAuthenticated } = useConvexAuth();
 
-//[ ] https://labs.convex.dev/auth/config/oauth#callback-url
-//[ ] https://labs.convex.dev/auth/config/oauth#environment-variables
+  //[ ] https://labs.convex.dev/auth/config/oauth#callback-url
+  //[ ] https://labs.convex.dev/auth/config/oauth#environment-variables
 
   const handleSignIn = async (authType: string) => {
     const { redirect } = await signIn(authType, { redirectTo });
-    console.log("1", redirect)
+    console.log("everwhz.LoginScreen 1", redirect, isLoading, isAuthenticated)
     const result = await openAuthSessionAsync(redirect!.toString(), redirectTo);
-    console.log("2")
+    console.log("everwhz.LoginScreen 2", result)
     if (result.type === "success") {
       const { url } = result;
       const code = new URL(url).searchParams.get("code")!;
-      console.log("3")
+      console.log("everwhz.LoginScreen 3", code, url)
       await signIn(authType, { code });
-      console.log("4")
+      console.log("everwhz.LoginScreen 4 isAuthenticated")
+    } else {
+      console.error("error", result);
+
     }
   };
 
@@ -40,7 +45,20 @@ const LoginScreen = () => {
         />
         <Text style={styles.title}>Log in to your account</Text>
         <Text style={styles.subtitle}>Welcome! Please login below.</Text>
-        <Text style={[styles.buttonGoogle, { fontSize: 30 }]} onPress={() => handleSignIn('github')}>Continue with GitHub</Text>
+
+        <TouchableOpacity
+          style={disabled_button ? [styles.buttonGoogle, { opacity: .2 }] : styles.buttonGoogle}
+          onPress={() => handleSignIn('github')}
+        >
+          {/* <Image
+            style={styles.googleIcon}
+            source={require('../assets/icons/google.png')}
+          /> */}
+          <Text style={{ ...styles.buttonText, color: '#344054' }}>
+            Continue with GitHub
+          </Text>
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={disabled_button ? [styles.buttonGoogle, { opacity: .2 }] : styles.buttonGoogle}
           onPress={() => handleSignIn('google')}
@@ -70,6 +88,7 @@ const LoginScreen = () => {
         <View style={styles.signupContainer}>
           <Text style={{ fontFamily: 'Regular' }}>Don’t have an account? </Text>
           <Text>Sign up above.</Text>
+          <Text>{deviceId}</Text>
         </View>
       </View>
     </View>

@@ -24,7 +24,7 @@
         ]
       },
       "bundleIdentifier": "com.burnstony.everwhz",
-      "buildNumber": "10",
+      "buildNumber": "13",
       "entitlements": {
         "com.apple.developer.applesignin": "Default"
       }

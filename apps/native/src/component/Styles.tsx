@@ -8,6 +8,9 @@ export const styles = StyleSheet.create({
     selected: {
       color: 'green'
     },
+    exit: {
+      color: 'red'
+    },
     link: {
       color: 'blue'
     },

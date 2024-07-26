@@ -42,4 +42,5 @@ yarn-error.log*
 .todo
 my-cache/
 AuthKey_5327AZB24G.p8
+apple_private_key.pk
 

@@ -15,7 +15,7 @@ import { useAuthActions } from '@convex-dev/auth/dist/react';
 export const EverwhzHeader = ({ navigation, page }) => {
   // [ ] get user info from backend
   const user  = {"firstName": "Anthony L Burns", "imageUrl": "../assets/icons/logo.png"}
-  const imageUrl = user?.imageUrl;
+  const imageUrl = undefined;
   const firstName = user?.firstName;
   const { signOut } = useAuthActions();
 
@@ -106,12 +106,13 @@ export const EverwhzHeader = ({ navigation, page }) => {
             logOut()
           }
         >
+
           {imageUrl ? (
             // <Image style={styles.avatarSmall} source={{ uri: imageUrl }} />
             // [ ] use data from backend
             <Image style={styles.avatarSmall} source={require('../assets/icons/logo.png')}  />
           ) : (
-            <Text>{firstName ? firstName : ''}</Text>
+            <Text style={styles.exit}>EXIT</Text>
           )}
         </TouchableOpacity>
       </View>
