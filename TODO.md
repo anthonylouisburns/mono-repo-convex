@@ -20,6 +20,9 @@ BUG
 [ ] apple log in with convex
 [ ] use icon from oauth
 
+[ ]  expo@51.0.14 - expected version: ~51.0.22
+[ ] react-native-safe-area-context@4.10.1 - expected version: 4.10.5
+
 [ ] ios release
 [ ] support page
 [ ] android release
