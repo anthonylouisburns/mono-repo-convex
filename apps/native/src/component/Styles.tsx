@@ -11,6 +11,9 @@ export const styles = StyleSheet.create({
     exit: {
       color: 'red'
     },
+    enter: {
+      color: 'green'
+    },
     link: {
       color: 'blue'
     },
