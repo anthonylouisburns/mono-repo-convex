@@ -17,6 +17,7 @@ BUG
 [x]   react-native@0.74.2 - expected version: 0.74.3
 [x] episode condinues to play on log out
 
+[ ] paly icon and play from anywhere
 [ ] apple log in with convex
 [ ] use icon from oauth
 
