@@ -45,7 +45,7 @@ export const addPendingPodcast = mutation({
         if (args.rss_url.trim().length === 0) {
             return { error: "empty arg" };
         }
-
+    
         const existing = await ctx.db.query("podcast").withIndex("rss_url", q => q.eq("rss_url", args.rss_url)).unique();
         if (existing) {
             return { error: "existing" }
@@ -55,11 +55,14 @@ export const addPendingPodcast = mutation({
             return { error: "invalid url" }
         }
 
-        const user = await currentUser(ctx, {});
+        const user_id = await auth.getUserId(ctx)
+        if (!user_id) {
+            throw new Error("No User Found");
+        }
 
         const id = await ctx.db.insert("pending_podcast", {
             rss_url: args.rss_url,
-            user_id: user._id
+            user_id: user_id
         });
 
         console.log("added pending podcast {id} {args.name}");

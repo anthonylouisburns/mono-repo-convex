@@ -6,7 +6,7 @@ const schema = defineSchema({
   ...authTables,
   pending_podcast: defineTable({
     rss_url: v.string(),
-    user_id: v.id("user")
+    user_id: v.id("users")
   })
     .index("rss_user", ["user_id", "rss_url"]),
   podcast: defineTable({
