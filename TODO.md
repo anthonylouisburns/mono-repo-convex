@@ -17,8 +17,15 @@ BUG
 [x]   react-native@0.74.2 - expected version: 0.74.3
 [x] episode condinues to play on log out
 
-[ ] apple log in with convex
+[ ] login options not straight to sign in
+[ ] play icon and play from anywhere
+[ ] headphone controls
+[x] apple log in with convex
 [ ] use icon from oauth
+[x] remove underlines from web links
+
+[ ]  expo@51.0.14 - expected version: ~51.0.22
+[ ] react-native-safe-area-context@4.10.1 - expected version: 4.10.5
 
 [ ] ios release
 [ ] support page
@@ -62,3 +69,11 @@ PHASE II
 [ ] (node:25735) [DEP0044] DeprecationWarning: The `util.isArray` API is deprecated. Please use `Array.isArray()` instead. - during run preview build
 [ ] set up resend for sending emails and magic link
 [ ] app stiore connect setting to stop having to manually state not using encryption
+
+
+https://labs.convex.dev/auth/setup
+npm create convex@latest
+
+https://turbo.build/repo/docs/guides/frameworks/vite
+npm create vite@latest apps/my-app
+

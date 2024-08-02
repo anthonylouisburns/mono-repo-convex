@@ -41,8 +41,8 @@
     "turbo-cli": "^0.39.6"
   },
   "resolutions": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "expo": "51.0.14",
     "expo-web-browser": "13.0.3",
     "@babel/core": "7.24.0",

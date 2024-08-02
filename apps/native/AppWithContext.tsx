@@ -15,15 +15,15 @@ import uuid from 'react-uuid'
 const deviceIdKey = "everwhz-deviceId"
 
 export const getDeviceId = async () => {
-    let deviceId = await SecureStore.getItemAsync(deviceIdKey);
+  let deviceId = await SecureStore.getItemAsync(deviceIdKey);
 
-    if (!deviceId) {
-      deviceId = uuid()
-      await SecureStore.setItemAsync(deviceIdKey, deviceId);
-    }
-
-    return deviceId;
+  if (!deviceId) {
+    deviceId = uuid()
+    await SecureStore.setItemAsync(deviceIdKey, deviceId);
   }
+
+  return deviceId;
+}
 
 export default function AppWithContext() {
   LogBox.ignoreLogs(['Warning: ...']);
@@ -60,7 +60,7 @@ export default function AppWithContext() {
   WebBrowser.maybeCompleteAuthSession();
 
   useEffect(() => {
-      getDeviceId().then(id => setDeviceId(id))
+    getDeviceId().then(id => setDeviceId(id))
   }, []);
   useEffect(() => {
     Audio.setAudioModeAsync({
@@ -94,34 +94,29 @@ export default function AppWithContext() {
             barStyle="light-content"
           />
         </View>
-        <Authenticated>
-          <AudioContext.Provider
-            value={{
-              sound,
-              setSound,
-              player_podcast_name,
-              set_player_podcast_name,
-              duration,
-              set_duration,
-              position,
-              set_position,
-              podcast_id,
-              set_podcast_id,
-              player_episode_id,
-              set_player_episode_id,
-              isPlaying,
-              setIsPlaying
-            }}
-          >
-            <Navigation />
-          </AudioContext.Provider>
-        </Authenticated>
         <AuthLoading>
           <Text>loading...</Text>
         </AuthLoading>
-        <Unauthenticated>
-          <LoginScreen deviceId={deviceId} />
-        </Unauthenticated>
+        <AudioContext.Provider
+          value={{
+            sound,
+            setSound,
+            player_podcast_name,
+            set_player_podcast_name,
+            duration,
+            set_duration,
+            position,
+            set_position,
+            podcast_id,
+            set_podcast_id,
+            player_episode_id,
+            set_player_episode_id,
+            isPlaying,
+            setIsPlaying
+          }}
+        >
+          <Navigation />
+        </AudioContext.Provider>
       </View>
     </>
   );

@@ -1,13 +1,32 @@
 
 
-export function timedisplay(dateString: string) {
-    const y = dateString.slice(0, -4)
-    const m = dateString.slice(-4, -2)
-    const d = dateString.slice(-2)
+export function timedisplay(dString: string) {
+    const y = dString.slice(0, -4)
+    const m = dString.slice(-4, -2)
+    const d = dString.slice(-2)
+
     var dateString = y
-    if(dateString.slice(0,1)=="-"){
-        dateString = dateString.slice(1)+" BC"
+    var era = ""
+
+    if (dateString.slice(0, 1) == "-") {
+        era = " BC"
+        dateString = dateString.slice(1)
+    } else {
+        if (dateString.slice(0, 2) != "19" && dateString.slice(0, 2) != "20") {
+            era = " AD"
+        }
     }
+    
+    if (dateString.slice(0, 1) == "0") {
+        dateString = dateString.slice(1)
+        if (dateString.slice(0, 1) == "0") {
+            dateString = dateString.slice(1)
+            if (dateString.slice(0, 1) == "0") {
+                dateString = dateString.slice(1)
+            }
+        }
+    }
+
     if (m != "00") {
         dateString += "-" + m
 
@@ -15,5 +34,7 @@ export function timedisplay(dateString: string) {
             dateString += "-" + d
         }
     }
+
+    dateString += era
     return <>{dateString}</>
 }

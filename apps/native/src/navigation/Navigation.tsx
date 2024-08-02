@@ -6,6 +6,7 @@ import Podcasts from '../screens/Podcasts';
 import Episodes from '../screens/Episodes';
 import Episode from '../screens/Episode';
 import Player from '../component/Player';
+import LoginScreen from '../screens/LoginScreen';
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
@@ -22,6 +23,7 @@ const Navigation = () => {
           <Stack.Screen name="Podcasts" component={Podcasts} />
           <Stack.Screen name="Episodes" component={Episodes} />
           <Stack.Screen name="Episode" component={Episode} />
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

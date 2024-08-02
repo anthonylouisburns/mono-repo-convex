@@ -10,14 +10,14 @@ import { useContext, } from 'react';
 import { AudioContext } from '../../AudioContext'
 import { styles } from './Styles';
 import { useAuthActions } from '@convex-dev/auth/dist/react';
+import { Authenticated, Unauthenticated, useConvexAuth } from 'convex/react';
+import { auth } from '@packages/backend/convex/auth';
 
 
 export const EverwhzHeader = ({ navigation, page }) => {
   // [ ] get user info from backend
-  const user  = {"firstName": "Anthony L Burns", "imageUrl": "../assets/icons/logo.png"}
-  const imageUrl = undefined;
-  const firstName = user?.firstName;
   const { signOut } = useAuthActions();
+  const { isAuthenticated } = useConvexAuth();
 
   const {
     podcast_id,
@@ -27,11 +27,6 @@ export const EverwhzHeader = ({ navigation, page }) => {
 
   function logOut() {
     console.log("logging out")
-
-    if (sound) {
-      sound.stopAsync()
-      sound.unloadAsync()
-    }
     signOut()
   }
 
@@ -95,6 +90,22 @@ export const EverwhzHeader = ({ navigation, page }) => {
     }
   }
 
+  function log_in_out() {
+    if (page == 'login') {
+      return <></>
+    } else {
+      return (
+        <>
+          <Authenticated>
+            <Text style={styles.exit}>EXIT</Text>
+          </Authenticated>
+          <Unauthenticated>
+            <Text style={styles.enter}>LOGIN</Text>
+          </Unauthenticated>
+        </>
+      );
+    }
+  }
   return (
     <>
       <View style={styles.yourNotesContainer}>
@@ -102,18 +113,14 @@ export const EverwhzHeader = ({ navigation, page }) => {
         <Image style={styles.avatarSmall} source={require('../assets/icons/logo.png')} />
         <Text style={styles.rainbowText}>everwhz</Text>
         <TouchableOpacity
-          onPress={() =>
-            logOut()
-          }
+          onPress={() => {
+            if (isAuthenticated) {
+              logOut()
+            } 
+            navigation.navigate('LoginScreen')
+          }}
         >
-
-          {imageUrl ? (
-            // <Image style={styles.avatarSmall} source={{ uri: imageUrl }} />
-            // [ ] use data from backend
-            <Image style={styles.avatarSmall} source={require('../assets/icons/logo.png')}  />
-          ) : (
-            <Text style={styles.exit}>EXIT</Text>
-          )}
+          {log_in_out()}
         </TouchableOpacity>
       </View>
       <View style={styles.links}>

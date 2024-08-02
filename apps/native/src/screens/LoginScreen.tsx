@@ -8,10 +8,11 @@ import { makeRedirectUri } from "expo-auth-session";
 import { openAuthSessionAsync } from "expo-web-browser";
 import { useConvexAuth } from 'convex/react';
 import OsLogger from 'react-native-os-logger'
+import { EverwhzHeader } from '../component/EverwhzHeader';
 
 const redirectTo = makeRedirectUri();
 
-const LoginScreen = ({ deviceId }: { deviceId: string }) => {
+const LoginScreen = ({ navigation }) => {
   const { signIn } = useAuthActions()
   const disabled_button = false
   const { isLoading, isAuthenticated } = useConvexAuth();
@@ -30,14 +31,15 @@ const LoginScreen = ({ deviceId }: { deviceId: string }) => {
       console.log("everwhz.LoginScreen 3", code, url)
       await signIn(authType, { code });
       console.log("everwhz.LoginScreen 4 isAuthenticated")
+      navigation.navigate('Timeline')
     } else {
       console.error("error", result);
-
     }
   };
 
   return (
     <View style={styles.container}>
+      <EverwhzHeader navigation={navigation} page="login" />
       <View style={styles.card}>
         <Image
           source={require('../assets/icons/logo.png')} // Ensure the correct path to your logo image file
@@ -88,7 +90,6 @@ const LoginScreen = ({ deviceId }: { deviceId: string }) => {
         <View style={styles.signupContainer}>
           <Text style={{ fontFamily: 'Regular' }}>Don’t have an account? </Text>
           <Text>Sign up above.</Text>
-          <Text>{deviceId}</Text>
         </View>
       </View>
     </View>

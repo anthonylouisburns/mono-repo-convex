@@ -6,7 +6,7 @@ const schema = defineSchema({
   ...authTables,
   pending_podcast: defineTable({
     rss_url: v.string(),
-    user_id: v.id("user")
+    user_id: v.id("users")
   })
     .index("rss_user", ["user_id", "rss_url"]),
   podcast: defineTable({
@@ -44,11 +44,13 @@ const schema = defineSchema({
   })
   .index("tokenIdentifier", ["tokenIdentifier","issuer"]),
   play_status: defineTable({
-    tokenIdentifier: v.string(),
+    user_id: v.optional(v.id("users")),
+    device_id: v.optional(v.string()),
     episode_id: v.id("episode"),
     position: v.number()
   })
-  .index("token", ["tokenIdentifier","episode_id"]),
+  .index("user", ["user_id","episode_id"])
+  .index("device", ["device_id","episode_id"]),
   podcast_suggestions: defineTable({
     suggestions: v.array(v.string()),
   }),

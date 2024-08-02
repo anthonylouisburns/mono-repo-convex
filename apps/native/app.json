@@ -24,7 +24,7 @@
         ]
       },
       "bundleIdentifier": "com.burnstony.everwhz",
-      "buildNumber": "13",
+      "buildNumber": "15",
       "entitlements": {
         "com.apple.developer.applesignin": "Default"
       }
@@ -35,7 +35,8 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.burnstony.everwhz",
-      "versionCode": 3
+      "versionCode": 5,
+      "blockedPermissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
