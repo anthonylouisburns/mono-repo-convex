@@ -2,6 +2,7 @@
 
 export EXPO_NO_CAPABILITY_SYNC=1 
 eas build --platform ios --auto-submit
+eas build --platform android --auto-submit
 
 ## OR
 

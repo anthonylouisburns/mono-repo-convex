@@ -10,7 +10,7 @@ export default function Podcasts() {
   const podcasts = useQuery(api.everwhz.podcasts);
   const addPendingPodcast = useMutation(api.everwhz.addPendingPodcast);
   const total_episodes = podcasts?.reduce((acc, podcast) => acc + (podcast.number_of_episodes || 0), 0)
-  const [name, setName] = useState('');
+  const [, setName] = useState('');
   const [rss, setRss] = useState('');
 
   return <div>
@@ -25,7 +25,7 @@ export default function Podcasts() {
         rss: <input type="text" className='text-input' value={rss} onChange={e => setRss(e.target.value)} id="podcast_rss" /></div>
       {podcasts &&
         podcasts.map((podcast) => (
-          <Podcast podcast={podcast} podcastColor='black' setName={setName} setRss={setRss} key={podcast._id}/>
+          <Podcast podcast={podcast} podcastColor='black'  setName={setName} setRss={setRss} key={podcast._id}/>
         ))}
     </div>
   </div>
