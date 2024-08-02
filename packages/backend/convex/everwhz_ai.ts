@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { internalAction, internalMutation, query } from './_generated/server';
+import { internalAction, internalMutation } from './_generated/server';
 import { v } from 'convex/values';
 import { api, internal } from "./_generated/api";
 import { missingEnvVariableUrl } from './utils';

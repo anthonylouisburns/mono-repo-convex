@@ -1,6 +1,6 @@
 'use client';
 
-import { usePaginatedQuery, useQuery, } from 'convex/react';
+import { useQuery, } from 'convex/react';
 import { api } from '@packages/backend/convex/_generated/api';
 import { Id } from '@packages/backend/convex/_generated/dataModel';
 import { EpisodeTitle } from '../timeline/EpisodeTitle';

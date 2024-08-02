@@ -5,7 +5,7 @@ import { api } from '@packages/backend/convex/_generated/api';
 import { Dispatch, SetStateAction } from "react";
 import Link from "next/link";
 
-export const Podcast = function Podcast({ podcast, podcastColor, setName, setRss }: { podcast: Doc<"podcast">, podcastColor: string, setName: Dispatch<SetStateAction<string>>, setRss: Dispatch<SetStateAction<string>> }): JSX.Element {
+export const Podcast = function Podcast({ podcast, setName, setRss }: { podcast: Doc<"podcast">, podcastColor: string, setName: Dispatch<SetStateAction<string>>, setRss: Dispatch<SetStateAction<string>> }): JSX.Element {
     const deletePodcast = useMutation(api.everwhz.deletePodcast);
     const redStyle = { color: "red" }
     const updatePodcastRssData = useMutation(api.everwhz.updatePodcastRssData);

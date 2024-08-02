@@ -1,11 +1,9 @@
 "use client";
 
-import { Doc, Id } from "@packages/backend/convex/_generated/dataModel";
-import { Options } from "distinct-colors"
-import distinctColors from "distinct-colors"
+import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { api } from '@packages/backend/convex/_generated/api';
-import { useQuery, useMutation } from 'convex/react';
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useQuery } from 'convex/react';
+import { Dispatch, SetStateAction } from "react";
 import Select from 'react-select'
 
 export const FIRST_ELEMENT = { label: "-", value: null, key: "-" }

@@ -1,6 +1,5 @@
 export function msToTime(duration:number) {
-    const milliseconds = Math.floor((duration % 1000) / 10),
-        seconds = Math.floor((duration / 1000) % 60),
+    const seconds = Math.floor((duration / 1000) % 60),
         minutes = Math.floor((duration / (1000 * 60)) % 60),
         hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
 
