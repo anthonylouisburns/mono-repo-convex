@@ -18,15 +18,6 @@
       #d2e4f2 127.55%);
 }
 
-.bg_image {
-  background:
-    linear-gradient(181deg,
-      rgba(255, 255, 255, 0) 57.92%,
-      #fff 97.09%,
-      rgba(255, 255, 255, 0) 127.09%),
-    url('/images/background.png'),
-    lightgray 0% 0% / 261.2499952316284px 261.2499952316284px repeat;
-}
 
 .button {
   border-radius: 8px;
