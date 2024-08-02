@@ -11,6 +11,9 @@ export const styles = StyleSheet.create({
     exit: {
       color: 'red'
     },
+    enter: {
+      color: 'green'
+    },
     link: {
       color: 'blue'
     },
@@ -64,18 +67,18 @@ export const styles = StyleSheet.create({
       right: 0,
     },
     logo: {
-      width: 46,
+      width: 46, 
       height: 46,
       borderRadius: 20,
       resizeMode: 'contain',
     },
     title: {
-      fontSize: RFValue(17.5),
+      // fontSize: RFValue(17.5),
       fontFamily: 'MMedium',
       alignSelf: 'center',
     },
     podcast_name: {
-      fontSize: RFValue(12.5),
+      // fontSize: RFValue(12.5),
     },
     yourNotesContainer: {
       flexDirection: 'row',
@@ -104,7 +107,7 @@ export const styles = StyleSheet.create({
     },
     searchInput: {
       flex: 1,
-      fontSize: RFValue(15),
+      // fontSize: RFValue(15),
       fontFamily: 'MRegular',
       color: '#2D2D2D',
     },
@@ -158,7 +161,7 @@ export const styles = StyleSheet.create({
     emptyStateText: {
       textAlign: 'center',
       alignSelf: 'center',
-      fontSize: RFValue(15),
+      // fontSize: RFValue(15),
       color: 'grey',
       fontFamily: 'MLight',
     },
@@ -173,11 +176,11 @@ export const styles = StyleSheet.create({
       borderColor: 'rgba(0, 0, 0, 0.59)',
     },
     rainbowText: {
-      fontFamily: 'Courier New',
+      fontFamily: "monospace",
       backgroundColor: 'linear',
       textShadowColor: 'navy',
       fontSize: 35,
-      fontWeight: 900
+      // fontWeight: 900
     },
     dangerousTitle: {
       transform: 'scale(1.2)',

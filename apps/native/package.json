@@ -26,7 +26,7 @@
     "expo-status-bar": "~1.12.1",
     "expo-web-browser": "^13.0.3",
     "hermes": "^0.4.4",
-    "react": "18.2.0",
+    "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-native": "^0.74.3",
     "react-native-asset": "^2.1.1",

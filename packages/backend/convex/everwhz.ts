@@ -3,6 +3,7 @@ import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
 import { Doc, Id } from "./_generated/dataModel";
 const { XMLParser } = require("fast-xml-parser");
+import { auth } from "./auth.js";
 
 function isValidUrl(urlString: string): Boolean {
     var urlPattern = new RegExp('^(https?:\\/\\/)?' + // validate protocol
@@ -44,7 +45,7 @@ export const addPendingPodcast = mutation({
         if (args.rss_url.trim().length === 0) {
             return { error: "empty arg" };
         }
-
+    
         const existing = await ctx.db.query("podcast").withIndex("rss_url", q => q.eq("rss_url", args.rss_url)).unique();
         if (existing) {
             return { error: "existing" }
@@ -54,11 +55,14 @@ export const addPendingPodcast = mutation({
             return { error: "invalid url" }
         }
 
-        const user = await currentUser(ctx, {});
+        const user_id = await auth.getUserId(ctx)
+        if (!user_id) {
+            throw new Error("No User Found");
+        }
 
         const id = await ctx.db.insert("pending_podcast", {
             rss_url: args.rss_url,
-            user_id: user._id
+            user_id: user_id
         });
 
         console.log("added pending podcast {id} {args.name}");
@@ -178,12 +182,12 @@ export const episodeName = query({
     //TODO should not be optional!!
     args: { id: v.optional(v.id("episode")) },
 
-    handler: async (ctx, args):Promise<{episode:Doc<"episode"> | null, podcast:Doc<"podcast"> | null}> => {
+    handler: async (ctx, args): Promise<{ episode: Doc<"episode"> | null, podcast: Doc<"podcast"> | null }> => {
         if (args.id == null) {
             return { episode: null, podcast: null };
         }
         const episode = await ctx.db.get(args.id)
-        if(!episode){
+        if (!episode) {
             return { episode: null, podcast: null }
         }
         const podcast = await ctx.db.get(episode.podcast_id)
@@ -231,9 +235,9 @@ export const deletePodcast = mutation({
 export const timeline = query({
     handler: async (ctx) => {
         const timeSpans = await ctx.db.query("timespan")
-        .withIndex("start")
-        .order("asc")
-        .collect();
+            .withIndex("start")
+            .order("asc")
+            .collect();
 
         const data: Array<{ span: Doc<"timespan">, podcast: Doc<"podcast"> | null, episode: Doc<"episode"> | null }> = []
 
@@ -312,7 +316,7 @@ export const updatePodcastRssData = mutation({
         console.log("updateRssData");
         const podcast = await ctx.db.get(id)
 
-        if(podcast){
+        if (podcast) {
             console.log("updating podcast {id}");
             await ctx.scheduler.runAfter(0, api.everwhz.downloadRssBody, {
                 id: podcast._id,
@@ -412,13 +416,13 @@ export const patchPodcastRssJson = mutation({
         const max_episode = items.length
         const title = rss_json.rss.channel.title
 
-        ctx.db.patch(id, { number_of_episodes: max_episode, title: title})
+        ctx.db.patch(id, { number_of_episodes: max_episode, title: title })
         for (const [index, item] of rss_json.rss.channel.item.entries()) {
             const e_n = Math.ceil(max_episode - index)
             const episode = await ctx.db.query("episode")
                 .withIndex("podcast_episode_number", (q) => q.eq("podcast_id", args.id).eq("episode_number", e_n))
                 .unique()
-                
+
             console.log("item", item.title)
             const title = item.title
 
@@ -484,54 +488,98 @@ export const store = mutation({
     },
 });
 
+// [ ] simplify this function
 export const playStatus = mutation({
-    args: { id: v.id("episode"), position: v.number() },
+    args: { id: v.id("episode"), device_id: v.optional(v.string()), position: v.number() },
     handler: async (ctx, args) => {
-        const { id, position } = args;
-        const identity = await ctx.auth.getUserIdentity();
-        const tokenIdentifier = identity?.tokenIdentifier!;
-        console.log(id, tokenIdentifier, position)
+        const { id, device_id, position } = args;
+        const user_id = await auth.getUserId(ctx)
 
-        const play_status = await ctx.db
-            .query("play_status")
-            .withIndex("token", (q) =>
-                q.eq("tokenIdentifier", tokenIdentifier).eq("episode_id", id),
-            )
-            .unique();
+        console.log("playStatus", id, user_id, position)
 
-        if (play_status !== null) {
-            await ctx.db.patch(play_status._id, { position: position });
-            return
+        if (user_id) {
+            const play_status = await ctx.db
+                .query("play_status")
+                .withIndex("user", (q) =>
+                    q.eq("user_id", user_id).eq("episode_id", id),
+                )
+                .unique();
+
+            if (play_status !== null) {
+                await ctx.db.patch(play_status._id, { position: position, device_id: device_id });
+                return
+            }
+            if (play_status == null){
+                const play_status = await ctx.db
+                .query("play_status")
+                .withIndex("device", (q) =>
+                    q.eq("device_id", device_id).eq("episode_id", id),
+                )
+                .unique();
+                if (play_status !== null) {
+                    await ctx.db.patch(play_status._id, { position: position, user_id: user_id });
+                    return
+                }
+            }
+
+            return await ctx.db.insert("play_status", {
+                user_id: user_id,
+                device_id: device_id,
+                episode_id: id,
+                position: position,
+            });
+        } else {
+            const play_status = await ctx.db
+                .query("play_status")
+                .withIndex("device", (q) =>
+                    q.eq("device_id", device_id).eq("episode_id", id),
+                )
+                .unique();
+
+            if (play_status !== null) {
+                await ctx.db.patch(play_status._id, { position: position });
+                return
+            }
+
+            return await ctx.db.insert("play_status", {
+                device_id: device_id,
+                episode_id: id,
+                position: position,
+            });
+
         }
-
-        return await ctx.db.insert("play_status", {
-            tokenIdentifier: tokenIdentifier,
-            episode_id: id,
-            position: position,
-        });
     },
 });
 
 export const getPlayStatus = query({
-    args: { id: v.optional(v.id("episode")) },
+    args: { id: v.optional(v.id("episode")), device_id: v.optional(v.string()) },
     handler: async (ctx, args) => {
-        const { id } = args;
+        const { id, device_id } = args;
         if (id == null) {
             return
         }
         // console.log("getPlayStatus id", id)
-        const identity = await ctx.auth.getUserIdentity();
-        const tokenIdentifier = identity?.tokenIdentifier!;
-        // console.log("getPlayStatus tokenIdentifier", tokenIdentifier)
+        const user_id = await auth.getUserId(ctx)
+
+        if (user_id) {
+            const play_status = await ctx.db
+                .query("play_status")
+                .withIndex("user", (q) =>
+                    q.eq("user_id", user_id).eq("episode_id", id),
+                )
+                .unique();
+            // console.log("getPlayStatus play_status", play_status)
+            if (play_status) {
+                return play_status
+            }
+        }
 
         const play_status = await ctx.db
             .query("play_status")
-            .withIndex("token", (q) =>
-                q.eq("tokenIdentifier", tokenIdentifier).eq("episode_id", id),
+            .withIndex("device", (q) =>
+                q.eq("device_id", device_id).eq("episode_id", id),
             )
             .unique();
-        // console.log("getPlayStatus play_status", play_status)
-
         return play_status
     },
 });
