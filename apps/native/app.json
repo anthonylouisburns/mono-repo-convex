@@ -35,7 +35,8 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.burnstony.everwhz",
-      "versionCode": 5
+      "versionCode": 5,
+      "blockedPermissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
