@@ -1,33 +1,18 @@
 
-FeatureRequest
-[x] remove title from create podcast
-[x] reformat buttons
-[x] reformat text box
-BUG
-[x] web google icon not showing custom image - false positive it works for some but not if you have a clerk account?
-[x] iphone store no logo
-[x] privacy statement
-[x] merge all branches together
-[x] debug login page
-[x] clean up merge - login and new UI turbo
-[x] add apple login
+WEB
+[ ] login options not straight to sign in !!
 
-[x] expo@51.0.14 - expected version: ~51.0.20
-[x]   expo-font@12.0.7 - expected version: ~12.0.8
-[x]   react-native@0.74.2 - expected version: 0.74.3
-[x] episode condinues to play on log out
-
-[ ] login options not straight to sign in
+GOOGLE PLAY
 [ ] play icon and play from anywhere
+
+NATIVE
 [ ] headphone controls
-[x] apple log in with convex
 [ ] use icon from oauth
-[x] remove underlines from web links
 
-[ ]  expo@51.0.14 - expected version: ~51.0.22
-[ ] react-native-safe-area-context@4.10.1 - expected version: 4.10.5
+APPLE STORE
+[x] ios release
 
-[ ] ios release
+FEATURES
 [ ] support page
 [ ] android release
 [ ] AI suggestions

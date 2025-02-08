@@ -55,11 +55,13 @@ export default function Header() {
           <p></p>
         </Unauthenticated>
       </div>
-      <div className='header-center'>
-        <div>
-          {navigation("timeline")} | {navigation("podcasts")} | {navigation("episodes")} | {navigation("episode")}
+      <Authenticated>
+        <div className='header-center'>
+          <div>
+            {navigation("timeline")} | {navigation("podcasts")} | {navigation("episodes")} | {navigation("episode")}
+          </div>
         </div>
-      </div>
+      </Authenticated>
     </>
   );
 }
