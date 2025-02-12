@@ -10,9 +10,13 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"
   },
   "devDependencies": {
-    "@types/react": "^18",
+    "@types/react": "^19.0.8",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.20",
     "concurrently": "^8.2.2",
+    "postcss": "^8.5.1",
     "prettier": "^3.1.0",
+    "tailwindcss": "3.4.1",
     "turbo": "latest"
   },
   "engines": {
@@ -25,7 +29,12 @@
   "dependencies": {
     "@auth/core": "^0.34.1",
     "@convex-dev/auth": "^0.0.43",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/lab": "6.0.0-beta.26",
+    "@mui/material": "^6.4.3",
     "@packages/backend": "^1.0.0",
+    "@tailwindcss/postcss": "^4.0.5",
     "convex": "^1.12.2",
     "expo": "^51.0.21",
     "expo-auth-session": "^5.5.2",
@@ -36,6 +45,7 @@
     "react-native": "^0.74.3",
     "react-native-device-info": "^11.1.0",
     "react-native-os-logger": "^1.0.1",
+    "react-select": "^5.10.0",
     "react-uuid": "^2.0.0",
     "sharp": "^0.33.4",
     "turbo-cli": "^0.39.6"
