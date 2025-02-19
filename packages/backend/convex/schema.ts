@@ -6,23 +6,28 @@ const schema = defineSchema({
   ...authTables,
   pending_podcast: defineTable({
     rss_url: v.string(),
-    user_id: v.id("users")
+    user_id: v.union(v.id("users"), v.literal("INTERNAL"))
   })
     .index("rss_user", ["user_id", "rss_url"]),
   podcast: defineTable({
-    name: v.optional(v.string()),
     title: v.optional(v.string()),
+    description: v.optional(v.string()),
     rss_url: v.string(),
     rss_body: v.optional(v.id("_storage")),
     number_of_episodes: v.optional(v.number()),
   })
     .index("rss_url", ["rss_url"]),
+    // years, geonames, location, time_period
   episode: defineTable({
     podcast_id: v.id("podcast"),
     episode_number: v.number(),
+    podcast_title: v.optional(v.string()),
     title: v.optional(v.string()),
-    // pud_date: v.string(),
-    // media_url: v.string(),
+    episode_description: v.optional(v.string()),
+    years: v.optional(v.array(v.string())),
+    geonames: v.optional(v.array(v.string())),
+    location: v.optional(v.array(v.string())),
+    time_period: v.optional(v.array(v.string())),
     body: v.any(),
   })
     .index("podcast_episode_number", ["podcast_id", "episode_number"]),
@@ -54,6 +59,12 @@ const schema = defineSchema({
   podcast_suggestions: defineTable({
     suggestions: v.array(v.string()),
   }),
-
+  taddy_charts: defineTable({
+    date: v.string(),
+    chart_type: v.string(),
+    page: v.number(),
+    chart_data: v.any()
+  })
+  .index("chart_index", ["date","chart_type","page"]),
 });
 export default schema;

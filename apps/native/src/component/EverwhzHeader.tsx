@@ -111,7 +111,7 @@ export const EverwhzHeader = ({ navigation, page }) => {
       <View style={styles.yourNotesContainer}>
         {/* @ts-ignore, for css purposes */}
         <Image style={styles.avatarSmall} source={require('../assets/icons/logo.png')} />
-        <Text style={styles.rainbowText}>everwhz</Text>
+        <Text style={styles.rainbowText}>evrwhz</Text>
         <TouchableOpacity
           onPress={() => {
             if (isAuthenticated) {

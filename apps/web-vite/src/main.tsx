@@ -1,6 +1,5 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
 import './globals.css'
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import { ConvexReactClient } from "convex/react";
@@ -8,11 +7,13 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Timeline from './components/timeline/Timeline.tsx';
-import ErrorPage from './components/ErrorPage.tsx';
-import Podcasts from './components/podcasts/Podcasts.tsx';
-import Episodes from './components/episodes/Episodes.tsx';
-import Episode from './components/episode/Episode.tsx';
+import App from './App'
+import Timeline from './components/timeline/Timeline';
+import ErrorPage from './components/ErrorPage';
+import Podcasts from './components/podcasts/Podcasts';
+import Episodes from './components/episodes/Episodes';
+import Episode from './components/episode/Episode';
+
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 const router = createBrowserRouter([

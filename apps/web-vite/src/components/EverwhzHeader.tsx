@@ -43,7 +43,7 @@ export default function Header() {
         </Link>
         <div>
           <h1 className="rainbow-text">
-            everwhz
+            evrwhz
           </h1>
         </div>
         <Authenticated>

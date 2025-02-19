@@ -1,4 +1,4 @@
-import { query, action, mutation } from './_generated/server';
+import { query, action, mutation, internalMutation, MutationCtx } from './_generated/server';
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
 import { Doc, Id } from "./_generated/dataModel";
@@ -42,27 +42,33 @@ export const currentUser = mutation({
 export const addPendingPodcast = mutation({
     args: { rss_url: v.string() },
     handler: async (ctx, args) => {
+        const user_id = await auth.getUserId(ctx)
+        if (!user_id) {
+            throw new Error("No User Found");
+        }
+       await addPendingPodcastInternal(ctx, {rss_url: args.rss_url, user_id: user_id})
+    },
+});
+
+export async function addPendingPodcastInternal(ctx: MutationCtx, args: { rss_url: string, user_id: string }) {
+    console.log("addPendingPodcastInternal", args)
         if (args.rss_url.trim().length === 0) {
             return { error: "empty arg" };
         }
     
+        //todo and description
         const existing = await ctx.db.query("podcast").withIndex("rss_url", q => q.eq("rss_url", args.rss_url)).unique();
         if (existing) {
-            return { error: "existing" }
+            return { status: "existing" }
         }
 
         if (!isValidUrl(args.rss_url)) {
             return { error: "invalid url" }
         }
 
-        const user_id = await auth.getUserId(ctx)
-        if (!user_id) {
-            throw new Error("No User Found");
-        }
-
         const id = await ctx.db.insert("pending_podcast", {
             rss_url: args.rss_url,
-            user_id: user_id
+            user_id: args.user_id as Id<"users">
         });
 
         console.log("added pending podcast {id} {args.name}");
@@ -72,9 +78,18 @@ export const addPendingPodcast = mutation({
             rss: args.rss_url,
         });
 
-        return id
-    },
-});
+    return id
+}
+
+// export const updatePodcastDescription = mutation({
+//     args: { id: v.id("podcast"), rss: v.string() },
+//     handler: async (ctx, args) => {
+//         const response = await fetch(args.rss);
+//         const body = (await response.blob());
+
+//         await ctx.db.patch(args.id, { description: body. })
+//     },
+// });
 
 export const downloadPendingRssBody = action({
     args: {
@@ -125,7 +140,8 @@ export const insertPodcast = mutation({
             pod_id: id,
         });
 
-        await ctx.scheduler.runAfter(0, internal.everwhz_ai.getSuggestions);
+        //TODO: maybe turn back on - current returning empty array
+        // await ctx.scheduler.runAfter(0, internal.everwhz_ai.getSuggestions);
         return id
     },
 });

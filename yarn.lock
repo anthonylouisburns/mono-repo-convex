@@ -2927,6 +2927,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@google/generative-ai@npm:^0.21.0":
+  version: 0.21.0
+  resolution: "@google/generative-ai@npm:0.21.0"
+  checksum: 10c0/cff5946c5964f2380e5097d82bd563d79be27a1a5ac604aaaad3f9ba3382992e4f0a371bd255baabfba4e5bdf296d8ce1410cbd65424afa98e64b2590fe49f3b
+  languageName: node
+  linkType: hard
+
 "@graphql-typed-document-node/core@npm:^3.1.0":
   version: 3.2.0
   resolution: "@graphql-typed-document-node/core@npm:3.2.0"
@@ -9210,6 +9217,7 @@ __metadata:
     "@convex-dev/auth": "npm:^0.0.43"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.0"
+    "@google/generative-ai": "npm:^0.21.0"
     "@mui/lab": "npm:6.0.0-beta.26"
     "@mui/material": "npm:^6.4.3"
     "@packages/backend": "npm:^1.0.0"
@@ -9224,6 +9232,7 @@ __metadata:
     expo-constants: "npm:^16.0.2"
     expo-device: "npm:^6.0.2"
     expo-font: "npm:^12.0.9"
+    openai: "npm:^4.85.1"
     postcss: "npm:^8.5.1"
     prettier: "npm:^3.1.0"
     react: "npm:^18.3.1"
@@ -13609,6 +13618,31 @@ __metadata:
   bin:
     openai: bin/cli
   checksum: 10c0/8ca7cf1e67a91b746402575acff035dc664f4b50f95533229caa581a9c4f16e9692765fc53be3e8b0ecda0c5efc6735e803154b02c7d69119149f622792e0bb0
+  languageName: node
+  linkType: hard
+
+"openai@npm:^4.85.1":
+  version: 4.85.1
+  resolution: "openai@npm:4.85.1"
+  dependencies:
+    "@types/node": "npm:^18.11.18"
+    "@types/node-fetch": "npm:^2.6.4"
+    abort-controller: "npm:^3.0.0"
+    agentkeepalive: "npm:^4.2.1"
+    form-data-encoder: "npm:1.7.2"
+    formdata-node: "npm:^4.3.2"
+    node-fetch: "npm:^2.6.7"
+  peerDependencies:
+    ws: ^8.18.0
+    zod: ^3.23.8
+  peerDependenciesMeta:
+    ws:
+      optional: true
+    zod:
+      optional: true
+  bin:
+    openai: bin/cli
+  checksum: 10c0/2692a84ad58750e1fb0607d8e13fcc7f71b8b00c58b6da1c1140f974c41f28674032f405378ccfe9151cae63c9c12712416999542f3ddaa7e13ad298efab26a9
   languageName: node
   linkType: hard
 
