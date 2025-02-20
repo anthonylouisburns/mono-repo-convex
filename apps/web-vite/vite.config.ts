@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import path, { resolve } from 'path'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
   base: '/',
   server: {
     port: 5173,
@@ -18,5 +22,10 @@ export default defineConfig({
         timeline2: resolve(__dirname, 'timeline2/index.html'),
       },
     },
-  }
+  },
+  resolve: {
+    alias: {
+      '@packages': path.resolve(__dirname, '../../packages'),
+    },
+  },
 }) 

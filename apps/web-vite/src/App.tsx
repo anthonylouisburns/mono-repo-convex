@@ -1,5 +1,4 @@
 
-import './globals.css'
 
 import EverwhzHeader from './components/EverwhzHeader';
 import { Outlet } from 'react-router-dom';
@@ -18,7 +17,7 @@ function App() {
       <EverwhzHeader />
       <PlayerHolder playerEpisodeId={player_episode_id!} />
       <Authenticated>
-        <Outlet context={{ player_episode_id, set_player_episode_id } satisfies PlayerContext} />
+       <Outlet  context={{ player_episode_id, set_player_episode_id }} />  
       </Authenticated>
       <Unauthenticated>
         <SignIn/>
