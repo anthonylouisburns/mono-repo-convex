@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
 import { ConvexAuthProvider } from "@convex-dev/auth/react";
-import { ConvexReactClient } from 'convex/react';
-import React from 'react';
+import { ConvexReactClient } from "convex/react";
+import React from "react";
 import * as SecureStore from "expo-secure-store";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {

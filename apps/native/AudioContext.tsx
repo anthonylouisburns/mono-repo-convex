@@ -1,3 +1,3 @@
-import { createContext } from 'react';
+import { createContext } from "react";
 
-export const AudioContext = createContext(null)
+export const AudioContext = createContext(null);

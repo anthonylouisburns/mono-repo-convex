@@ -1,44 +1,67 @@
 "use client";
 
 import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { api } from '@packages/backend/convex/_generated/api';
-import { useQuery } from 'convex/react';
+import { api } from "@packages/backend/convex/_generated/api";
+import { useQuery } from "convex/react";
 import { Dispatch, SetStateAction } from "react";
-import Select from 'react-select'
+import Select from "react-select";
 
-export const FIRST_ELEMENT = { label: "-", value: null, key: "-" }
+export const FIRST_ELEMENT = { label: "-", value: null, key: "-" };
 
-export const EpisodeSelect = function EpisodeSelect({ podcast_id, selectedOption, setSelectedOption, setSelectedEpisode }:
-    {
-        podcast_id: Id<"podcast"> | null,
-        selectedOption: { label: string, value: string | null, key: string | null } | null,
-        setSelectedOption: Dispatch<SetStateAction<{ label: string, value: string | null, key: string | null } | null>>,
-        setSelectedEpisode: Dispatch<SetStateAction<Id<"episode"> | null>>
-    }): JSX.Element {
-    const episodes = useQuery(api.everwhz.episodes, { podcast_id: (podcast_id) });
+export const EpisodeSelect = function EpisodeSelect({
+  podcast_id,
+  selectedOption,
+  setSelectedOption,
+  setSelectedEpisode,
+}: {
+  podcast_id: Id<"podcast"> | null;
+  selectedOption: {
+    label: string;
+    value: string | null;
+    key: string | null;
+  } | null;
+  setSelectedOption: Dispatch<
+    SetStateAction<{
+      label: string;
+      value: string | null;
+      key: string | null;
+    } | null>
+  >;
+  setSelectedEpisode: Dispatch<SetStateAction<Id<"episode"> | null>>;
+}): JSX.Element {
+  const episodes = useQuery(api.everwhz.episodes, { podcast_id: podcast_id });
 
+  var optionList: Array<{
+    label: string;
+    value: string | null;
+    key: string | null;
+  }> = episodes
+    ? episodes?.map((episode) => {
+        return {
+          label: episode.body.title as string,
+          value: episode._id,
+          key: episode._id,
+        };
+      })
+    : [];
 
-    var optionList: Array<{ label: string, value: string | null, key: string | null }> = episodes ? episodes?.map((episode) => {
-        return { label: (episode.body.title as string), value: (episode._id), key: (episode._id), }
-    }) : []
+  // [ ] allow no episode
+  optionList.unshift(FIRST_ELEMENT);
 
-    // [ ] allow no episode
-    optionList.unshift(FIRST_ELEMENT)
-
-    return <Select
-        className="text-input"
-        options={optionList}
-        onChange={(e) => {
-            if (e) {
-                setSelectedEpisode(e?.value as Id<"episode">)
-                setSelectedOption(e)
-            }
-        }}
-        value={selectedOption}
-        formatOptionLabel={function (data) {
-            return (
-                <span dangerouslySetInnerHTML={{ __html: data.label }} />
-            );
-        }} />
-}
-
+  return (
+    <Select
+      className="text-input"
+      options={optionList}
+      onChange={(e) => {
+        if (e) {
+          setSelectedEpisode(e?.value as Id<"episode">);
+          setSelectedOption(e);
+        }
+      }}
+      value={selectedOption}
+      formatOptionLabel={function (data) {
+        return <span dangerouslySetInnerHTML={{ __html: data.label }} />;
+      }}
+    />
+  );
+};

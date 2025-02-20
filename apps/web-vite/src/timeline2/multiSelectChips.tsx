@@ -14,17 +14,18 @@ export default function MultiSelectChips({ options }: MultiSelectChipsProps) {
       options={options}
       value={selectedValues}
       onChange={(_, newValue) => setSelectedValues(newValue)}
-      freeSolo  // Allows users to add custom values
+      freeSolo // Allows users to add custom values
       renderTags={(value, getTagProps) =>
         value.map((option, index) => (
-          <Chip
-            label={option}
-            {...getTagProps({ index })}
-          />
+          <Chip label={option} {...getTagProps({ index })} />
         ))
       }
       renderInput={(params) => (
-        <TextField {...params} label="Select Technologies" placeholder="Type..." />
+        <TextField
+          {...params}
+          label="Select Technologies"
+          placeholder="Type..."
+        />
       )}
     />
   );

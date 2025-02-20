@@ -1,6 +1,6 @@
-import { registerRootComponent } from 'expo';
+import { registerRootComponent } from "expo";
 
-import App from './App';
+import App from "./App";
 // https://rntp.dev/docs/basics/getting-started
 // import TrackPlayer from 'react-native-track-player';
 

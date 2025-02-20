@@ -3,10 +3,10 @@ import Google from "@auth/core/providers/google";
 import GitHub from "@auth/core/providers/github";
 import Apple from "@auth/core/providers/apple";
 
-
 export const { auth, signIn, signOut, store } = convexAuth({
-
-  providers: [Google, GitHub,
+  providers: [
+    Google,
+    GitHub,
     Apple({
       clientSecret: process.env.AUTH_APPLE_SECRET!,
       client: {
@@ -17,7 +17,7 @@ export const { auth, signIn, signOut, store } = convexAuth({
   ],
   callbacks: {
     async redirect({ redirectTo }) {
-      console.log('redirectTo:', redirectTo)
+      console.log("redirectTo:", redirectTo);
       return redirectTo;
     },
   },

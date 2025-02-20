@@ -1,6 +1,6 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import React from 'react';
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
 interface Props {
   isMobile?: boolean;
@@ -8,12 +8,15 @@ interface Props {
 
 const Logo = () => {
   return (
-    <Link href={'/'}>
+    <Link href={"/"}>
       <div className="flex gap-2 items-center">
-        <Image src={'/images/icons8-nautilus-96.png'} width={40} height={40} alt="logo" />
-          <h1 className="rainbow-text">
-            everwhz
-          </h1>
+        <Image
+          src={"/images/icons8-nautilus-96.png"}
+          width={40}
+          height={40}
+          alt="logo"
+        />
+        <h1 className="rainbow-text">everwhz</h1>
       </div>
     </Link>
   );

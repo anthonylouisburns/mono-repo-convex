@@ -7,7 +7,7 @@ BASIC TESTS
 [ ] log out while episode playing, and log back in
 
 TEST RUNS
-[x] July 12, 2024 - 10:44 
+[x] July 12, 2024 - 10:44
 [x] login apple
 [x] login google
 [x] multi-click both login buttons

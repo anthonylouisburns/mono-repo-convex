@@ -1,98 +1,123 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import React from "react";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 
-import { useContext, } from 'react';
-import { AudioContext } from '../../AudioContext'
-import { styles } from './Styles';
-import { useAuthActions } from '@convex-dev/auth/dist/react';
-import { Authenticated, Unauthenticated, useConvexAuth } from 'convex/react';
-import { auth } from '@packages/backend/convex/auth';
-
+import { useContext } from "react";
+import { AudioContext } from "../../AudioContext";
+import { styles } from "./Styles";
+import { useAuthActions } from "@convex-dev/auth/dist/react";
+import { Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
+import { auth } from "@packages/backend/convex/auth";
 
 export const EverwhzHeader = ({ navigation, page }) => {
   // [ ] get user info from backend
   const { signOut } = useAuthActions();
   const { isAuthenticated } = useConvexAuth();
 
-  const {
-    podcast_id,
-    podcast_name,
-    sound
-  } = useContext(AudioContext);
+  const { podcast_id, podcast_name, sound } = useContext(AudioContext);
 
   function logOut() {
-    console.log("logging out")
-    signOut()
+    console.log("logging out");
+    signOut();
   }
 
   function timeline() {
-    if (page == 'timeline') {
+    if (page == "timeline") {
       return (
-        <><Text style={styles.selected}>timeline</Text> | </>
-      )
+        <>
+          <Text style={styles.selected}>timeline</Text> |{" "}
+        </>
+      );
     } else {
       return (
-        <><Text style={styles.link} onPress={() =>
-          navigation.navigate('Timeline')
-        }>timeline</Text> | </>
-      )
+        <>
+          <Text
+            style={styles.link}
+            onPress={() => navigation.navigate("Timeline")}
+          >
+            timeline
+          </Text>{" "}
+          |{" "}
+        </>
+      );
     }
   }
 
   function podcasts() {
-    if (page == 'podcast') {
+    if (page == "podcast") {
       return (
-        <><Text style={styles.selected}>podcasts</Text> | </>
-      )
+        <>
+          <Text style={styles.selected}>podcasts</Text> |{" "}
+        </>
+      );
     } else {
       return (
-        <><Text style={styles.link} onPress={() =>
-          navigation.navigate('Podcasts')
-        }>podcasts</Text> | </>
-      )
+        <>
+          <Text
+            style={styles.link}
+            onPress={() => navigation.navigate("Podcasts")}
+          >
+            podcasts
+          </Text>{" "}
+          |{" "}
+        </>
+      );
     }
   }
 
   function episodes() {
-    if (page == 'episodes') {
+    if (page == "episodes") {
       return (
-        <><Text style={styles.selected}>episodes</Text> | </>
-      )
+        <>
+          <Text style={styles.selected}>episodes</Text> |{" "}
+        </>
+      );
     } else {
       if (podcast_id) {
         return (
-          <><Text style={styles.link} onPress={() =>
-            navigation.navigate('Episodes', { podcast_id: podcast_id, podcast_name: podcast_name })
-          }>episodes</Text> | </>
-        )
+          <>
+            <Text
+              style={styles.link}
+              onPress={() =>
+                navigation.navigate("Episodes", {
+                  podcast_id: podcast_id,
+                  podcast_name: podcast_name,
+                })
+              }
+            >
+              episodes
+            </Text>{" "}
+            |{" "}
+          </>
+        );
       } else {
         return (
-          <><Text>episodes</Text> | </>
-        )
+          <>
+            <Text>episodes</Text> |{" "}
+          </>
+        );
       }
     }
   }
 
   function episode() {
-    if (page == 'episode') {
+    if (page == "episode") {
       return (
-        <><Text style={styles.selected}>episode</Text></>
-      )
+        <>
+          <Text style={styles.selected}>episode</Text>
+        </>
+      );
     } else {
       return (
-        <><Text>episode</Text></>
-      )
+        <>
+          <Text>episode</Text>
+        </>
+      );
     }
   }
 
   function log_in_out() {
-    if (page == 'login') {
-      return <></>
+    if (page == "login") {
+      return <></>;
     } else {
       return (
         <>
@@ -110,14 +135,17 @@ export const EverwhzHeader = ({ navigation, page }) => {
     <>
       <View style={styles.yourNotesContainer}>
         {/* @ts-ignore, for css purposes */}
-        <Image style={styles.avatarSmall} source={require('../assets/icons/logo.png')} />
+        <Image
+          style={styles.avatarSmall}
+          source={require("../assets/icons/logo.png")}
+        />
         <Text style={styles.rainbowText}>evrwhz</Text>
         <TouchableOpacity
           onPress={() => {
             if (isAuthenticated) {
-              logOut()
-            } 
-            navigation.navigate('LoginScreen')
+              logOut();
+            }
+            navigation.navigate("LoginScreen");
           }}
         >
           {log_in_out()}

@@ -15,7 +15,7 @@
       [
         "expo-av",
         {
-          "InterruptionModeIOS.DoNotMix" : 1
+          "InterruptionModeIOS.DoNotMix": 1
         }
       ]
     ]
