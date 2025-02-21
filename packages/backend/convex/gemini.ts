@@ -4,6 +4,8 @@ import {
   internalMutation,
   internalAction,
   internalQuery,
+  QueryCtx,
+  MutationCtx,
 } from "./_generated/server";
 import { v } from "convex/values";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -23,6 +25,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 //TODO reorganize code use async functions, call a single mutation per transaction
 //TODO set type of podcast
 //
+
+
 export const geminiHistoryByPodcast = internalAction({
   args: {
     podcast_id: v.id("podcast"),
@@ -117,12 +121,14 @@ export const savePrompt = internalMutation({
     podcast_id: v.id("podcast"),
     prompt: v.string(),
     response: v.string(),
+    chart: v.string(),
   },
   handler: async (ctx, args) => {
     await ctx.db.insert("gemini_prompt", {
       podcast_id: args.podcast_id,
       prompt: args.prompt,
       response: args.response,
+      chart: args.chart,
     });
   },
 });

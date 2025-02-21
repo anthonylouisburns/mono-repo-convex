@@ -369,7 +369,7 @@ export const podcastTitle = query({
   args: { id: v.id("podcast") },
   handler: async (ctx, args) => {
     const podcast = await ctx.db.get(args.id);
-    return podcast?.title;
+    return { title: podcast?.title, description: podcast?.description };
   },
 });
 
@@ -679,7 +679,7 @@ export const getEpisodesWithYears = query({
   handler: async (ctx) => {
     const episodes = await ctx.db
       .query("episode")
-      .withIndex("years", (q) => q.gt("years", []))
+      .withIndex("years", (q) => q.gt("years", undefined))
       .collect();
 
     const sortedFilteredEpisodes = episodes

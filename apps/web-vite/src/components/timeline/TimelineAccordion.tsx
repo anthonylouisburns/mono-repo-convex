@@ -16,17 +16,18 @@ export default function TimelineAccordion() {
   //[ ] player show previous and next episode (with play button)
   //[ ] someway to show podcast info
   //[ ] save users status in all episodes
-  //[ ] database unified playlist - first_year, last_year, podcast_id, episode_id
+  //[ ] database unified playlist - first_year, last_year, podcast_id, episode_id, tags?
   //---
   //[ ] just this view on app - maybe try flutter
-  //---
+  //--- 
   //[ ] palette colors for title by podcast
   //[ ] 15 per page
   //[ ] save users filters
   //[ ] filters
 
+  //[ ] todo component above accordion to show podcast info - has x to close, and title and description, only show if podcast selected
   const AccordionItem = ({ episode }: { episode: Doc<"episode"> }) => {
-    const podcast_title = useQuery(api.everwhz.podcastTitle, {
+    const podcast = useQuery(api.everwhz.podcastTitle, {
       id: episode.podcast_id,
     });
     return (
@@ -38,7 +39,7 @@ export default function TimelineAccordion() {
             </span>
             <PlayArrowOutlined className="text-green-600" />
             <div className="flex items-center gap-2 flex-1 justify-center">
-              <span className="truncate w-2/5 text-right">{podcast_title}</span>
+              <span className="truncate w-2/5 text-right">{podcast?.title}</span>
               <span className="flex-shrink-0 text-center w-4">:</span>
               <span className="truncate w-3/5 text-left">{episode.title}</span>
             </div>

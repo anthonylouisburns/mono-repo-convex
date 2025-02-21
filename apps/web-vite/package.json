@@ -7,19 +7,26 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:once": "vitest run",
+    "test:debug": "vitest --inspect-brk --no-file-parallelism",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text"
   },
   "dependencies": {
+    "@edge-runtime/vm": "^5.0.0",
     "@mui/icons-material": "^6.4.5",
     "@mui/material": "^6.4.5",
     "@tailwindcss/postcss": "^4.0.7",
     "@tailwindcss/vite": "^4.0.7",
     "autoprefixer": "^10.4.20",
+    "convex-test": "^0.0.35",
     "postcss": "^8.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.25.1",
-    "tailwindcss": "^4.0.7"
+    "tailwindcss": "^4.0.7",
+    "vitest": "^3.0.6"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

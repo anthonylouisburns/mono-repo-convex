@@ -19,6 +19,7 @@ import type * as crons from "../crons.js";
 import type * as everwhz from "../everwhz.js";
 import type * as everwhz_ai from "../everwhz_ai.js";
 import type * as gemini from "../gemini.js";
+import type * as geminiBatch from "../geminiBatch.js";
 import type * as http from "../http.js";
 import type * as taddy from "../taddy.js";
 import type * as utils from "../utils.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   everwhz: typeof everwhz;
   everwhz_ai: typeof everwhz_ai;
   gemini: typeof gemini;
+  geminiBatch: typeof geminiBatch;
   http: typeof http;
   taddy: typeof taddy;
   utils: typeof utils;

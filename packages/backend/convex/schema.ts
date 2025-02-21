@@ -14,13 +14,15 @@ const schema = defineSchema({
     rss_url: v.string(),
     rss_body: v.optional(v.id("_storage")),
     number_of_episodes: v.optional(v.number()),
+    chart: v.optional(v.string()),
+    rank: v.optional(v.number()),
     response_headers: v.optional(
       v.object({
         last_modified: v.string(),
         etag: v.string(),
       }),
     ),
-  }).index("rss_url", ["rss_url"]),
+  }).index("rss_url", ["rss_url"]).index("rank", ["rank"]),
   // years, geonames, location, time_period
   episode: defineTable({
     podcast_id: v.id("podcast"),
@@ -74,6 +76,7 @@ const schema = defineSchema({
     podcast_id: v.id("podcast"),
     prompt: v.string(),
     response: v.string(),
+    chart: v.string(),
     status: v.optional(v.string()),
   }).index("podcast_id", ["podcast_id"]),
 });
