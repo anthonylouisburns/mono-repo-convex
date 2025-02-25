@@ -3,3 +3,4 @@
 
 # Zip files
 *.zip
+**/*.zip
