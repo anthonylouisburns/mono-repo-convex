@@ -38,7 +38,7 @@ const schema = defineSchema({
     status: v.optional(v.string()),
   })
     .index("podcast_episode_number", ["podcast_id", "episode_number"])
-    .index("years", ["years"]),
+    .index("years", ["years", "episode_number"]),
   timespan: defineTable({
     podcast_id: v.id("podcast"),
     episode_id: v.optional(v.id("episode")),
@@ -75,7 +75,7 @@ const schema = defineSchema({
   gemini_prompt: defineTable({
     podcast_id: v.id("podcast"),
     prompt: v.string(),
-    response: v.string(),
+    response: v.optional(v.string()),
     chart: v.string(),
     status: v.optional(v.string()),
   }).index("podcast_id", ["podcast_id"]),

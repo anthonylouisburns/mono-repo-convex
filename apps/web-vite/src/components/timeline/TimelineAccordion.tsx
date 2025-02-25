@@ -39,9 +39,13 @@ export default function TimelineAccordion() {
             </span>
             <PlayArrowOutlined className="text-green-600" />
             <div className="flex items-center gap-2 flex-1 justify-center">
-              <span className="truncate w-2/5 text-right">{podcast?.title}</span>
+              <span className="truncate w-2/5 text-right">
+                <span dangerouslySetInnerHTML={{ __html: podcast?.title ?? "" }} />
+              </span>
               <span className="flex-shrink-0 text-center w-4">:</span>
-              <span className="truncate w-3/5 text-left">{episode.title}</span>
+              <span className="truncate w-3/5 text-left">
+                <span dangerouslySetInnerHTML={{ __html: episode.title ?? "" }} />
+              </span>
             </div>
           </div>
         </AccordionSummary>

@@ -679,7 +679,7 @@ export const getEpisodesWithYears = query({
   handler: async (ctx) => {
     const episodes = await ctx.db
       .query("episode")
-      .withIndex("years", (q) => q.gt("years", undefined))
+      .withIndex("years", (q) => q.gt("years", []))
       .collect();
 
     const sortedFilteredEpisodes = episodes
