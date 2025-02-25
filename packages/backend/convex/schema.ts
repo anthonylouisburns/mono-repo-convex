@@ -16,6 +16,7 @@ const schema = defineSchema({
     number_of_episodes: v.optional(v.number()),
     chart: v.optional(v.string()),
     rank: v.optional(v.number()),
+    updated_date: v.optional(v.string()),
     response_headers: v.optional(
       v.object({
         last_modified: v.string(),

@@ -9,6 +9,10 @@ import { api, internal } from "./_generated/api";
 import { addPendingPodcastInternal } from "./everwhz";
 import { Id } from "./_generated/dataModel";
 
+export const PODCASTSERIES_HISTORY = "PODCASTSERIES_HISTORY";
+export const PODCASTSERIES_MUSIC_HISTORY = "PODCASTSERIES_MUSIC_HISTORY";
+export const PODCASTSERIES_TV_AND_FILM_HISTORY = "PODCASTSERIES_TV_AND_FILM_HISTORY";
+
 export const testTaddy = internalAction({
   args: {},
   handler: async (ctx, args) => {
@@ -17,14 +21,36 @@ export const testTaddy = internalAction({
   },
 });
 
+export const taddyBatchDownloadCharts = internalAction({
+  args: { },
+  handler: async (ctx, args) => {
+    const chart_types = [PODCASTSERIES_HISTORY, PODCASTSERIES_MUSIC_HISTORY, PODCASTSERIES_TV_AND_FILM_HISTORY];
+    const pages = [1, 2];
+    const date = new Date().toISOString().split("T")[0];
+
+    for (const chart_type of chart_types) {
+      for (const page of pages) {
+        await ctx.runAction(internal.taddy.taddyDownloadCharts, {
+          chart_type: chart_type,
+          page: page,
+          date: date,
+        });
+      }
+    }
+    await ctx.runMutation(internal.load_episodes.loadChartEpisodes, {
+      date: date,
+    });
+  },
+});
+
+
 export const taddyDownloadCharts = internalAction({
-  args: { chart_type: v.string(), page: v.number() },
+  args: { chart_type: v.string(), page: v.number(), date: v.string()   },
 
   // Action implementation.
   handler: async (ctx, args) => {
     const taddy = "https://api.taddy.org";
-    const date = new Date().toISOString().split("T")[0];
-    const { chart_type, page } = args;
+    const { chart_type, page, date } = args;
 
     console.log("Starting Taddy download:", { chart_type, page, date }); // Debug log
 
@@ -57,7 +83,7 @@ export const taddyDownloadCharts = internalAction({
     console.log(response);
     const body = await response.json();
     console.log(body);
-    const id: Id<"taddy_charts"> | null = await ctx.runMutation(
+    await ctx.runMutation(
       api.taddy.taddyInsertCharts,
       {
         chart_data: body,
@@ -66,11 +92,6 @@ export const taddyDownloadCharts = internalAction({
         date: date,
       },
     );
-    if (id) {
-      await ctx.scheduler.runAfter(0, internal.taddy.taddyLoadChartsInternal, {
-        id: id,
-      });
-    }
   },
 });
 
@@ -138,20 +159,4 @@ export const taddyLoadCharts = internalMutation({
   },
 });
 
-export const taddyLoadChartsInternal = internalMutation({
-  args: { id: v.id("taddy_charts") },
-  handler: async (ctx, args) => {
-    const data = await ctx.db.get(args.id);
-    if (!data) {
-      return { error: "No data found" };
-    }
-    data.chart_data.data.getTopChartsByGenres.podcastSeries.map(
-      async (series: any) =>
-        await addPendingPodcastInternal(ctx, {
-          rss_url: series.rssUrl,
-          user_id: "INTERNAL",
-        }),
-    );
-    return "OK";
-  },
-});
+

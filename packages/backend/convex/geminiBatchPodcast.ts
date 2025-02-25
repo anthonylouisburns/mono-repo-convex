@@ -8,6 +8,7 @@ import {
 } from "./_generated/server";
 import { v } from "convex/values";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { PODCASTSERIES_HISTORY, PODCASTSERIES_MUSIC_HISTORY, PODCASTSERIES_TV_AND_FILM_HISTORY } from "./taddy";
 
 
 export const startGeminiBatchProcess = internalAction({
@@ -229,11 +230,11 @@ export async function geminiPrompt(
     episodes: items,
   }
   switch (chart) {
-    case "PODCASTSERIES_HISTORY":
+    case PODCASTSERIES_HISTORY:
       return HISTORY_PROMPT + JSON.stringify(data);
-    case "PODCASTSERIES_MUSIC_HISTORY":
+    case PODCASTSERIES_MUSIC_HISTORY:
       return MUSIC_PROMPT + JSON.stringify(data);
-    case "PODCASTSERIES_TV_AND_FILM_HISTORY":
+    case PODCASTSERIES_TV_AND_FILM_HISTORY:
       return FILM_PROMPT + JSON.stringify(data);
     default:
       return "";
