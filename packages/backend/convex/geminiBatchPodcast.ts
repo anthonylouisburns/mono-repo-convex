@@ -187,20 +187,16 @@ export async function savePrompt(podcast_id: Id<"podcast">, prompt: string, char
 
 export const HISTORY_PROMPT =
   `
-    Below is a description of a podcast and a list of episodes I need geonames and years for each episode. 
-    please respond with:
-    [
-        {
-            id: string,
-            years: string[],  // at least 1 year format YYYY or YYYY.MM.DD
-            geonames: string[],  // at least 1 geoname
-        }
-    ]
+    Below is a description of a history podcast and a list of episodes with title and description.
+    every episode must have at least 1 specific year and 1 geoname.
+    For each episode, please respond with:
+    {id: string,years: string[], geonames: string[]},
+    return an array [{id: string,years: string[], geonames: string[]}...]
 `;
 
 export const MUSIC_PROMPT =
   `
-    Below is a description of a podcast and a list of episodes with title.
+    Below is a description of a music history podcast and a list of episodes with title and description.
     every episode must have at least 1 specific year and 1 geoname.
     For each episode, please respond with:
     {id: string,years: string[], geonames: string[]},
@@ -213,16 +209,11 @@ export const MUSIC_PROMPT =
 
 export const FILM_PROMPT =
   `
-    Below is a description of a podcast and a list of episodes I need geonames and years for each episode. 
-    please respond with:
-    [
-        {
-            id: string,
-            years: string[],  // at least 1 year format YYYY or YYYY.MM.DD
-            geonames: string[],  // at least 1 geoname
-        }
-    ]
-
+    Below is a description of a tv and film history podcast and a list of episodes with title and description.
+    every episode must have at least 1 specific year and 1 geoname.
+    For each episode, please respond with:
+    {id: string,years: string[], geonames: string[]},
+    return an array [{id: string,years: string[], geonames: string[]}...]
 `;
 
 

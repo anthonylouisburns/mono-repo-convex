@@ -1,2 +1,5 @@
 .env.local
 .env
+
+# Zip files
+*.zip
