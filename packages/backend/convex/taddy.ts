@@ -6,7 +6,6 @@ import {
 } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
-import { addPendingPodcastInternal } from "./everwhz";
 import { Id } from "./_generated/dataModel";
 
 export const PODCASTSERIES_HISTORY = "PODCASTSERIES_HISTORY";
@@ -138,24 +137,6 @@ export const taddyGetChartsById = query({
   args: { id: v.id("taddy_charts") },
   handler: async (ctx, args) => {
     return await ctx.db.get(args.id);
-  },
-});
-
-export const taddyLoadCharts = internalMutation({
-  args: { chart_type: v.string(), page: v.number(), date: v.string() },
-  handler: async (ctx, args) => {
-    const data = await ctx.runQuery(api.taddy.taddyGetCharts, args);
-    if (!data) {
-      return { error: "No data found" };
-    }
-    data.chart_data.data.getTopChartsByGenres.podcastSeries.map(
-      async (series: any) =>
-        await addPendingPodcastInternal(ctx, {
-          rss_url: series.rssUrl,
-          user_id: "INTERNAL",
-        }),
-    );
-    return "OK";
   },
 });
 

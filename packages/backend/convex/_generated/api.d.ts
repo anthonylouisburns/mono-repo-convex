@@ -21,6 +21,7 @@ import type * as everwhz_ai from "../everwhz_ai.js";
 import type * as geminiBatchPodcast from "../geminiBatchPodcast.js";
 import type * as http from "../http.js";
 import type * as load_episodes from "../load_episodes.js";
+import type * as load_podcasts from "../load_podcasts.js";
 import type * as taddy from "../taddy.js";
 import type * as utils from "../utils.js";
 
@@ -41,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   geminiBatchPodcast: typeof geminiBatchPodcast;
   http: typeof http;
   load_episodes: typeof load_episodes;
+  load_podcasts: typeof load_podcasts;
   taddy: typeof taddy;
   utils: typeof utils;
 }>;

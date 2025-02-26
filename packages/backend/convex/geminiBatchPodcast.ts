@@ -10,7 +10,7 @@ import { v } from "convex/values";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PODCASTSERIES_HISTORY, PODCASTSERIES_MUSIC_HISTORY, PODCASTSERIES_TV_AND_FILM_HISTORY } from "./taddy";
 
-
+//TODO some years are [] and some are undefined
 export const startGeminiBatchProcess = internalAction({
   handler: async (ctx) => {
     const podcasts = await ctx.runQuery(internal.geminiBatchPodcast.getNextPodcasts);
@@ -301,7 +301,7 @@ export const processPromptResponse = internalMutation({
         ctx.db.patch(item.id, {
           status: "failed to insert years",
         });
-        console.log("failed to insert years", item.id);
+        console.log("failed to insert years episode:", item.id, "prompt:", prompt._id);
       }
     });
     console.log(items);
@@ -313,12 +313,87 @@ export const deleteYearsByPodcast = internalMutation({
     podcast_id: v.id("podcast"),
   },
   handler: async (ctx, args) => {
-    const episodes = await ctx.db.query("episode").withIndex("podcast_episode_number", (q) => q.eq("podcast_id", args.podcast_id)).collect();
+    const episodes = await ctx.db
+      .query("episode")
+      .withIndex("podcast_episode_number", (q) => q.eq("podcast_id", args.podcast_id))
+      .collect();
     episodes.map((episode) => {
       ctx.db.patch(episode._id, {
         years: undefined,
         status: "years_deleted",
       });
     });
+  },
+});
+
+export const updateTimeline = internalAction({
+  handler: async (ctx) => {
+    const podcasts = await ctx.runQuery(internal.geminiBatchPodcast.getNextPodcasts);
+    podcasts.map(async (podcast) => {
+      console.log("updateTimelinePodcast", podcast._id, podcast.title);
+      await ctx.scheduler.runAfter(0, internal.geminiBatchPodcast.updateTimelinePodcast, {
+        podcast_id: podcast._id,
+      });
+    });
+  },
+});
+
+export const updateTimelinePodcast = internalMutation({
+  args: {
+    podcast_id: v.id("podcast"),
+  },
+
+  handler: async (ctx, args) => {
+    const {podcast_id} = args
+    let totalCount = 0;
+    let totalWithYears = 0;
+    let totalWithGeonames = 0;
+    let totalWithChart = 0;
+    let totalWithRank = 0;
+    let totalWithEpisodeNumber = 0;
+    let totalInserted = 0;
+    const episodes = await ctx.db
+      .query("episode")
+      .withIndex("podcast_episode_number", (q) => q.eq("podcast_id", podcast_id))
+      .collect();
+    episodes.map(async (episode) => {
+      const timeline = await ctx.db.query("timeline")
+        .withIndex("podcast_episode", (q) => q.eq("podcast_id", episode.podcast_id).eq("episode_id", episode._id))
+        .unique() ;
+      if (timeline) {
+        await ctx.db.delete(timeline._id);
+      }
+      if (episode.years && episode.years.length > 0) {
+        totalWithYears++;
+      }
+      if (episode.geonames && episode.geonames.length > 0) {
+        totalWithGeonames++;
+      }
+      if (episode.chart) {
+        totalWithChart++;
+      }
+      if (episode.rank) {
+        totalWithRank++;
+      }
+      if (episode.episode_number) {
+        totalWithEpisodeNumber++;
+      }
+      if (episode.years && episode.years.length > 0 && episode.geonames && episode.geonames.length > 0 && episode.chart && episode.rank && episode.episode_number) {
+        totalInserted++;
+        await ctx.db.insert("timeline", {
+          podcast_id: episode.podcast_id,
+          episode_id: episode._id,
+          start: episode.years[0],
+          end: episode.years[episode.years.length - 1],
+          geoname: episode.geonames[0],
+          chart: episode.chart,
+          rank: episode.rank,
+          episode_number: episode.episode_number,
+        });
+      }
+      totalCount++;
+    });
+    console.log("totalCount", totalCount, "totalInserted", totalInserted, "totalWithYears", totalWithYears, "totalWithGeonames", totalWithGeonames, "totalWithChart", totalWithChart, "totalWithRank", totalWithRank, "totalWithEpisodeNumber", totalWithEpisodeNumber);
+    return {totalCount, totalWithYears, totalWithGeonames, totalWithChart, totalWithRank, totalWithEpisodeNumber, totalInserted};
   },
 });

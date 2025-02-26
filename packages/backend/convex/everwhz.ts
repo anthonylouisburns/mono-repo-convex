@@ -11,19 +11,6 @@ import { Doc, Id } from "./_generated/dataModel";
 const { XMLParser } = require("fast-xml-parser");
 import { auth } from "./auth.js";
 
-function isValidUrl(urlString: string): Boolean {
-  var urlPattern = new RegExp(
-    "^(https?:\\/\\/)?" + // validate protocol
-      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // validate domain name
-      "((\\d{1,3}\\.){3}\\d{1,3}))" + // validate OR ip (v4) address
-      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // validate port and path
-      "(\\?[;&a-z\\d%_.~+=-]*)?" + // validate query string
-      "(\\#[-a-z\\d_]*)?$",
-    "i",
-  ); // validate fragment locator
-
-  return !!urlPattern.test(urlString);
-}
 
 export const currentUser = mutation({
   args: {},
@@ -50,158 +37,6 @@ export const currentUser = mutation({
   },
 });
 
-export const addPendingPodcast = mutation({
-  args: { rss_url: v.string() },
-  handler: async (ctx, args) => {
-    const user_id = await auth.getUserId(ctx);
-    if (!user_id) {
-      throw new Error("No User Found");
-    }
-    await addPendingPodcastInternal(ctx, {
-      rss_url: args.rss_url,
-      user_id: user_id,
-    });
-  },
-});
-
-export async function addPendingPodcastInternal(
-  ctx: MutationCtx,
-  args: { rss_url: string; user_id: string },
-) {
-  console.log("addPendingPodcastInternal", args);
-  if (args.rss_url.trim().length === 0) {
-    return { error: "empty arg" };
-  }
-
-  //TODO and description
-  const existing = await ctx.db
-    .query("podcast")
-    .withIndex("rss_url", (q) => q.eq("rss_url", args.rss_url))
-    .unique();
-  if (existing) {
-    return { status: "existing" };
-  }
-
-  if (!isValidUrl(args.rss_url)) {
-    return { error: "invalid url" };
-  }
-
-  const id = await ctx.db.insert("pending_podcast", {
-    rss_url: args.rss_url,
-    user_id: args.user_id as Id<"users">,
-  });
-
-  console.log("added pending podcast {id} {args.name}");
-
-  await ctx.scheduler.runAfter(0, api.everwhz.downloadPendingRssBody, {
-    pending_id: id,
-    rss: args.rss_url,
-  });
-
-  return id;
-}
-
-// export const updatePodcastDescription = mutation({
-//     args: { id: v.id("podcast"), rss: v.string() },
-//     handler: async (ctx, args) => {
-//         const response = await fetch(args.rss);
-//         const body = (await response.blob());
-
-//         await ctx.db.patch(args.id, { description: body. })
-//     },
-// });
-
-export const downloadPendingRssBody = action({
-  args: {
-    pending_id: v.id("pending_podcast"),
-    rss: v.string(),
-  },
-
-  // Action implementation.
-  handler: async (ctx, args) => {
-    const response = await fetch(args.rss);
-    const body = await response.blob();
-
-    const storageId: Id<"_storage"> = await ctx.storage.store(body);
-
-    await ctx.runMutation(api.everwhz.insertPodcast, {
-      rss_body: storageId,
-      rss_url: args.rss,
-    });
-  },
-});
-
-export const insertPodcast = mutation({
-  args: { rss_body: v.id("_storage"), rss_url: v.string() },
-  handler: async (ctx, args) => {
-    if (args.rss_url.trim().length === 0) {
-      return { error: "empty arg" };
-    }
-
-    const existing = await ctx.db
-      .query("podcast")
-      .withIndex("rss_url", (q) => q.eq("rss_url", args.rss_url))
-      .unique();
-    if (existing) {
-      return { error: "existing" };
-    }
-
-    if (!isValidUrl(args.rss_url)) {
-      return { error: "invalid url" };
-    }
-
-    const id = await ctx.db.insert("podcast", {
-      rss_url: args.rss_url,
-      rss_body: args.rss_body,
-    });
-
-    console.log("added podcast {id} {args.name}");
-
-    await ctx.scheduler.runAfter(0, api.everwhz.parseXml, {
-      storageId: args.rss_body,
-      pod_id: id,
-    });
-
-    //TODO: maybe turn back on - current returning empty array
-    // await ctx.scheduler.runAfter(0, internal.everwhz_ai.getSuggestions);
-    return id;
-  },
-});
-
-// TODO delete
-export const addPodcast = mutation({
-  args: { name: v.string(), rss_url: v.string() },
-  handler: async (ctx, args) => {
-    if (args.rss_url.trim().length === 0 || args.name.trim().length === 0) {
-      return { error: "empty arg" };
-    }
-
-    const existing = await ctx.db
-      .query("podcast")
-      .withIndex("rss_url", (q) => q.eq("rss_url", args.rss_url))
-      .unique();
-    if (existing) {
-      return { error: "existing" };
-    }
-
-    if (!isValidUrl(args.rss_url)) {
-      return { error: "invalid url" };
-    }
-
-    const id = await ctx.db.insert("podcast", {
-      name: args.name,
-      rss_url: args.rss_url,
-    });
-
-    console.log("added podcast {id} {args.name}");
-    await ctx.scheduler.runAfter(0, api.everwhz.downloadRssBody, {
-      id: id,
-      rss: args.rss_url,
-    });
-
-    return id;
-  },
-});
 
 export const episodes = query({
   args: { podcast_id: v.union(v.id("podcast"), v.null()) },
@@ -253,31 +88,6 @@ export const episode = query({
   },
 });
 
-export const deletePodcast = mutation({
-  args: { id: v.id("podcast") },
-
-  handler: async (ctx, args) => {
-    const data = await ctx.db.get(args.id);
-    await ctx.db.delete(args.id);
-    if (data?.rss_body != null) {
-      await ctx.storage.delete(data?.rss_body);
-    }
-    const episodes = await ctx.db
-      .query("episode")
-      .withIndex("podcast_episode_number", (q) => q.eq("podcast_id", args.id))
-      .collect();
-    for (const e of episodes) {
-      ctx.db.delete(e._id);
-    }
-    const spans = await ctx.db
-      .query("timespan")
-      .withIndex("podcast_episode", (q) => q.eq("podcast_id", args.id))
-      .collect();
-    for (const span of spans) {
-      ctx.db.delete(span._id);
-    }
-  },
-});
 
 export const timeline = query({
   handler: async (ctx) => {
@@ -309,54 +119,6 @@ export const timeline = query({
   },
 });
 
-export const addTimeSpan = mutation({
-  args: {
-    podcast_id: v.id("podcast"),
-    episode_id: v.optional(v.id("episode")),
-    name: v.string(),
-    start: v.string(),
-    end: v.string(),
-  },
-
-  handler: async (ctx, args) => {
-    ctx.db.insert("timespan", args);
-  },
-});
-
-export const deleteTimeSpan = mutation({
-  args: { id: v.id("timespan") },
-
-  handler: async (ctx, args) => {
-    ctx.db.delete(args.id);
-  },
-});
-
-export const timespans = query({
-  args: {
-    podcast_id: v.id("podcast"),
-    episode_id: v.optional(v.id("episode")),
-  },
-
-  handler: async (ctx, args) => {
-    if (args.episode_id) {
-      const timeSpans = await ctx.db
-        .query("timespan")
-        .withIndex("podcast_episode", (q) =>
-          q.eq("podcast_id", args.podcast_id).eq("episode_id", args.episode_id),
-        )
-        .collect();
-      return timeSpans;
-    } else {
-      const timeSpans = await ctx.db
-        .query("timespan")
-        .withIndex("podcast_episode", (q) =>
-          q.eq("podcast_id", args.podcast_id),
-        )
-        .collect();
-      return timeSpans;
-    }
-  },
-});
 
 export const podcasts = query({
   handler: async (ctx) => {
@@ -690,5 +452,11 @@ export const getEpisodesWithYears = query({
         return yearA.localeCompare(yearB);
       });
     return sortedFilteredEpisodes;
+  },
+});
+
+export const getTimeline = query({
+  handler: async (ctx) => {
+    return await ctx.db.query("timeline").collect();
   },
 });

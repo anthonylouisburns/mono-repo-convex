@@ -19,12 +19,24 @@ const schema = defineSchema({
     updated_date: v.optional(v.string()),
     response_headers: v.optional(
       v.object({
-        last_modified: v.string(),
-        etag: v.string(),
+        last_modified: v.optional(v.string()),
+        etag: v.optional(v.string()),
       }),
     ),
   }).index("rss_url", ["rss_url"]).index("rank", ["rank"]),
   // years, geonames, location, time_period
+  timeline: defineTable({
+    podcast_id: v.id("podcast"),
+    episode_id: v.id("episode"),
+    episode_number: v.number(),
+    start: v.string(),
+    end:v.string(),
+    geoname: v.string(),
+    chart: v.string(),
+    rank: v.number(),
+  })
+  .index("podcast_episode", ["podcast_id", "episode_id"])
+  .index("start", ["start", "chart", "rank","episode_number"]),   
   episode: defineTable({
     podcast_id: v.id("podcast"),
     episode_number: v.number(),
@@ -37,9 +49,11 @@ const schema = defineSchema({
     time_period: v.optional(v.array(v.string())),
     body: v.any(),
     status: v.optional(v.string()),
+    chart: v.optional(v.string()),
+    rank: v.optional(v.number()),
   })
     .index("podcast_episode_number", ["podcast_id", "episode_number"])
-    .index("years", ["years", "episode_number"]),
+    .index("years", ["years", "rank", "episode_number"]),
   timespan: defineTable({
     podcast_id: v.id("podcast"),
     episode_id: v.optional(v.id("episode")),
