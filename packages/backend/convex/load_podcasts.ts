@@ -4,19 +4,19 @@ import {
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 
-export const loadChartEpisodes = internalMutation({
+export const loadChartPodcasts = internalMutation({
     args: { date: v.string() },
     handler: async (ctx, args) => {
         const charts = await ctx.db.query("taddy_charts").filter(q => q.eq(q.field("date"), args.date)).collect();
 
         console.log("Loading episodes", args.date);
         //loop over all charts for the date
-        charts.forEach((chart) => {
-            ctx.runMutation(internal.load_podcasts.updateAddPodcast, {
+        charts.forEach(async (chart) => {
+            await ctx.runMutation(internal.load_podcasts.updateAddPodcast, {
                 chart_id: chart._id
             });
         });
-        ctx.runMutation(internal.load_podcasts.unchartedPodcasts, {
+        await ctx.runMutation(internal.load_podcasts.unchartedPodcasts, {
             date: args.date
         });
     },

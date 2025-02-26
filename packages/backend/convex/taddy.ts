@@ -12,13 +12,6 @@ export const PODCASTSERIES_HISTORY = "PODCASTSERIES_HISTORY";
 export const PODCASTSERIES_MUSIC_HISTORY = "PODCASTSERIES_MUSIC_HISTORY";
 export const PODCASTSERIES_TV_AND_FILM_HISTORY = "PODCASTSERIES_TV_AND_FILM_HISTORY";
 
-export const testTaddy = internalAction({
-  args: {},
-  handler: async (ctx, args) => {
-    console.log("Starting Taddy test");
-    return "OK";
-  },
-});
 
 export const taddyBatchDownloadCharts = internalAction({
   args: { },
@@ -36,9 +29,7 @@ export const taddyBatchDownloadCharts = internalAction({
         });
       }
     }
-    await ctx.runMutation(internal.load_episodes.loadChartEpisodes, {
-      date: date,
-    });
+    return date;
   },
 });
 

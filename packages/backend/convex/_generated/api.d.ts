@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as audioProxy from "../audioProxy.js";
 import type * as auth from "../auth.js";
+import type * as batch_coordination from "../batch_coordination.js";
 import type * as crons from "../crons.js";
 import type * as everwhz from "../everwhz.js";
 import type * as everwhz_ai from "../everwhz_ai.js";
@@ -36,6 +37,7 @@ import type * as utils from "../utils.js";
 declare const fullApi: ApiFromModules<{
   audioProxy: typeof audioProxy;
   auth: typeof auth;
+  batch_coordination: typeof batch_coordination;
   crons: typeof crons;
   everwhz: typeof everwhz;
   everwhz_ai: typeof everwhz_ai;

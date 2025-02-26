@@ -27,6 +27,9 @@ export const startGeminiBatchProcess = internalAction({
         podcast_id: podcast._id,
         chart: podcast.chart,
       });
+      await ctx.runMutation(internal.geminiBatchPodcast.updateTimelinePodcast, {
+        podcast_id: podcast._id,
+      });
     }
   }
 });
@@ -50,9 +53,10 @@ export const getGeminiCreatePromptAndProcess = internalAction({
       await ctx.runAction(internal.geminiBatchPodcast.getGeminiResponse, {
         prompt_id: prompt_id,
       });
-      await ctx.scheduler.runAfter(0, internal.geminiBatchPodcast.processPromptResponse, {
+      await ctx.runMutation(internal.geminiBatchPodcast.processPromptResponse, {
         prompt_id: prompt_id,
       });
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     // run again after 10 seconds
