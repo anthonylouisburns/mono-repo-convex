@@ -109,7 +109,6 @@ export const timeline = query({
         : null;
       data.push({ span: span, podcast: pod, episode: episode });
     }
-
     return data;
   },
 });
@@ -289,6 +288,8 @@ export const getEpisodesWithYears = query({
 
 export const getTimeline = query({
   handler: async (ctx) => {
-    return await ctx.db.query("timeline").collect();
+    const timeline = await ctx.db.query("timeline").collect();
+    console.log("timeline", timeline.length);
+    return timeline;
   },
 });

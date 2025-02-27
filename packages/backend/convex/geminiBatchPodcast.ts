@@ -9,6 +9,8 @@ import {
 import { v } from "convex/values";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PODCASTSERIES_HISTORY, PODCASTSERIES_MUSIC_HISTORY, PODCASTSERIES_TV_AND_FILM_HISTORY } from "./taddy";
+import OpenAI from "openai";
+const REDO_GEMINI_EPISODES = false;
 
 //TODO some years are [] and some are undefined
 export const startGeminiBatchProcess = internalAction({
@@ -25,6 +27,8 @@ export const startGeminiBatchProcess = internalAction({
     }
   }
 });
+
+
 
 export const geminiOnePodcast = internalAction({
   args: { podcast_id: v.id("podcast") },
@@ -70,10 +74,11 @@ export const getGeminiCreatePromptAndProcess = internalAction({
       await ctx.runAction(internal.geminiBatchPodcast.getGeminiResponse, {
         prompt_id: prompt_id,
       });
+      console.log("processing prompt", prompt_id);
       await ctx.runMutation(internal.geminiBatchPodcast.processPromptResponse, {
         prompt_id: prompt_id,
       });
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log("processed prompt", prompt_id);
     }
 
     // run again after 10 seconds
@@ -125,6 +130,10 @@ export const getGeminiResponse = internalAction({
       return;
     }
     const response = await geminiHistoryResponse(prompt.prompt);
+    if (!response) {
+      console.log("No response found");
+      return;
+    }
     await ctx.runMutation(internal.geminiBatchPodcast.saveGeminiResponse, {
       prompt_id: args.prompt_id,
       response: response,
@@ -157,28 +166,29 @@ export const saveGeminiResponse = internalMutation({
 });
 
 export function getEpisodesQueryForPrompt(ctx: MutationCtx, podcast_id: Id<"podcast">) {
-  if (REDO_GEMINI_EPISODES) {
-    return ctx.db.query("episode").filter((q) => q.eq(q.field("years"), undefined));
+  const q = ctx.db.query("episode")
+    .withIndex("podcast_episode_number", (q) =>
+      q.eq("podcast_id", podcast_id),
+    );
+  if (!REDO_GEMINI_EPISODES) {
+    return q.filter((q) => q.eq(q.field("years"), undefined));
   }
-  return ctx.db.query("episode")
-      .withIndex("podcast_episode_number", (q) =>
-        q.eq("podcast_id", podcast_id),
-      )
-      .filter((q) => q.eq(q.field("years"), undefined));
+  return q;
 }
-const REDO_GEMINI_EPISODES = true;
+
 
 export async function geminiHistoryOnePodcast(podcast_id: Id<"podcast">, chart: string, ctx: MutationCtx) {
   const page_size = 50;
   console.log("geminiHistoryOnePodcast", podcast_id, chart, page_size);
   const podcast = await ctx.db.get(podcast_id);
-  
-  const episodes = await getEpisodesQueryForPrompt(ctx, podcast_id)
-      .collect();
 
-  if (episodes.length === 0) {
-    console.log("No episodes found");
-    return;
+  const prompt_ids: Id<"gemini_prompt">[] = [];
+
+  const episodes = await getEpisodesQueryForPrompt(ctx, podcast_id)
+    .collect();
+  if (!episodes || episodes.length === 0) {
+    console.log("No more episodes found", page_size, podcast_id, chart);
+    return [];
   }
 
   const items = episodes.map((episode) => ({
@@ -192,16 +202,17 @@ export async function geminiHistoryOnePodcast(podcast_id: Id<"podcast">, chart: 
     return [];
   }
 
-  const prompt_ids: Id<"gemini_prompt">[] = [];
   // Process in batches of 50
+  console.log("items", items.length);
   for (let i = 0; i < items.length; i += page_size) {
     const batch = items.slice(i, i + page_size);
     const prompt_string = await geminiPrompt(podcast, batch, chart);
     const prompt_id = await savePrompt(podcast_id, prompt_string, chart, ctx);
     prompt_ids.push(prompt_id);
   }
+  console.log("prompt_ids", prompt_ids.length, prompt_ids);
 
-  console.log("prompt_ids", prompt_ids);
+
   return prompt_ids;
 }
 
@@ -275,6 +286,10 @@ export async function geminiPrompt(
 
 export async function geminiHistoryResponse(prompt: string) {
   // console.log("geminiHistoryResponse", prompt);
+  return await openaiResponse(prompt);
+}
+
+export async function geminiResponse(prompt: string) {
   const genAI = new GoogleGenerativeAI(
     "AIzaSyDJA8p-kNXjviC_4jyuZljDhaGbjcoxxXU",
   );
@@ -284,6 +299,14 @@ export async function geminiHistoryResponse(prompt: string) {
   return result.response.text();
 }
 
+export async function openaiResponse(prompt: string) {
+  console.log("openai")
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const output = await openai.chat.completions.create({ model: "gpt-4o-mini", messages: [{ role: "user", content: prompt }] });
+  console.log(output);
+  return output.choices[0].message.content;
+
+}
 
 export const processPromptResponse = internalMutation({
   args: {
@@ -296,49 +319,68 @@ export const processPromptResponse = internalMutation({
       return;
     }
 
-    const responseJson = prompt.response.replace("```json", "").replace("```", "").trim();
-    var first_char = "";
-    var last_char = "";
-    console.log("responseJson", responseJson.charAt(0), responseJson.charAt(responseJson.length - 1));
-    if ("[" != responseJson.charAt(0)) {
-      first_char = "[";
+    let items: Array<{ id: Id<"episode">; years: string[]; geonames: string[]; }> = [];
+    try {
+      items = await getJsonFromResponse(prompt.response);
+    } catch (error) {
+      console.log("error", error);
+      return;
     }
-    if ("]" != responseJson.charAt(responseJson.length - 1)) {
-      last_char = "]";
+    if (!items) {
+      return;
     }
-    console.log("responseJson", first_char, last_char, responseJson);
-    const json = JSON.parse(first_char + responseJson + last_char);
-    console.log("json", json);
-    const items: Array<{ id: Id<"episode">; years: string[]; geonames: string[]; }> = json.map((item: any) => {
-      try {
-        const id = item.id;
-        const years = item.years.sort();
-        const geonames = item.geonames.sort();
-        return { id, years, geonames };
-      } catch (error) {
-        console.log("error", error, item);
-        return null;
-      }
-    });
-    console.log("items", items);
     // insert years into episode
-    items.map((item) => {
-      if (item.years.length > 0) {
-        ctx.db.patch(item.id, {
-          years: item.years,
-          geonames: item.geonames,
-          status: "years_inserted",
-        });
-      } else {
-        ctx.db.patch(item.id, {
-          status: "failed to insert years",
-        });
-        console.log("failed to insert years episode:", item.id, "prompt:", prompt._id);
+    for (const item of items) {
+      try {
+        if (item.years.length > 0) {
+          console.log("patch years", item.id, item.years, item.geonames);
+          await ctx.db.patch(item.id, {
+            years: item.years,
+            geonames: item.geonames,
+            status: "years_inserted",
+          });
+        } else {
+          console.log("failed to insert years episode:", item.id, "prompt:", prompt._id);
+          await ctx.db.patch(item.id, {
+            status: "failed to insert years"
+          });
+        }
+      } catch (error) {
+        console.error("error failed to insert", error);
       }
-    });
-    console.log(items);
+    }
+    console.log("processPromptResponse done");
   },
 });
+
+export async function getJsonFromResponse(response: string) {
+  const responseJson = response.replace("```json", "").replace("```", "").trim();
+  var first_char = "";
+  var last_char = "";
+  console.log("responseJson first last char", responseJson.charAt(0), responseJson.charAt(responseJson.length - 1));
+  if ("[" != responseJson.charAt(0)) {
+    first_char = "[";
+  }
+  if ("]" != responseJson.charAt(responseJson.length - 1)) {
+    last_char = "]";
+  }
+  console.log("responseJson", first_char, last_char, responseJson);
+  const json = JSON.parse(first_char + responseJson + last_char);
+  console.log("json", json);
+  const items: Array<{ id: Id<"episode">; years: string[]; geonames: string[]; }> = json.map((item: any) => {
+    try {
+      const id = item.id;
+      const years = item.years.sort();
+      const geonames = item.geonames.sort();
+      return { id, years, geonames };
+    } catch (error) {
+      console.log("error", error, item);
+      return null;
+    }
+  });
+  console.log("items", items);
+  return items;
+}
 
 export const deleteYearsByPodcast = internalMutation({
   args: {
@@ -363,12 +405,12 @@ export const deleteYearsByPodcast = internalMutation({
 export const updateTimeline = internalAction({
   handler: async (ctx) => {
     const podcasts = await ctx.runQuery(internal.geminiBatchPodcast.getNextPodcasts);
-    podcasts.map(async (podcast) => {
+    await Promise.all(podcasts.map(async (podcast) => {
       console.log("updateTimelinePodcast", podcast._id, podcast.title);
-      await ctx.scheduler.runAfter(0, internal.geminiBatchPodcast.updateTimelinePodcast, {
+      await ctx.runMutation(internal.geminiBatchPodcast.updateTimelinePodcast, {
         podcast_id: podcast._id,
       });
-    });
+    }));
   },
 });
 
@@ -390,7 +432,7 @@ export const updateTimelinePodcast = internalMutation({
       .query("episode")
       .withIndex("podcast_episode_number", (q) => q.eq("podcast_id", podcast_id))
       .collect();
-    episodes.map(async (episode) => {
+    for (const episode of episodes) {
       const timeline = await ctx.db.query("timeline")
         .withIndex("podcast_episode", (q) => q.eq("podcast_id", episode.podcast_id).eq("episode_id", episode._id))
         .unique();
@@ -412,21 +454,22 @@ export const updateTimelinePodcast = internalMutation({
       if (episode.episode_number) {
         totalWithEpisodeNumber++;
       }
-      if (episode.years && episode.years.length > 0 && episode.geonames && episode.geonames.length > 0 && episode.chart && episode.rank && episode.episode_number) {
+      if (episode.years && episode.years.length > 0 
+        && episode.chart && episode.rank && episode.episode_number) {
         totalInserted++;
         await ctx.db.insert("timeline", {
           podcast_id: episode.podcast_id,
           episode_id: episode._id,
           start: episode.years[0],
           end: episode.years[episode.years.length - 1],
-          geoname: episode.geonames[0],
+          geoname: episode.geonames?.[0] ?? "",
           chart: episode.chart,
           rank: episode.rank,
           episode_number: episode.episode_number,
         });
       }
       totalCount++;
-    });
+    }
     console.log("totalCount", totalCount, "totalInserted", totalInserted, "totalWithYears", totalWithYears, "totalWithGeonames", totalWithGeonames, "totalWithChart", totalWithChart, "totalWithRank", totalWithRank, "totalWithEpisodeNumber", totalWithEpisodeNumber);
     return { totalCount, totalWithYears, totalWithGeonames, totalWithChart, totalWithRank, totalWithEpisodeNumber, totalInserted };
   },

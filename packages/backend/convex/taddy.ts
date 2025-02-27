@@ -49,7 +49,7 @@ export const taddyDownloadCharts = internalAction({
           getTopChartsByGenres(
             taddyType: PODCASTSERIES, 
             genres: [${chart_type}], 
-            limitPerPage: PAGE_SIZE,
+            limitPerPage: ${PAGE_SIZE},
             page: ${page}
           ) {
             topChartsId

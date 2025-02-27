@@ -65,7 +65,7 @@ export default function TimelineAccordion() {
           <div
             className="text-sm"
             dangerouslySetInnerHTML={{
-              __html: episode.body?.description ?? "",
+              __html: episode.episode_description ?? "",
             }}
           />
         </AccordionDetails>
