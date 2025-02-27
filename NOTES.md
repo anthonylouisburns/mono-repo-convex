@@ -53,3 +53,69 @@ testing jiust backend
 https://docs.convex.dev/testing/convex-test
 mock convex client 
 https://stack.convex.dev/testing-react-components-with-convex
+
+
+async function patchPodcastRssJsonFunction(ctx: MutationCtx, args: { podcast_id: Id<"podcast">, rss_json: any, date: string }) {
+
+  const { podcast_id, rss_json } = args;
+  const podcast = await ctx.runQuery(api.load_episodes.getPodcast, {
+    id: podcast_id,
+  });
+  if (podcast == null) {
+    console.error("podcast not found");
+    return;
+  }
+  const items = rss_json.rss.channel.item;
+  const max_episode = items.length;
+  const podcast_title = rss_json.rss.channel.title;
+  const podcast_description = rss_json.rss.channel.description;
+  console.log("patchPodcastRssJson patching podcast", podcast_title, podcast._id);
+  ctx.db.patch(podcast._id, { number_of_episodes: max_episode, title: podcast_title, description: podcast_description });
+  for (const [index, item] of rss_json.rss.channel.item.entries()) {
+    const e_n = Math.ceil(max_episode - index);
+    const episode = await ctx.db
+      .query("episode")
+      .withIndex("podcast_episode_number", (q) =>
+        q.eq("podcast_id", args.podcast_id).eq("episode_number", e_n),
+      )
+      .unique();
+
+    // console.log("item", item.title);
+    const title = item.title;
+    //[ ] set mp3_link :   const mp3_link = episode?.body.enclosure["@_url"];
+    if (episode) {
+      ctx.db.patch(episode._id, {
+        podcast_id: args.podcast_id,
+        episode_number: Math.ceil(max_episode - index),
+        body: item,
+        title: title,
+        podcast_title: podcast_title,
+        chart: podcast.chart,
+        rank: podcast.rank,
+        updated_date: args.date
+      });
+    } else {
+      ctx.db.insert("episode", {
+        podcast_id: args.podcast_id,
+        episode_number: Math.ceil(max_episode - index),
+        body: item,
+        title: title,
+        podcast_title: podcast_title,
+        chart: podcast.chart,
+        rank: podcast.rank,
+        updated_date: args.date
+      });
+    }
+  }
+  //   delete if extra episodes in db
+  const episodes = await ctx.db
+    .query("episode")
+    .withIndex("podcast_episode_number", (q) =>
+      q.eq("podcast_id", args.podcast_id).gt("episode_number", max_episode),
+    )
+    .collect();
+  for (const episode of episodes) {
+    ctx.db.delete(episode._id);
+  }
+  console.log("patchPodcastRssJson done", podcast_title, podcast._id);
+}

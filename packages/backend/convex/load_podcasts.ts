@@ -3,7 +3,7 @@ import {
 } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-
+import { PAGE_SIZE } from "./taddy";
 export const loadChartPodcasts = internalMutation({
     args: { date: v.string() },
     handler: async (ctx, args) => {
@@ -52,12 +52,12 @@ export const updateAddPodcast = internalMutation({
                 .query("podcast")
                 .withIndex("rss_url", (q) => q.eq("rss_url", series.rssUrl))
                 .unique();
-
+            const rank = ((chart.page - 1) * PAGE_SIZE)+ index + 1;
             if (existing) {
                 console.log(index, "podcast already exists", series.name, series.rssUrl, existing._id);
                 ctx.db.patch(existing._id, {
                     chart: chart.chart_type,
-                    rank: index + 1,
+                    rank: rank,
                     updated_date: chart.date,
                 });
             } else {
@@ -65,7 +65,7 @@ export const updateAddPodcast = internalMutation({
                 const id = await ctx.db.insert("podcast", {
                     rss_url: series.rssUrl,
                     chart: chart.chart_type,
-                    rank: index + 1,
+                    rank: rank,
                     updated_date: chart.date,
                 });
             }

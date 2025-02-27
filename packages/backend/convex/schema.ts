@@ -47,10 +47,11 @@ const schema = defineSchema({
     geonames: v.optional(v.array(v.string())),
     location: v.optional(v.array(v.string())),
     time_period: v.optional(v.array(v.string())),
-    body: v.any(),
+    mp3_link: v.optional(v.string()),
     status: v.optional(v.string()),
     chart: v.optional(v.string()),
     rank: v.optional(v.number()),
+    updated_date: v.optional(v.string()),
   })
     .index("podcast_episode_number", ["podcast_id", "episode_number"])
     .index("years", ["years", "rank", "episode_number"]),

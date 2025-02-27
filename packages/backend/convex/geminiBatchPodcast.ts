@@ -1,4 +1,4 @@
-import { internal } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import { Id, Doc } from "./_generated/dataModel";
 import {
   internalMutation,
@@ -19,18 +19,35 @@ export const startGeminiBatchProcess = internalAction({
       return;
     }
     for (const podcast of podcasts) {
-      if (!podcast.chart) {
-        console.log("No chart found for podcast", podcast._id);
-        continue;
-      }
-      await ctx.runAction(internal.geminiBatchPodcast.getGeminiCreatePromptAndProcess, {
-        podcast_id: podcast._id,
-        chart: podcast.chart,
-      });
-      await ctx.runMutation(internal.geminiBatchPodcast.updateTimelinePodcast, {
+      await ctx.runAction(internal.geminiBatchPodcast.geminiOnePodcast, {
         podcast_id: podcast._id,
       });
     }
+  }
+});
+
+export const geminiOnePodcast = internalAction({
+  args: { podcast_id: v.id("podcast") },
+  handler: async (ctx, args) => {
+    const podcast = await ctx.runQuery(api.load_episodes.getPodcast, {
+      id: args.podcast_id,
+    });
+    console.log("geminiOnePodcast", podcast?.title, podcast?._id);
+    if (!podcast) {
+      console.log("No podcast found");
+      return;
+    }
+    if (!podcast.chart) {
+      console.log("No chart found for podcast", podcast.title, podcast._id);
+      return;
+    }
+    await ctx.runAction(internal.geminiBatchPodcast.getGeminiCreatePromptAndProcess, {
+      podcast_id: podcast._id,
+      chart: podcast.chart,
+    });
+    await ctx.runMutation(internal.geminiBatchPodcast.updateTimelinePodcast, {
+      podcast_id: podcast._id,
+    });
   }
 });
 
@@ -81,12 +98,12 @@ export const geminiCreatePrompt = internalMutation({
   args: { podcast_id: v.id("podcast"), chart: v.string() },
   handler: async (ctx, args) => {
     console.log("geminiCreatePrompt", args.podcast_id, args.chart);
-    const prompt_id = await geminiHistoryOnePodcast(args.podcast_id, args.chart, ctx);
-    if (!prompt_id) {
-      console.log("No prompt_id found");
+    const prompt_ids = await geminiHistoryOnePodcast(args.podcast_id, args.chart, ctx);
+    if (!prompt_ids) {
+      console.log("No prompt_ids found");
       return;
     }
-    return prompt_id;
+    return prompt_ids;
   }
 });
 
@@ -139,18 +156,25 @@ export const saveGeminiResponse = internalMutation({
   }
 });
 
+export function getEpisodesQueryForPrompt(ctx: MutationCtx, podcast_id: Id<"podcast">) {
+  if (REDO_GEMINI_EPISODES) {
+    return ctx.db.query("episode").filter((q) => q.eq(q.field("years"), undefined));
+  }
+  return ctx.db.query("episode")
+      .withIndex("podcast_episode_number", (q) =>
+        q.eq("podcast_id", podcast_id),
+      )
+      .filter((q) => q.eq(q.field("years"), undefined));
+}
+const REDO_GEMINI_EPISODES = true;
 
 export async function geminiHistoryOnePodcast(podcast_id: Id<"podcast">, chart: string, ctx: MutationCtx) {
   const page_size = 50;
   console.log("geminiHistoryOnePodcast", podcast_id, chart, page_size);
   const podcast = await ctx.db.get(podcast_id);
-  const episodes = await ctx.db
-    .query("episode")
-    .withIndex("podcast_episode_number", (q) =>
-      q.eq("podcast_id", podcast_id),
-    )
-    .filter((q) => q.eq(q.field("years"), undefined))
-    .collect();
+  
+  const episodes = await getEpisodesQueryForPrompt(ctx, podcast_id)
+      .collect();
 
   if (episodes.length === 0) {
     console.log("No episodes found");
@@ -160,7 +184,7 @@ export async function geminiHistoryOnePodcast(podcast_id: Id<"podcast">, chart: 
   const items = episodes.map((episode) => ({
     id: episode._id,
     title: stripHtml(episode.title ?? "Untitled"),
-    description: stripHtml(episode.body["content:encoded"] ?? ""),
+    description: stripHtml(episode.episode_description ?? ""),
   }));
 
   if (!items || items.length === 0 || !podcast) {
@@ -233,7 +257,11 @@ export async function geminiPrompt(
     podcast_description: stripHtml(podcast.description ?? ""),
     episodes: items,
   }
-  switch (chart) {
+  if (!podcast.chart) {
+    console.log("No chart found for podcast", podcast.title, podcast._id, "chart", chart);
+    return "";
+  }
+  switch (podcast.chart) {
     case PODCASTSERIES_HISTORY:
       return HISTORY_PROMPT + JSON.stringify(data);
     case PODCASTSERIES_MUSIC_HISTORY:
@@ -330,6 +358,8 @@ export const deleteYearsByPodcast = internalMutation({
   },
 });
 
+
+
 export const updateTimeline = internalAction({
   handler: async (ctx) => {
     const podcasts = await ctx.runQuery(internal.geminiBatchPodcast.getNextPodcasts);
@@ -348,7 +378,7 @@ export const updateTimelinePodcast = internalMutation({
   },
 
   handler: async (ctx, args) => {
-    const {podcast_id} = args
+    const { podcast_id } = args
     let totalCount = 0;
     let totalWithYears = 0;
     let totalWithGeonames = 0;
@@ -363,7 +393,7 @@ export const updateTimelinePodcast = internalMutation({
     episodes.map(async (episode) => {
       const timeline = await ctx.db.query("timeline")
         .withIndex("podcast_episode", (q) => q.eq("podcast_id", episode.podcast_id).eq("episode_id", episode._id))
-        .unique() ;
+        .unique();
       if (timeline) {
         await ctx.db.delete(timeline._id);
       }
@@ -398,6 +428,6 @@ export const updateTimelinePodcast = internalMutation({
       totalCount++;
     });
     console.log("totalCount", totalCount, "totalInserted", totalInserted, "totalWithYears", totalWithYears, "totalWithGeonames", totalWithGeonames, "totalWithChart", totalWithChart, "totalWithRank", totalWithRank, "totalWithEpisodeNumber", totalWithEpisodeNumber);
-    return {totalCount, totalWithYears, totalWithGeonames, totalWithChart, totalWithRank, totalWithEpisodeNumber, totalInserted};
+    return { totalCount, totalWithYears, totalWithGeonames, totalWithChart, totalWithRank, totalWithEpisodeNumber, totalInserted };
   },
 });

@@ -12,16 +12,17 @@ export const PODCASTSERIES_HISTORY = "PODCASTSERIES_HISTORY";
 export const PODCASTSERIES_MUSIC_HISTORY = "PODCASTSERIES_MUSIC_HISTORY";
 export const PODCASTSERIES_TV_AND_FILM_HISTORY = "PODCASTSERIES_TV_AND_FILM_HISTORY";
 
+export const CHART_TYPES = [PODCASTSERIES_HISTORY, PODCASTSERIES_MUSIC_HISTORY, PODCASTSERIES_TV_AND_FILM_HISTORY];
+export const PAGES = [1, 2];
+export const PAGE_SIZE = 25;
 
 export const taddyBatchDownloadCharts = internalAction({
   args: { },
   handler: async (ctx, args) => {
-    const chart_types = [PODCASTSERIES_HISTORY, PODCASTSERIES_MUSIC_HISTORY, PODCASTSERIES_TV_AND_FILM_HISTORY];
-    const pages = [1, 2];
     const date = new Date().toISOString().split("T")[0];
 
-    for (const chart_type of chart_types) {
-      for (const page of pages) {
+    for (const chart_type of CHART_TYPES) {
+      for (const page of PAGES) {
         await ctx.runAction(internal.taddy.taddyDownloadCharts, {
           chart_type: chart_type,
           page: page,
@@ -48,7 +49,7 @@ export const taddyDownloadCharts = internalAction({
           getTopChartsByGenres(
             taddyType: PODCASTSERIES, 
             genres: [${chart_type}], 
-            limitPerPage: 25,
+            limitPerPage: PAGE_SIZE,
             page: ${page}
           ) {
             topChartsId
