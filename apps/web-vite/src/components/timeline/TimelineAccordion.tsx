@@ -12,8 +12,12 @@ import { Link } from "react-router-dom";
 
 export default function TimelineAccordion() {
   const timeline = useQuery(
-    api.everwhz.getTimeline,
+    api.everwhz.getSampledRecords,
+    {paginate: {numItems: 100, cursor: null}}
   );
+  // const timeline = useQuery(
+  //   api.everwhz.getTimeline,
+  // );
   //TODO just this view
   //[x] PLAYER
   //[ ] player show previous and next episode (with play button)
@@ -75,7 +79,7 @@ export default function TimelineAccordion() {
   return (
     <div>
       <AccordionGroup className="w-full">
-        {timeline?.map((timeline_item) => <AccordionItem timeline_item={timeline_item} />)}
+        {timeline?.page?.map((timeline_item) => <AccordionItem timeline_item={timeline_item} />)}
       </AccordionGroup>
     </div>
   );

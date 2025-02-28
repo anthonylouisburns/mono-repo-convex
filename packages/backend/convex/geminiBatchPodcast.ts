@@ -10,136 +10,185 @@ import { v } from "convex/values";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PODCASTSERIES_HISTORY, PODCASTSERIES_MUSIC_HISTORY, PODCASTSERIES_TV_AND_FILM_HISTORY } from "./taddy";
 import OpenAI from "openai";
+import { LengthFinishReasonError } from "openai/error.mjs";
 const REDO_GEMINI_EPISODES = false;
+const PAGE_SIZE = 50;
 
 //TODO some years are [] and some are undefined
+//create prompts
 export const startGeminiBatchProcess = internalAction({
   handler: async (ctx) => {
     const podcasts = await ctx.runQuery(internal.geminiBatchPodcast.getNextPodcasts);
+    const batch = new Date().toISOString().split("T")[0];
     if (!podcasts || podcasts.length === 0) {
       console.log("No podcasts found");
       return;
     }
     for (const podcast of podcasts) {
-      await ctx.runAction(internal.geminiBatchPodcast.geminiOnePodcast, {
+      if (!podcast.chart) {
+        console.log("No chart found for podcast", podcast.title, podcast._id);
+        continue;
+      }
+      await ctx.runMutation(internal.geminiBatchPodcast.geminiCreatePrompt, {
         podcast_id: podcast._id,
+        chart: podcast.chart,
+        batch: batch,
+        page_size: PAGE_SIZE,
       });
     }
   }
 });
 
-
-
-export const geminiOnePodcast = internalAction({
+export const startGeminiBatchProcessOnePodcast = internalAction({
   args: { podcast_id: v.id("podcast") },
   handler: async (ctx, args) => {
     const podcast = await ctx.runQuery(api.load_episodes.getPodcast, {
       id: args.podcast_id,
     });
-    console.log("geminiOnePodcast", podcast?.title, podcast?._id);
-    if (!podcast) {
-      console.log("No podcast found");
+
+    const batch = new Date().toISOString().split("T")[0] + ":" + podcast?.title;
+    console.log("startGeminiBatchProcessOnePodcast", podcast?.title, podcast?._id, batch);
+
+    if (!podcast?.chart) {
+      console.log("No chart found for podcast", podcast?.title, podcast?._id);
       return;
     }
-    if (!podcast.chart) {
-      console.log("No chart found for podcast", podcast.title, podcast._id);
-      return;
-    }
-    await ctx.runAction(internal.geminiBatchPodcast.getGeminiCreatePromptAndProcess, {
+    await ctx.runMutation(internal.geminiBatchPodcast.geminiCreatePrompt, {
       podcast_id: podcast._id,
       chart: podcast.chart,
+      batch: batch,
+      page_size: PAGE_SIZE,
     });
-    await ctx.runMutation(internal.geminiBatchPodcast.updateTimelinePodcast, {
-      podcast_id: podcast._id,
-    });
   }
 });
 
-// [ ] todo make sure deleted episodes are re added to the podcast
-export const getGeminiCreatePromptAndProcess = internalAction({
-  args: { podcast_id: v.id("podcast"), chart: v.string() },
-  handler: async (ctx, args) => {
-    const podcast_id = args.podcast_id;
-    const chart = args.chart;
-    console.log("getGeminiCreatePromptAndProcess");
-    const prompt_ids = await ctx.runMutation(internal.geminiBatchPodcast.geminiCreatePrompt, {
-      podcast_id: podcast_id,
-      chart: chart,
-    });
-    if (!prompt_ids || prompt_ids.length === 0) {
-      console.log("No prompt_id found");
-      return;
-    }
-    for (const prompt_id of prompt_ids) {
-      await ctx.runAction(internal.geminiBatchPodcast.getGeminiResponse, {
-        prompt_id: prompt_id,
-      });
-      console.log("processing prompt", prompt_id);
-      await ctx.runMutation(internal.geminiBatchPodcast.processPromptResponse, {
-        prompt_id: prompt_id,
-      });
-      console.log("processed prompt", prompt_id);
-    }
-
-    // run again after 10 seconds
-  }
-});
-
-//[ ] todo filter out podcasts with all years already inserted
-//[ ] update index episodes years, episode number
-export const getNextPodcasts = internalQuery({
-  args: {},
-  handler: async (ctx) => {
-    console.log("getNextPodcast");
-    const podcasts = await ctx.db.query("podcast")
-      .filter((q) => q.neq(q.field("chart"), undefined))
-      .collect();
-
-    return podcasts;
-  }
-});
-
-export const geminiCreatePrompt = internalMutation({
-  args: { podcast_id: v.id("podcast"), chart: v.string() },
-  handler: async (ctx, args) => {
-    console.log("geminiCreatePrompt", args.podcast_id, args.chart);
-    const prompt_ids = await geminiHistoryOnePodcast(args.podcast_id, args.chart, ctx);
-    if (!prompt_ids) {
-      console.log("No prompt_ids found");
-      return;
-    }
-    return prompt_ids;
-  }
-});
-
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, '');
-}
-
-export const getGeminiResponse = internalAction({
+// post prompt to get response
+export const postAllPrompts = internalAction({
   args: {
-    prompt_id: v.id("gemini_prompt"),
+    batch: v.string(),
+    run_number: v.optional(v.number())
   },
   handler: async (ctx, args) => {
-    console.log("getGeminiResponse", args.prompt_id);
-    const prompt = await ctx.runQuery(internal.geminiBatchPodcast.getGeminiPrompt, {
-      prompt_id: args.prompt_id,
+    console.log("postAllPrompts", args.batch, args.run_number);
+    const next = await ctx.runAction(internal.geminiBatchPodcast.postOnePrompt, {
+      batch: args.batch,
     });
-    if (!prompt) {
-      console.log("No prompt found");
-      return;
+    if (next) {
+      await ctx.scheduler.runAfter(100, internal.geminiBatchPodcast.postAllPrompts, {
+        batch: args.batch,
+        run_number: (args.run_number ?? 0) + 1,
+      });
     }
-    const response = await geminiHistoryResponse(prompt.prompt);
-    if (!response) {
-      console.log("No response found");
-      return;
-    }
-    await ctx.runMutation(internal.geminiBatchPodcast.saveGeminiResponse, {
-      prompt_id: args.prompt_id,
-      response: response,
-    });
   }
 });
+
+export const postOnePrompt = internalAction({
+  args: { batch: v.string() },
+  handler: async (ctx, args) => {
+    const prompt = await ctx.runQuery(internal.geminiBatchPodcast.getNextPrompt, {
+      batch: args.batch,
+    });
+    console.log("postOnePrompt", args.batch, prompt?._id);
+    if (!prompt) {
+      console.log("No prompt found");
+      return false;
+    }
+    await ctx.runMutation(internal.geminiBatchPodcast.patchPromptStatus, {
+      prompt_id: prompt._id,
+      status: "response_generating",
+    });
+    const response = await aiHistoryResponse(prompt.prompt);
+    if (!response) {
+      console.log("No response found");
+      return false;
+    }
+    await ctx.runMutation(internal.geminiBatchPodcast.saveGeminiResponse, {
+      prompt_id: prompt._id,
+      response: response,
+      status: "response_generated",
+    });
+    return true;
+  }
+});
+
+export const getNextPrompt = internalQuery({
+  args: {
+    batch: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const prompt = await ctx.db.query("gemini_prompt")
+      .withIndex("batch", (q) => q.eq("batch", args.batch).eq("status", undefined))
+      .first();
+    return prompt;
+  }
+});
+
+//process prompt response
+export const processAllPromptResponses = internalAction({
+  args: {
+    batch: v.string(),
+    run_number: v.optional(v.number())
+  },
+  handler: async (ctx, args) => {
+    console.log("postAllPrompts", args.batch, args.run_number);
+    const next = await ctx.runMutation(internal.geminiBatchPodcast.processOnePromptResponse, {
+      batch: args.batch,
+    });
+    if (next) {
+      await ctx.scheduler.runAfter(100, internal.geminiBatchPodcast.processAllPromptResponses, {
+        batch: args.batch,
+        run_number: (args.run_number ?? 0) + 1,
+      });
+    }
+  }
+});
+
+export const resetPromptStatus = internalMutation({
+  args: {
+    batch: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const prompts = await ctx.db.query("gemini_prompt")
+      .withIndex("batch", (q) => q.eq("batch", args.batch).eq("status", "response_processed_error"))
+      .collect();
+
+    for (const prompt of prompts) {
+      await ctx.db.patch(prompt._id, {
+        status: "response_generated",
+      });
+    }
+  }
+});
+
+export const processOnePromptResponse = internalMutation({
+  args: {
+    batch: v.string(),
+    run_number: v.optional(v.number())
+  },
+  handler: async (ctx, args) => {
+    console.log("processPromptResponse", args.batch, args.run_number);
+    const prompt = await ctx.db.query("gemini_prompt")
+      .withIndex("batch", (q) => q.eq("batch", args.batch).eq("status", "response_generated"))
+      .first();
+    if (!prompt) {
+      console.log("No prompt found");
+      return false;
+    }
+    await ctx.runMutation(internal.geminiBatchPodcast.processPromptResponse, {
+      prompt_id: prompt._id,
+    });
+    return true;
+  }
+});
+
+export async function aiHistoryResponse(prompt: string) {
+  // console.log("geminiHistoryResponse", prompt);
+  return await openaiResponse(prompt);
+}
+
+
+
+
 
 export const getGeminiPrompt = internalQuery({
   args: {
@@ -156,40 +205,59 @@ export const saveGeminiResponse = internalMutation({
   args: {
     prompt_id: v.id("gemini_prompt"),
     response: v.string(),
+    status: v.string(),
   },
 
   handler: async (ctx, args) => {
     await ctx.db.patch(args.prompt_id, {
       response: args.response,
+      status: args.status,
     });
   }
 });
 
-export function getEpisodesQueryForPrompt(ctx: MutationCtx, podcast_id: Id<"podcast">) {
-  const q = ctx.db.query("episode")
-    .withIndex("podcast_episode_number", (q) =>
-      q.eq("podcast_id", podcast_id),
-    );
-  if (!REDO_GEMINI_EPISODES) {
-    return q.filter((q) => q.eq(q.field("years"), undefined));
+export const patchPromptStatus = internalMutation({
+  args: {
+    prompt_id: v.id("gemini_prompt"),
+    status: v.string(),
+  },
+
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.prompt_id, {
+      status: args.status,
+    });
   }
-  return q;
-}
+});
+
+export const getNextPodcasts = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    console.log("getNextPodcast");
+    const podcasts = await ctx.db.query("podcast")
+      .filter((q) => q.neq(q.field("chart"), undefined))
+      .collect();
+
+    return podcasts;
+  }
+});
 
 
-export async function geminiHistoryOnePodcast(podcast_id: Id<"podcast">, chart: string, ctx: MutationCtx) {
-  const page_size = 50;
+
+export const geminiCreatePrompt = internalMutation({
+  args: { podcast_id: v.id("podcast"), chart: v.string(), batch: v.string(), page_size: v.number() },
+  handler: async (ctx, args) => {
+    console.log("geminiCreatePrompt", args.podcast_id, args.chart);
+    await geminiHistoryOnePodcast(args.podcast_id, args.chart, ctx, args.batch, args.page_size);
+  }
+});
+
+export async function geminiHistoryOnePodcast(podcast_id: Id<"podcast">, chart: string, ctx: MutationCtx, batch_name: string, page_size: number) {
   console.log("geminiHistoryOnePodcast", podcast_id, chart, page_size);
   const podcast = await ctx.db.get(podcast_id);
 
-  const prompt_ids: Id<"gemini_prompt">[] = [];
-
   const episodes = await getEpisodesQueryForPrompt(ctx, podcast_id)
     .collect();
-  if (!episodes || episodes.length === 0) {
-    console.log("No more episodes found", page_size, podcast_id, chart);
-    return [];
-  }
+
 
   const items = episodes.map((episode) => ({
     id: episode._id,
@@ -207,21 +275,34 @@ export async function geminiHistoryOnePodcast(podcast_id: Id<"podcast">, chart: 
   for (let i = 0; i < items.length; i += page_size) {
     const batch = items.slice(i, i + page_size);
     const prompt_string = await geminiPrompt(podcast, batch, chart);
-    const prompt_id = await savePrompt(podcast_id, prompt_string, chart, ctx);
-    prompt_ids.push(prompt_id);
+    const prompt_id = await savePrompt(podcast_id, prompt_string, chart, batch_name, ctx);
   }
-  console.log("prompt_ids", prompt_ids.length, prompt_ids);
-
-
-  return prompt_ids;
 }
 
-export async function savePrompt(podcast_id: Id<"podcast">, prompt: string, chart: string, ctx: MutationCtx) {
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, '');
+}
+
+
+
+export function getEpisodesQueryForPrompt(ctx: MutationCtx, podcast_id: Id<"podcast">) {
+  const q = ctx.db.query("episode")
+    .withIndex("podcast_episode_number", (q) =>
+      q.eq("podcast_id", podcast_id),
+    );
+  if (!REDO_GEMINI_EPISODES) {
+    return q.filter((q) => q.eq(q.field("years"), undefined));
+  }
+  return q;
+}
+
+export async function savePrompt(podcast_id: Id<"podcast">, prompt: string, chart: string, batch: string, ctx: MutationCtx) {
   console.log("savePrompt", podcast_id, chart);
   return await ctx.db.insert("gemini_prompt", {
     podcast_id: podcast_id,
     prompt: prompt,
     chart: chart,
+    batch: batch,
   });
 }
 
@@ -242,10 +323,7 @@ export const MUSIC_PROMPT =
     {id: string,years: string[], geonames: string[]},
     return an array [{id: string,years: string[], geonames: string[]}...]
 `;
-//     Below is a description of a podcast and a list of episodes with title.
-// For each episode, please respond with:
-// {id: string,years: string[], geonames: string[]},
-// every episode must have at least 1 year and 1 geoname.
+
 
 export const FILM_PROMPT =
   `
@@ -284,10 +362,7 @@ export async function geminiPrompt(
   }
 }
 
-export async function geminiHistoryResponse(prompt: string) {
-  // console.log("geminiHistoryResponse", prompt);
-  return await openaiResponse(prompt);
-}
+
 
 export async function geminiResponse(prompt: string) {
   const genAI = new GoogleGenerativeAI(
@@ -305,7 +380,6 @@ export async function openaiResponse(prompt: string) {
   const output = await openai.chat.completions.create({ model: "gpt-4o-mini", messages: [{ role: "user", content: prompt }] });
   console.log(output);
   return output.choices[0].message.content;
-
 }
 
 export const processPromptResponse = internalMutation({
@@ -324,10 +398,17 @@ export const processPromptResponse = internalMutation({
       items = await getJsonFromResponse(prompt.response);
     } catch (error) {
       console.log("error", error);
-      return;
+
+      await ctx.db.patch(args.prompt_id, {
+        status: "response_processed_error",
+      });//[ ] todo move to where called not in function
+      return false;
     }
     if (!items) {
-      return;
+      await ctx.db.patch(args.prompt_id, {
+        status: "response_processed_error",
+      });
+      return false;
     }
     // insert years into episode
     for (const item of items) {
@@ -347,25 +428,34 @@ export const processPromptResponse = internalMutation({
         }
       } catch (error) {
         console.error("error failed to insert", error);
+        await ctx.db.patch(args.prompt_id, {
+          status: "response_processed_error",
+        });
       }
     }
     console.log("processPromptResponse done");
+    await ctx.db.patch(args.prompt_id, {
+      status: "response_processed",
+    });
   },
 });
 
 export async function getJsonFromResponse(response: string) {
-  const responseJson = response.replace("```json", "").replace("```", "").trim();
-  var first_char = "";
-  var last_char = "";
-  console.log("responseJson first last char", responseJson.charAt(0), responseJson.charAt(responseJson.length - 1));
-  if ("[" != responseJson.charAt(0)) {
-    first_char = "[";
-  }
-  if ("]" != responseJson.charAt(responseJson.length - 1)) {
-    last_char = "]";
-  }
-  console.log("responseJson", first_char, last_char, responseJson);
-  const json = JSON.parse(first_char + responseJson + last_char);
+  // just get the string between ```json and ```
+  console.log("getJsonFromResponse", response);
+  let responseJson = response.substring(response.indexOf("["), response.lastIndexOf("]") + 1);
+  responseJson = responseJson
+  .replace(/\/.*/g, '') // Remove single-line comments;;
+  // Add quotes to unquoted keys
+  .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":');
+  // responseJson = responseJson.replace(/\n/g, '')
+
+  console.log("responseJson", responseJson);
+  if (responseJson.indexOf("[") != 0) {
+    console.log("json wrong format", response);
+  } 
+
+  const json = JSON.parse(responseJson);
   console.log("json", json);
   const items: Array<{ id: Id<"episode">; years: string[]; geonames: string[]; }> = json.map((item: any) => {
     try {
@@ -454,7 +544,7 @@ export const updateTimelinePodcast = internalMutation({
       if (episode.episode_number) {
         totalWithEpisodeNumber++;
       }
-      if (episode.years && episode.years.length > 0 
+      if (episode.years && episode.years.length > 0
         && episode.chart && episode.rank && episode.episode_number) {
         totalInserted++;
         await ctx.db.insert("timeline", {

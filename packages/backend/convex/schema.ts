@@ -94,6 +94,8 @@ const schema = defineSchema({
     response: v.optional(v.string()),
     chart: v.string(),
     status: v.optional(v.string()),
-  }).index("podcast_id", ["podcast_id"]),
+    batch: v.string(),
+  }).index("podcast_id", ["podcast_id"])
+  .index("batch", ["batch", "status"]),
 });
 export default schema;
