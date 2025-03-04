@@ -36,7 +36,7 @@ const schema = defineSchema({
     rank: v.number(),
   })
   .index("podcast_episode", ["podcast_id", "episode_id"])
-  .index("start", ["start", "chart", "rank","episode_number"]),   
+  .index("start_index", ["start", "chart", "rank","episode_number"]),   
   episode: defineTable({
     podcast_id: v.id("podcast"),
     episode_number: v.number(),
@@ -97,5 +97,10 @@ const schema = defineSchema({
     batch: v.string(),
   }).index("podcast_id", ["podcast_id"])
   .index("batch", ["batch", "status"]),
+  test_table: defineTable({
+    name: v.string(),
+    age: v.number(),
+    city: v.string(),
+  }).index("i_1", ["city", "age", "name"]),
 });
 export default schema;

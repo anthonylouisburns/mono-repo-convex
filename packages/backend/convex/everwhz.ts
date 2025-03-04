@@ -1,14 +1,10 @@
 import {
   query,
   mutation,
-  QueryCtx,
-  action,
 } from "./_generated/server";
 import { v } from "convex/values";
 import { Doc, Id } from "./_generated/dataModel";
 import { auth } from "./auth.js";
-import { paginationOptsValidator } from "convex/server";
-import { api } from "./_generated/api";
 
 
 export const currentUser = mutation({
@@ -298,45 +294,3 @@ export const getTimeline = query({
 });
 
 
-// export const test = query({
-//   args: {},
-//   handler: async (ctx) => {
-//     let cursor: string | null = null;
-//     let isDoneYet = false;
-
-//     const timeline: Array<Doc<"timeline">> = [];
-//     do {
-//       const {page, continueCursor, isDone}:{page: Doc<"timeline">[], continueCursor: string | null, isDone: boolean} = await ctx.runQuery(api.everwhz.getSampledRecords, {  
-//         paginate: {
-//           numItems: 100,
-//           cursor: cursor,
-//         },
-//         filter: undefined,
-//       });
-//       cursor = continueCursor
-//       isDoneYet = isDone
-//       const len = page.length;
-//       // console.log("test", isDoneYet, page[0].start, page[len - 1].start);
-//       timeline.push(page[0], page[len - 1])
-//     } while (!isDoneYet);
-//     return timeline;
-//   },
-// });
-
-
-// export async function getSampledRecords(ctx: QueryCtx,
-export const getSampledRecords = query({
-  args: {
-    paginate: paginationOptsValidator
-  },
-  handler: async (ctx, args) => {
-    const records = await ctx.db
-      .query("timeline")
-      .withIndex("start")
-      .paginate(args.paginate);
-    const len = records.page.length;
-    return {page: [records.page[0], records.page[len - 1]], 
-      continueCursor: records.continueCursor, 
-      isDone: records.isDone};
-  },
-});

@@ -3,7 +3,7 @@
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { EpisodeTitle } from "./EpisodeTitle";
+import { EpisodeTitle } from "../episodes/EpisodeTitle";
 import { useParams } from "react-router-dom";
 
 export const EpisodeById = function EpisodeById(): JSX.Element {

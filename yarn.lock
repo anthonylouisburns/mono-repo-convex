@@ -1886,6 +1886,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@convex-dev/aggregate@npm:^0.1.20":
+  version: 0.1.20
+  resolution: "@convex-dev/aggregate@npm:0.1.20"
+  peerDependencies:
+    convex: ~1.16.5 || >=1.17.0 <1.25.0
+  checksum: 10c0/965327a261f50c6ada3341e9a97c07e3d06e74cc0d2cee242616c1497b1704255a11b825faa8aeac6745b61b5c2ce2c4c524cb2a64e79214909ca6f118bcb1d7
+  languageName: node
+  linkType: hard
+
 "@convex-dev/auth@npm:^0.0.43":
   version: 0.0.43
   resolution: "@convex-dev/auth@npm:0.0.43"
@@ -1904,6 +1913,15 @@ __metadata:
   bin:
     auth: dist/bin.cjs
   checksum: 10c0/99fcac471f0a19d290177ce77c4520e06da19d77ee62bec9c5653a690deeb6ce6fb715779aa0d6819f48bf3dfff3d6b3924e3d242cf29ec3576a50e36ca2b9ab
+  languageName: node
+  linkType: hard
+
+"@convex-dev/migrations@npm:^0.2.5":
+  version: 0.2.5
+  resolution: "@convex-dev/migrations@npm:0.2.5"
+  peerDependencies:
+    convex: ~1.16.5 || >=1.17.0 <1.25.0
+  checksum: 10c0/a71cbc16fc275b41d3a632a7d70509077d1bcf4f3aedb5b36dd354d02c0f7273d8f2797f9ce2e1cfb1593fb3022ff54df5ed099a56f8ddeaa40b6dbb7b428684
   languageName: node
   linkType: hard
 
@@ -9564,7 +9582,9 @@ __metadata:
   resolution: "everwhz@workspace:."
   dependencies:
     "@auth/core": "npm:^0.34.1"
+    "@convex-dev/aggregate": "npm:^0.1.20"
     "@convex-dev/auth": "npm:^0.0.43"
+    "@convex-dev/migrations": "npm:^0.2.5"
     "@edge-runtime/vm": "npm:^5.0.0"
     "@emotion/react": "npm:^11.14.0"
     "@emotion/styled": "npm:^11.14.0"
