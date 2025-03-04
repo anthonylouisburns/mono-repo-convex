@@ -8,11 +8,12 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Doc } from "@packages/backend/convex/_generated/dataModel";
 import TimelineLevel4 from "./TimelineLevel4";
-
+import { useState } from "react";
 
 const AccordionPage3 = ({ first, last }: { first: { timeline: Doc<"timeline">, offset: number }, last: { timeline: Doc<"timeline">, offset: number } }) => {
+    const [expanded, setExpanded] = useState(false);
     return (
-        <Accordion>
+        <Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
             <AccordionSummary>
                 <div className="flex items-center justify-between w-full">
                     <span className="font-bold">
@@ -20,9 +21,11 @@ const AccordionPage3 = ({ first, last }: { first: { timeline: Doc<"timeline">, o
                     </span>
                 </div>
             </AccordionSummary>
-            <AccordionDetails>
-                <TimelineLevel4 pageSize={10} offset={first.offset} />
-            </AccordionDetails>
+            {expanded && (
+                <AccordionDetails>
+                    <TimelineLevel4 pageSize={10} offset={first.offset} />
+                </AccordionDetails>
+            )}
         </Accordion>
 
     );
