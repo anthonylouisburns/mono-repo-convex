@@ -18,6 +18,7 @@ export const clearAggregate = internalAction({
 
 export const run = migrations.runner();
 
+// [ ] make a migration to delete from timeline if it can't find the episode
 export const createTimeline = migrations.define({
   table: "episode",
   batchSize: 100, // Process 100 documents at a time

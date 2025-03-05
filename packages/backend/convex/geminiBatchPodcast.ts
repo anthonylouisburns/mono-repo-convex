@@ -474,22 +474,6 @@ export async function getJsonFromResponse(response: string) {
   return items;
 }
 
-export const deleteYearsByPodcast = internalMutation({
-  args: {
-    podcast_id: v.id("podcast"),
-  },
-  handler: async (ctx, args) => {
-    const episodes = await ctx.db
-      .query("episode")
-      .withIndex("podcast_episode_number", (q) => q.eq("podcast_id", args.podcast_id))
-      .collect();
-    episodes.map((episode) => {
-      ctx.db.patch(episode._id, {
-        years: undefined,
-        status: "years_deleted",
-      });
-    });
-  },
-});
+
 
 

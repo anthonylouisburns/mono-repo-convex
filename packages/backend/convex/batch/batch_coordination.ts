@@ -4,6 +4,7 @@ import { Doc, Id } from "../_generated/dataModel";
 import { internalAction, QueryCtx, ActionCtx } from "../_generated/server";
 const { XMLParser } = require("fast-xml-parser");
 
+//[ ] at somepoint schedule a migration to update the timeline
 export const dailyInitialBatchJob = internalAction({
     args: {},
     handler: async (ctx) => {
