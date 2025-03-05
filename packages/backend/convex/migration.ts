@@ -4,18 +4,17 @@ import { insertTimeline, timeline_aggregate } from "./page_timeline";
 import { deleteTimeline } from "./page_timeline";
 import { Doc } from "./_generated/dataModel";
 import { Id } from "./_generated/dataModel";
-import { MutationCtx } from "./_generated/server";
+import { internalAction, MutationCtx } from "./_generated/server";
 
 export const migrations = new Migrations(components.migrations);
 
 
-// export const runAggregateBackfill = migrations.define({
-//   table: "timeline",
-//   batchSize: 100, // Process 100 documents at a time
-//   migrateOne: async (ctx, doc) => {
-//     await timeline_aggregate.insertIfDoesNotExist(ctx, doc as any);
-//   },
-// });
+export const clearAggregate = internalAction({
+  args: {},
+  handler: async (ctx) => {
+    await timeline_aggregate.clear(ctx) 
+  },
+});
 
 export const run = migrations.runner();
 
@@ -23,16 +22,28 @@ export const createTimeline = migrations.define({
   table: "episode",
   batchSize: 100, // Process 100 documents at a time
   migrateOne: async (ctx, episode) => {
-    await insertTimelineFunc(ctx, episode as Doc<"episode">);
+    await insertTimelineFunc(ctx, episode as Doc<"episode">, true);
   },
 });
 
-export async function insertTimelineFunc(ctx: MutationCtx, episode: Doc<"episode">) {
+export const udpateTimeline = migrations.define({
+  table: "episode",
+  batchSize: 100, // Process 100 documents at a time
+  migrateOne: async (ctx, episode) => {
+    await insertTimelineFunc(ctx, episode as Doc<"episode">, false);
+  },
+});
+
+export async function insertTimelineFunc(ctx: MutationCtx, episode: Doc<"episode">, update:boolean) {
   const timeline = await ctx.db.query("timeline")
     .withIndex("podcast_episode", (q) => q.eq("podcast_id", episode.podcast_id).eq("episode_id", episode._id))
     .unique();
   if (timeline) {
-    await deleteTimeline(ctx, timeline._id as Id<"timeline">);
+    if (update) {
+      await deleteTimeline(ctx, timeline._id as Id<"timeline">);
+    } else {
+      return;
+    }
   }
   if (episode._id && episode.years && episode.years.length > 0
     && episode.chart && episode.rank && episode.episode_number) {

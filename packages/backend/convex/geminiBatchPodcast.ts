@@ -18,7 +18,7 @@ const PAGE_SIZE = 50;
 //create prompts
 export const startGeminiBatchProcess = internalAction({
   handler: async (ctx) => {
-    const podcasts = await ctx.runQuery(internal.geminiBatchPodcast.getNextPodcasts);
+    const podcasts = await ctx.runQuery(internal.geminiBatchPodcast.getAllPodcasts);
     const batch = new Date().toISOString().split("T")[0];
     if (!podcasts || podcasts.length === 0) {
       console.log("No podcasts found");
@@ -36,6 +36,18 @@ export const startGeminiBatchProcess = internalAction({
         page_size: PAGE_SIZE,
       });
     }
+  }
+});
+
+export const getAllPodcasts = internalQuery({
+  args: {},
+  handler: async (ctx) => {
+    console.log("getAllPodcasts must have chart type");
+    const podcasts = await ctx.db.query("podcast")
+      .filter((q) => q.neq(q.field("chart"), undefined))
+      .collect();
+
+    return podcasts;
   }
 });
 
@@ -229,17 +241,7 @@ export const patchPromptStatus = internalMutation({
   }
 });
 
-export const getNextPodcasts = internalQuery({
-  args: {},
-  handler: async (ctx) => {
-    console.log("getNextPodcast");
-    const podcasts = await ctx.db.query("podcast")
-      .filter((q) => q.neq(q.field("chart"), undefined))
-      .collect();
 
-    return podcasts;
-  }
-});
 
 
 

@@ -9,7 +9,7 @@ export const loadChartPodcasts = internalMutation({
     handler: async (ctx, args) => {
         const charts = await ctx.db.query("taddy_charts").filter(q => q.eq(q.field("date"), args.date)).collect();
 
-        console.log("Loading episodes", args.date);
+        console.log("Loading podcasts from charts", args.date);
         //loop over all charts for the date
         charts.forEach(async (chart) => {
             await ctx.runMutation(internal.load_podcasts.updateAddPodcast, {
@@ -70,5 +70,12 @@ export const updateAddPodcast = internalMutation({
                 });
             }
         }
+    },
+});
+
+export const updatePodcastDetailsFromRss = internalMutation({
+    args: { podcast_id: v.id("podcast"), number_of_episodes: v.number(), title: v.string(), description: v.string() },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.podcast_id, { number_of_episodes: args.number_of_episodes, title: args.title, description: args.description });
     },
 });

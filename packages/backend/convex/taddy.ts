@@ -17,7 +17,7 @@ export const PAGES = [1, 2];
 export const PAGE_SIZE = 25;
 
 export const taddyBatchDownloadCharts = internalAction({
-  args: { },
+  args: {},
   handler: async (ctx, args) => {
     const date = new Date().toISOString().split("T")[0];
 
@@ -28,6 +28,14 @@ export const taddyBatchDownloadCharts = internalAction({
           page: page,
           date: date,
         });
+        await ctx.runMutation(internal.batch.utils.saveWork, {
+          type: "download_charts",
+          summary: {
+            date: date,
+            page: page,
+            chart_type: chart_type,
+          },
+        });
       }
     }
     return date;
@@ -36,7 +44,7 @@ export const taddyBatchDownloadCharts = internalAction({
 
 
 export const taddyDownloadCharts = internalAction({
-  args: { chart_type: v.string(), page: v.number(), date: v.string()   },
+  args: { chart_type: v.string(), page: v.number(), date: v.string() },
 
   // Action implementation.
   handler: async (ctx, args) => {

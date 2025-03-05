@@ -8,10 +8,12 @@
  * @module
  */
 
+import type * as analytics_analytics from "../analytics/analytics.js";
 import type * as audioProxy from "../audioProxy.js";
 import type * as auth from "../auth.js";
-import type * as batch_coordination from "../batch_coordination.js";
-import type * as crons from "../crons.js";
+import type * as batch_batch_coordination from "../batch/batch_coordination.js";
+import type * as batch_crons from "../batch/crons.js";
+import type * as batch_utils from "../batch/utils.js";
 import type * as everwhz from "../everwhz.js";
 import type * as everwhz_ai from "../everwhz_ai.js";
 import type * as geminiBatchPodcast from "../geminiBatchPodcast.js";
@@ -37,10 +39,12 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "analytics/analytics": typeof analytics_analytics;
   audioProxy: typeof audioProxy;
   auth: typeof auth;
-  batch_coordination: typeof batch_coordination;
-  crons: typeof crons;
+  "batch/batch_coordination": typeof batch_batch_coordination;
+  "batch/crons": typeof batch_crons;
+  "batch/utils": typeof batch_utils;
   everwhz: typeof everwhz;
   everwhz_ai: typeof everwhz_ai;
   geminiBatchPodcast: typeof geminiBatchPodcast;

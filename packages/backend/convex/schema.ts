@@ -103,5 +103,16 @@ const schema = defineSchema({
     age: v.number(),
     city: v.string(),
   }).index("i_1", ["city", "age", "name"]),
+  work: defineTable({
+    type: v.string(),
+    summary: v.any(),
+  }).index("type", ["type"]),
+  job: defineTable({
+    type: v.string(),
+    data: v.optional(v.any()),
+    instructions: v.optional(v.any()),
+    status: v.optional(v.string()),
+    error: v.optional(v.string()),
+  }).index("status", ["status"]),
 });
 export default schema;
