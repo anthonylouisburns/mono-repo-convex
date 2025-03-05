@@ -3,11 +3,9 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
-import { getPlayStatus } from "@packages/backend/convex/everwhz";
-import { msToTime } from "../../utilities";
-import { Howl, Howler } from "howler";
-import { Button } from "./common/button";
+import { Howl } from "howler";
 import { useEffect, useState } from "react";
+import { msToTime } from "../../lib/utilities";
 
 export default function Player({
   player_episode_id,
@@ -28,7 +26,6 @@ export default function Player({
   });
   const set_play_status = useMutation(api.everwhz.playStatus);
   const player_podcast_name = podcast?.title;
-  const { Howl, Howler } = require("howler");
 
   async function stopSound() {
     // sound.stopAsync();
@@ -37,6 +34,22 @@ export default function Player({
     sound?.pause();
   }
 
+  async function updateCurrentTime() {
+    const status =  getPlayStatus
+    const currentTime = status ? status.position : 0 / 1000;
+    console.log("updateCurrentTime", currentTime);
+    setCurrentTime(currentTime);
+  }
+  
+  useEffect(() => {
+    if (getPlayStatus) {
+      const currentTime = getPlayStatus.position / 1000;
+      console.log("updateCurrentTime", currentTime);
+      setCurrentTime(currentTime);
+      setDuration(getPlayStatus.duration ?? 0);
+    }
+  }, [getPlayStatus]);
+
   useEffect(() => {
     if (sound) {
       stopSound();
@@ -44,7 +57,7 @@ export default function Player({
       setSound(undefined);
       console.log("sound deleted", sound);
       setCurrentTime(0);
-      setDuration(0);
+      setDuration(1000 * sound.duration());
     }
   }, [player_episode_id]);
 
@@ -52,20 +65,28 @@ export default function Player({
   const [duration, setDuration] = useState<number>(0);
   useEffect(() => {
     let timerInterval: any;
-    if (sound && player_episode_id) {
-      const updaterTimer = () => {
-        const pos = sound.seek();
-        setCurrentTime(Math.round(pos));
-        setDuration(1000 * sound.duration());
-        if (Math.abs(pos - lastUpdatePos) > UPDATE_DELAY_SECONDS) {
-          set_play_status({ position: pos * 1000, id: player_episode_id });
-          setLastUpdatePos(pos);
-        }
-      };
-      //The return value of setInterval is a unique identifier for the timer,
-      //which is stored in the timerInterval variable in this case.
-      // This identifier can be used later with the clearInterval function to stop the recurring timer.
-      timerInterval = setInterval(updaterTimer, 1000);
+    if (player_episode_id) {
+      console.log("player_episode_id", player_episode_id);
+      if (!sound) {
+        console.log("no sound", currentTime);
+        updateCurrentTime()
+      }
+      if (sound) {
+        console.log("sound", player_episode_id);
+        const updaterTimer = () => {
+          const pos = sound.seek();
+          setCurrentTime(Math.round(pos));
+          setDuration(1000 * sound.duration());
+          if (Math.abs(pos - lastUpdatePos) > UPDATE_DELAY_SECONDS) {
+            set_play_status({ id: player_episode_id, position: pos * 1000, duration: duration });
+            setLastUpdatePos(pos);
+          }
+        };
+        //The return value of setInterval is a unique identifier for the timer,
+        //which is stored in the timerInterval variable in this case.
+        // This identifier can be used later with the clearInterval function to stop the recurring timer.
+        timerInterval = setInterval(updaterTimer, 1000);
+      }
     }
     return () => {
       clearInterval(timerInterval);
@@ -73,13 +94,12 @@ export default function Player({
   }, [sound, lastUpdatePos, player_episode_id, set_play_status]);
 
   async function playSound() {
-    const proxyUrl = "https://cors-anywhere.herokuapp.com/";
     console.log("play sound");
     // console.log('Loading Sound');
     // setIsPlaying(true)
 
-    const mp3_link = episode?.mp3_link;
-
+    const mp3_link = episode?.mp3_link ?? "";
+    console.log("mp3_link", mp3_link);
     if (!sound) {
       const new_sound = new Howl({
         src: [mp3_link],
@@ -89,6 +109,7 @@ export default function Player({
 
       setSound(new_sound);
       console.log("new_pos:", new_position);
+
       new_sound.seek(new_position / 1000);
       new_sound.play();
     } else {

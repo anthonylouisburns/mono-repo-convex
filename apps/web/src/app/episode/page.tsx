@@ -44,7 +44,7 @@ export default function About(): JSX.Element {
         </button>
         <div
           className="dangerous"
-          dangerouslySetInnerHTML={{ __html: episode?.body["content:encoded"] }}
+          dangerouslySetInnerHTML={{ __html: episode?.episode_description ?? "-" }}
         />
       </div>
     </div>

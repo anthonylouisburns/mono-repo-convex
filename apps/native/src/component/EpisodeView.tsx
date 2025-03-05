@@ -18,7 +18,7 @@ export const EpisodeView = ({
   }
   function details() {
     if (longView) {
-      return <HTMLView value={episode?.body["content:encoded"]} />;
+      return <HTMLView value={episode.episode_description ?? "-"} />;
     }
     return <></>;
   }
@@ -34,7 +34,7 @@ export const EpisodeView = ({
       >
         <HTMLView
           style={"<div>" + styles.dangerousTitle + "</div>"}
-          value={episode?.body.title}
+          value={episode.title ?? "-"}
         />
       </Text>
       <ScrollView>{details()}</ScrollView>

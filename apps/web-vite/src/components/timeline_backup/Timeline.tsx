@@ -32,7 +32,7 @@ export default function Timeline() {
 
     if (episode) {
       setSelectedOption({
-        label: episode.body.title,
+        label: episode.title,
         value: episode._id,
         key: episode._id,
       });
@@ -67,7 +67,7 @@ export default function Timeline() {
           to={"/episode/" + episode._id}
           className="navigation-light-italic"
         >
-          <div dangerouslySetInnerHTML={{ __html: episode?.body.title }} />
+          <div dangerouslySetInnerHTML={{ __html: episode.title ?? "-" }} />
         </Link>
       </div>
     ) : (

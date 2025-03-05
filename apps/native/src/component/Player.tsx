@@ -94,7 +94,7 @@ const Player = () => {
     console.log("Loading Sound");
     setIsPlaying(true);
 
-    const mp3_link = episode?.body.enclosure["@_url"];
+    const mp3_link = episode.mp3_link;
     const source = { uri: mp3_link };
 
     console.log("Loading Sound at:", mp3_link, position.length);
@@ -126,7 +126,7 @@ const Player = () => {
         <Text style={styles.podcast_name}>{player_podcast_name}:</Text>
       </View>
       <View style={styles.player}>
-        <HTMLView value={episode?.body.title} />
+        <HTMLView value={episode.title ?? "-"} />
       </View>
       <View style={styles.player}>
         <Text style={styles.link} onPress={playSound}>

@@ -171,9 +171,11 @@ export const playStatus = mutation({
     id: v.id("episode"),
     device_id: v.optional(v.string()),
     position: v.number(),
+    duration: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const { id, device_id, position } = args;
+    console.log("playStatus", args);
+    const { id, device_id, position, duration } = args;
     const user_id = await auth.getUserId(ctx);
 
     console.log("playStatus", id, user_id, position);
@@ -188,6 +190,7 @@ export const playStatus = mutation({
         await ctx.db.patch(play_status._id, {
           position: position,
           device_id: device_id,
+          duration: duration,
         });
         return;
       }
@@ -202,6 +205,7 @@ export const playStatus = mutation({
           await ctx.db.patch(play_status._id, {
             position: position,
             user_id: user_id,
+            duration: duration,
           });
           return;
         }
@@ -212,6 +216,7 @@ export const playStatus = mutation({
         device_id: device_id,
         episode_id: id,
         position: position,
+        duration: duration,
       });
     } else {
       const play_status = await ctx.db
@@ -222,7 +227,7 @@ export const playStatus = mutation({
         .unique();
 
       if (play_status !== null) {
-        await ctx.db.patch(play_status._id, { position: position });
+        await ctx.db.patch(play_status._id, { position: position, duration: duration });
         return;
       }
 
@@ -230,6 +235,7 @@ export const playStatus = mutation({
         device_id: device_id,
         episode_id: id,
         position: position,
+        duration: duration,
       });
     }
   },
@@ -250,7 +256,7 @@ export const getPlayStatus = query({
         .query("play_status")
         .withIndex("user", (q) => q.eq("user_id", user_id).eq("episode_id", id))
         .unique();
-      // console.log("getPlayStatus play_status", play_status)
+      console.log("getPlayStatus play_status", play_status)
       if (play_status) {
         return play_status;
       }

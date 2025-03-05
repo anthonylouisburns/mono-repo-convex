@@ -38,7 +38,7 @@ export const EpisodeSelect = function EpisodeSelect({
   }> = episodes
     ? episodes?.map((episode) => {
         return {
-          label: episode.body.title as string,
+          label: episode.title,
           value: episode._id,
           key: episode._id,
         };

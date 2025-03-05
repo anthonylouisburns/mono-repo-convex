@@ -11,10 +11,13 @@ import TimelineLevel2 from "./TimelineLevel2";
 import { useState } from "react";
 
 
-const AccordionPage = ({ first, last }: { first: { timeline: Doc<"timeline">, offset: number }, last: { timeline: Doc<"timeline">, offset: number } }) => {
-    const [expanded, setExpanded] = useState(false);
+const AccordionPage = ({ first, last, expandedPanel, updateExpandedPanel }: { first: { timeline: Doc<"timeline">, offset: number }, last: { timeline: Doc<"timeline">, offset: number }, expandedPanel: string, updateExpandedPanel: (panel: string) => void }) => {
+
     return (
-        <Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
+        <Accordion
+            key={first.timeline._id}
+            expanded={expandedPanel === first.timeline._id}
+            onChange={() => updateExpandedPanel(first.timeline._id)}>
             <AccordionSummary>
                 <div className="flex items-center justify-between w-full">
                     <span className="font-bold">
@@ -22,7 +25,7 @@ const AccordionPage = ({ first, last }: { first: { timeline: Doc<"timeline">, of
                     </span>
                 </div>
             </AccordionSummary>
-            {expanded && (
+            {(expandedPanel === first.timeline._id) && (
                 <AccordionDetails>
                     <TimelineLevel2 pageSize={100} offset={first.offset} count={last.offset - first.offset} />
                 </AccordionDetails>
@@ -33,6 +36,7 @@ const AccordionPage = ({ first, last }: { first: { timeline: Doc<"timeline">, of
 };
 
 export default function TimelineLevel1({ pageSize }: { pageSize: number }) {
+    const [expandedPanel, setExpandedPanel] = useState("");
     const result = useQuery(api.page_timeline.getBookmarksAll, {
         pageSize: pageSize
     });
@@ -40,12 +44,19 @@ export default function TimelineLevel1({ pageSize }: { pageSize: number }) {
     const { bookmarks = [] } = result ?? {};
 
     const pairs = []
+    function updateExpandedPanel(panel: string) {
+        if (expandedPanel === panel) {
+            setExpandedPanel("");
+        } else {
+            setExpandedPanel(panel);
+        }
+    }
     for (let i = 0; i < bookmarks.length - 1; i += 1) {
         pairs.push({ first: bookmarks[i], last: bookmarks[i + 1], page: i })
     }
     return (
         <AccordionGroup className="w-full">
-            {pairs.map((tl) => <AccordionPage first={tl.first} last={tl.last} />)}
+            {pairs.map((tl) => <AccordionPage first={tl.first} last={tl.last} expandedPanel={expandedPanel} updateExpandedPanel={updateExpandedPanel} />)}
         </AccordionGroup>
     );
 };

@@ -1,8 +1,7 @@
-import { internalAction, MutationCtx } from "./_generated/server";
+import { internalAction, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
-import { action, internalMutation, mutation, query } from "./_generated/server";
-import { QueryCtx } from "./_generated/server";
+import { action, mutation, query } from "./_generated/server";
 const { XMLParser } = require("fast-xml-parser");
 import { Id, Doc } from "./_generated/dataModel";
 export const TODAYS_DATE = new Date().toISOString().split("T")[0];
@@ -15,12 +14,50 @@ export const loadAllEpisodes = internalAction({
       await ctx.runAction(internal.load_episodes.downloadRssBody, {
         id: podcast._id,
       });
-      await ctx.scheduler.runAfter(0, api.load_episodes.parseXml, {
-        pod_id: podcast._id,
+      await ctx.scheduler.runAfter(0, internal.load_episodes.deleteAllEpisodes, {
+        podcast_id: podcast._id,
       });
     }
   },
 });
+
+export const loadAllEpisodesOnePodcast = internalAction({
+  args: {
+    id: v.id("podcast"),
+  },
+  handler: async (ctx, { id }) => {
+    await ctx.runAction(internal.load_episodes.downloadRssBody, {
+      id: id,
+    });
+
+    await ctx.scheduler.runAfter(0, internal.load_episodes.deleteAllEpisodes, {
+      podcast_id: id,
+    });
+  },
+});
+
+export const deleteAllEpisodes = internalAction({
+  args: {
+    podcast_id: v.id("podcast"),
+  },
+  handler: async (ctx, args) => {
+    const continue_deleting = await ctx.runMutation(internal.load_episodes.deleteAllEpisodes1000, {
+        podcast_id: args.podcast_id,
+      });
+    if (continue_deleting) {
+      console.log("deleted all episodes", args.podcast_id);
+      await ctx.scheduler.runAfter(0, internal.load_episodes.deleteAllEpisodes, {
+        podcast_id: args.podcast_id,
+      });
+    } else {
+      console.log("no episodes to delete", args.podcast_id);
+      await ctx.scheduler.runAfter(0, api.load_episodes.parseXml, {
+        pod_id: args.podcast_id,
+      });
+    }
+  },
+});
+
 
 export const downloadRssBody = internalAction({
   args: {
@@ -70,9 +107,10 @@ export const patchPodcastRss = mutation({
   handler: async (ctx, args) => {
     const { id, rss_body, etag, last_modified } = args;
     const updateId = await ctx.db.patch(id,
-      { rss_body: rss_body,
+      {
+        rss_body: rss_body,
         response_headers: {
-          etag: etag, 
+          etag: etag,
           last_modified: last_modified,
         },
       });
@@ -92,7 +130,7 @@ export const parseXml = action({
     const podcast = await ctx.runQuery(api.load_episodes.getPodcast, {
       id: args.pod_id,
     });
-    if (podcast == null || podcast.rss_body == null) {
+    if (podcast == null || podcast.rss_body == null || podcast.chart == null || podcast.rank == null) {
       console.error("podcast not found", podcast?.title, podcast?._id, podcast?.rss_body);
       return;
     }
@@ -101,7 +139,7 @@ export const parseXml = action({
       console.error("doc empty", podcast?.title, podcast?._id, podcast?.rss_body);
       return;
     }
-    const rss_text = await rss_blob.text(); 
+    const rss_text = await rss_blob.text();
 
     const options = {
       ignoreAttributes: false,
@@ -111,9 +149,26 @@ export const parseXml = action({
 
     await ctx.runMutation(api.load_episodes.patchPodcastRssJson, {
       podcast_id: args.pod_id,
+      podcast_chart: podcast.chart,
+      podcast_rank: podcast.rank,
       rss_json: doc,
       date: TODAYS_DATE,
     });
+  },
+});
+
+export const deleteAllEpisodes1000 = internalMutation({
+  args: { podcast_id: v.id("podcast") },
+  handler: async (ctx, args) => {
+    const episodes = await ctx.db.query("episode").withIndex("podcast_episode_number", (q) => q.eq("podcast_id", args.podcast_id)).take(1000);
+    if (episodes.length == 0) {
+      console.log("no episodes to delete", args.podcast_id);
+      return false;
+    }
+    for (const episode of episodes) {
+      ctx.db.delete(episode._id);
+    }
+    return true;
   },
 });
 
@@ -125,76 +180,84 @@ export const getPodcast = query({
 });
 
 export const patchPodcastRssJson = mutation({
-  args: { podcast_id: v.id("podcast"), rss_json: v.any(), date: v.string() },
+  args: { podcast_id: v.id("podcast"), podcast_chart: v.string(), podcast_rank: v.number(), rss_json: v.any(), date: v.string() },
 
   handler: async (ctx, args) => {
     console.log("patchPodcastRssJson start", args.podcast_id);
     const { podcast_id, rss_json } = args;
-    const podcast = await ctx.runQuery(api.load_episodes.getPodcast, {
-      id: podcast_id,
-    });
-    if (podcast == null) {
-      console.error("podcast not found");
-      return;
-    }
+
+
     const items = rss_json.rss.channel.item;
     const max_episode = items.length;
     const podcast_title = rss_json.rss.channel.title;
     const podcast_description = rss_json.rss.channel.description;
-    console.log("patching podcast", podcast_title, podcast._id);
-    ctx.db.patch(podcast._id, { number_of_episodes: max_episode, title: podcast_title, description: podcast_description });
+    console.log("patching podcast", podcast_title, podcast_id);
+    ctx.db.patch(podcast_id, { number_of_episodes: max_episode, title: podcast_title, description: podcast_description });
+
+
     for (const [index, item] of rss_json.rss.channel.item.entries()) {
       const e_n = Math.ceil(max_episode - index);
 
-      const episode = await ctx.db
-        .query("episode")
-        .withIndex("podcast_episode_number", (q) =>
-          q.eq("podcast_id", args.podcast_id).eq("episode_number", e_n),
-        )
-        .unique();
+      // const episode = await ctx.db
+      //   .query("episode")
+      //   .withIndex("podcast_episode_number", (q) =>
+      //     q.eq("podcast_id", args.podcast_id).eq("episode_number", e_n),
+      //   )
+      //   .unique();
 
       // console.log("item", item.title);
       const title = item.title;
-      if(!item.enclosure || item.enclosure["@_url"] == null) {
-        console.log("mp3_link", item);
+      if (!item.enclosure || item.enclosure["@_url"] == null) {
+        console.log("mp3_link missing", item);
         return;
       }
-      if (episode) {
-        ctx.db.patch(episode._id, {
-          podcast_id: args.podcast_id,
-          episode_number: Math.ceil(max_episode - index),
-          episode_description: item.description,
-          mp3_link: item.enclosure["@_url"],
-          title: title,
-          podcast_title: podcast_title,
-          chart: podcast.chart,
-          rank: podcast.rank,
-          updated_date: args.date
-        });
-      } else {
-        ctx.db.insert("episode", {
-          podcast_id: args.podcast_id,
-          episode_number: Math.ceil(max_episode - index),
-          episode_description: item.description,
-          mp3_link: item.enclosure["@_url"],
-          title: title,
-          podcast_title: podcast_title,
-          chart: podcast.chart,
-          rank: podcast.rank,
-          updated_date: args.date
-        });
-      }
+      ctx.db.insert("episode", {
+        podcast_id: args.podcast_id,
+        episode_number: Math.ceil(max_episode - index),
+        episode_description: item.description,
+        mp3_link: item.enclosure["@_url"],
+        title: title,
+        podcast_title: podcast_title,
+        chart: args.podcast_chart,
+        rank: args.podcast_rank,
+        updated_date: args.date
+      });
+      // if (episode) {
+      //   ctx.db.patch(episode._id, {
+      //     podcast_id: args.podcast_id,
+      //     episode_number: Math.ceil(max_episode - index),
+      //     episode_description: item.description,
+      //     mp3_link: item.enclosure["@_url"],
+      //     title: title,
+      //     podcast_title: podcast_title,
+      //     chart: args.podcast_chart,
+      //     rank: args.podcast_rank,
+      //     updated_date: args.date
+      //   });
+      // } else {
+      //   ctx.db.insert("episode", {
+      //     podcast_id: args.podcast_id,
+      //     episode_number: Math.ceil(max_episode - index),
+      //     episode_description: item.description,
+      //     mp3_link: item.enclosure["@_url"],
+      //     title: title,
+      //     podcast_title: podcast_title,
+      //     chart: args.podcast_chart,
+      //     rank: args.podcast_rank,
+      //     updated_date: args.date
+      //   });
+      // }
     }
     //   delete if extra episodes in db
-    const episodes = await ctx.db
-      .query("episode")
-      .withIndex("podcast_episode_number", (q) =>
-        q.eq("podcast_id", args.podcast_id).gt("episode_number", max_episode),
-      )
-      .collect();
-    for (const episode of episodes) {
-      ctx.db.delete(episode._id);
-    }
+    // const episodes = await ctx.db
+    //   .query("episode")
+    //   .withIndex("podcast_episode_number", (q) =>
+    //     q.eq("podcast_id", args.podcast_id).gt("episode_number", max_episode),
+    //   )
+    //   .collect();
+    // for (const episode of episodes) {
+    //   ctx.db.delete(episode._id);
+    // }
     console.log("patchPodcastRssJson done", podcast_title, args.podcast_id);
   },
 });

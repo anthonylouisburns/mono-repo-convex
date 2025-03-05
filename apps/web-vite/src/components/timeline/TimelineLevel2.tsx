@@ -11,18 +11,18 @@ import TimelineLevel3 from "./TimelineLevel3";
 import { useState } from "react";
 
 
-const AccordionPage2 = ({ first, last }: { first: { timeline: Doc<"timeline">, offset: number }, last: { timeline: Doc<"timeline">, offset: number } }) => {
-    const [expanded, setExpanded] = useState(false);
+const AccordionPage2 = ({ first, last, expandedPanel, updateExpandedPanel }: { first: { timeline: Doc<"timeline">, offset: number }, last: { timeline: Doc<"timeline">, offset: number }, expandedPanel: string, updateExpandedPanel: (panel: string) => void }) => {
+
     return (
-        <Accordion expanded={expanded} onChange={() => setExpanded(!expanded)}>
-            <AccordionSummary>
+        <Accordion key={first.timeline._id} expanded={expandedPanel===first.timeline._id} onChange={() => updateExpandedPanel(first.timeline._id)}>
+            <AccordionSummary className="bg-blue-100">
                 <div className="flex items-center justify-between w-full">
                     <span className="font-bold">
                         {first.timeline.start}-{last.timeline.start}
                     </span>
                 </div>
             </AccordionSummary>
-            {expanded && (
+            {(expandedPanel===first.timeline._id) && (
                 <AccordionDetails>
                     <TimelineLevel3 pageSize={10} offset={first.offset} count={last.offset - first.offset} />
                 </AccordionDetails>
@@ -33,12 +33,19 @@ const AccordionPage2 = ({ first, last }: { first: { timeline: Doc<"timeline">, o
 };
 
 export default function TimelineLevel2({ pageSize, offset, count }: { pageSize: number, offset: number, count: number }) {
+    const [expandedPanel, setExpandedPanel] = useState("");
     const result = useQuery(api.page_timeline.getBookmarks, {
         pageSize: pageSize,
         offset: offset,
         count: count
     });
-
+    function updateExpandedPanel(panel: string) {
+        if (expandedPanel === panel) {
+            setExpandedPanel("");
+        } else {
+            setExpandedPanel(panel);
+        }
+    }
     const { bookmarks = [] } = result ?? {};
 
     const pairs = []
@@ -47,7 +54,7 @@ export default function TimelineLevel2({ pageSize, offset, count }: { pageSize: 
     }
     return (
         <AccordionGroup className="w-full">
-            {pairs.map((tl) => <AccordionPage2 first={tl.first} last={tl.last} />)}
+            {pairs.map((tl) => <AccordionPage2 first={tl.first} last={tl.last} expandedPanel={expandedPanel} updateExpandedPanel={updateExpandedPanel}/>)}
         </AccordionGroup>
     );
 };

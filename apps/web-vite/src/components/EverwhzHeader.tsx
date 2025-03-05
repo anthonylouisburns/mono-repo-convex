@@ -3,7 +3,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { Link, useLocation } from "react-router-dom";
 
-export default function Header() {
+export default function EverwhzHeader({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const { signOut } = useAuthActions();
   const root_page = location.pathname.slice(1).split("/")[0];
@@ -35,7 +35,7 @@ export default function Header() {
   }
 
   return (
-    <>
+    <div className="bg-white w-full text-black">
       <div className="header-center">
         <Link to="/">
           <img
@@ -65,6 +65,7 @@ export default function Header() {
           </div>
         </div>
       </Authenticated>
-    </>
+      {children}
+    </div>
   );
 }

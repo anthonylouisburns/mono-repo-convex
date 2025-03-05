@@ -4,109 +4,87 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { Howl } from "howler";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { msToTime } from "../../lib/utilities";
 
-export default function Player({
-  player_episode_id,
-}: {
-  player_episode_id: Id<"episode"> | undefined;
-}) {
-  const UPDATE_DELAY_SECONDS = 5;
-  const [lastUpdatePos, setLastUpdatePos] = useState(0);
+export default function Player({ player_episode_id }: { player_episode_id: Id<"episode"> | undefined }) {
   const [sound, setSound] = useState<Howl>();
-  const episodeName = useQuery(api.everwhz.episodeName, {
-    id: player_episode_id,
-  });
-  const { episode, podcast } = episodeName
-    ? episodeName
-    : { episode: null, podcast: null };
-  const getPlayStatus = useQuery(api.everwhz.getPlayStatus, {
-    id: player_episode_id,
-  });
-  const set_play_status = useMutation(api.everwhz.playStatus);
-  const player_podcast_name = podcast?.title;
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [lastUpdatePos, setLastUpdatePos] = useState(0);
 
-  async function stopSound() {
-    // sound.stopAsync();
-    // setIsPlaying(false)
-    console.log("stop sound");
-    sound?.pause();
-  }
+  const episodeName = useQuery(api.everwhz.episodeName, { id: player_episode_id });
+  const { episode, podcast } = episodeName ?? {};
+  const playStatus = useQuery(api.everwhz.getPlayStatus, { id: player_episode_id });
+  const updatePlayStatus = useMutation(api.everwhz.playStatus);
 
+  // Update time from server
+  useEffect(() => {
+    if (playStatus) {
+      setCurrentTime(playStatus.position / 1000);
+      setDuration(playStatus.duration ?? 0);
+    }
+  }, [playStatus]);
+
+  // Cleanup sound on episode change
   useEffect(() => {
     if (sound) {
-      stopSound();
+      sound.pause();
       sound.unload();
       setSound(undefined);
-      console.log("sound deleted", sound);
       setCurrentTime(0);
       setDuration(0);
     }
   }, [player_episode_id]);
 
-  const [currentTime, setCurrentTime] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(0);
+  // Update progress
   useEffect(() => {
-    let timerInterval: any;
-    if (sound && player_episode_id) {
-      const updaterTimer = () => {
-        const pos = sound.seek();
-        setCurrentTime(Math.round(pos));
-        setDuration(1000 * sound.duration());
-        if (Math.abs(pos - lastUpdatePos) > UPDATE_DELAY_SECONDS) {
-          set_play_status({ position: pos * 1000, id: player_episode_id });
-          setLastUpdatePos(pos);
-        }
-      };
-      //The return value of setInterval is a unique identifier for the timer,
-      //which is stored in the timerInterval variable in this case.
-      // This identifier can be used later with the clearInterval function to stop the recurring timer.
-      timerInterval = setInterval(updaterTimer, 1000);
-    }
-    return () => {
-      clearInterval(timerInterval);
-    };
-  }, [sound, lastUpdatePos, player_episode_id, set_play_status]);
+    if (!player_episode_id || !sound) return;
 
-  async function playSound() {
-    console.log("play sound");
-    // console.log('Loading Sound');
-    // setIsPlaying(true)
+    const interval = setInterval(() => {
+      const pos = sound.seek();
+      setCurrentTime(Math.round(pos));
+      setDuration(1000 * sound.duration());
+      
+      if (Math.abs(pos - lastUpdatePos) > 5) {
+        updatePlayStatus({ id: player_episode_id, position: pos * 1000, duration });
+        setLastUpdatePos(pos);
+      }
+    }, 1000);
 
-    const mp3_link = episode?.body.enclosure["@_url"];
+    return () => clearInterval(interval);
+  }, [sound, lastUpdatePos, player_episode_id, updatePlayStatus, duration]);
+
+  const playSound = useCallback(() => {
+    console.log("play sound", episode?.mp3_link, episode?._id);
+    if (!episode?.mp3_link) return;
+    if (sound?.playing()) return; // Prevent multiple plays
 
     if (!sound) {
-      const new_sound = new Howl({
-        src: [mp3_link],
+      const newSound = new Howl({
+        src: [episode.mp3_link],
         html5: true,
+        onload: () => {
+          if (playStatus?.position) {
+            newSound.seek(playStatus.position / 1000);
+          }
+          newSound.play();
+        }
       });
-      const new_position = getPlayStatus ? getPlayStatus.position : 0;
-
-      setSound(new_sound);
-      console.log("new_pos:", new_position);
-      new_sound.seek(new_position / 1000);
-      new_sound.play();
+      setSound(newSound);
     } else {
       sound.play();
     }
-  }
+  }, [episode?.mp3_link, sound, playStatus?.position]);
 
   return (
     <div className="header-center">
       <div>
-        {player_podcast_name}
-        <div
-          className="heavy"
-          dangerouslySetInnerHTML={{ __html: episode?.body.title }}
-        />
-        <button className="navigation-button" onClick={() => playSound()}>
-          play
-        </button>
-        <button className="navigation-button" onClick={() => stopSound()}>
-          stop
-        </button>
-        {msToTime(currentTime ? currentTime * 1000 : 0)} / {msToTime(duration)}
+        {podcast?.title}
+        <div className="heavy" dangerouslySetInnerHTML={{ __html: episode?.title ?? "-" }} />
+        <button className="navigation-button" onClick={playSound}>play</button>
+        <button className="navigation-button" onClick={() => sound?.pause()}>stop</button>
+        {msToTime(currentTime * 1000)} / {msToTime(duration)}
       </div>
     </div>
   );

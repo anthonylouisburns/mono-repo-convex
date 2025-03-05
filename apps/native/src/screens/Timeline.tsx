@@ -26,7 +26,7 @@ const Timeline = ({ navigation }) => {
             });
           }}
         >
-          <HTMLView value={episode?.body.title ? episode?.body.title : ""} />
+          <HTMLView value={episode.title ?? "-"} />
         </Text>
       </>
     );

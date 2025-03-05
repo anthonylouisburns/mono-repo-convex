@@ -76,6 +76,7 @@ const schema = defineSchema({
     device_id: v.optional(v.string()),
     episode_id: v.id("episode"),
     position: v.number(),
+    duration: v.optional(v.number()),
   })
     .index("user", ["user_id", "episode_id"])
     .index("device", ["device_id", "episode_id"]),
