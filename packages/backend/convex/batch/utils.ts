@@ -75,6 +75,7 @@ export const deleteOldFiles = mutation({
   export const getNextJob = internalQuery({
     args: {},
     handler: async (ctx) => {
+      // [ ] sort asc
       const job = await ctx.db.query("job").withIndex("status", (q) => q.eq("status", undefined)).order("desc").first();
       return job;
     },

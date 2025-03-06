@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as aiBatchPodcast from "../aiBatchPodcast.js";
 import type * as analytics_analytics from "../analytics/analytics.js";
 import type * as audioProxy from "../audioProxy.js";
 import type * as auth from "../auth.js";
@@ -16,7 +17,6 @@ import type * as batch_crons from "../batch/crons.js";
 import type * as batch_utils from "../batch/utils.js";
 import type * as everwhz from "../everwhz.js";
 import type * as everwhz_ai from "../everwhz_ai.js";
-import type * as geminiBatchPodcast from "../geminiBatchPodcast.js";
 import type * as http from "../http.js";
 import type * as load_episodes from "../load_episodes.js";
 import type * as load_podcasts from "../load_podcasts.js";
@@ -39,6 +39,7 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  aiBatchPodcast: typeof aiBatchPodcast;
   "analytics/analytics": typeof analytics_analytics;
   audioProxy: typeof audioProxy;
   auth: typeof auth;
@@ -47,7 +48,6 @@ declare const fullApi: ApiFromModules<{
   "batch/utils": typeof batch_utils;
   everwhz: typeof everwhz;
   everwhz_ai: typeof everwhz_ai;
-  geminiBatchPodcast: typeof geminiBatchPodcast;
   http: typeof http;
   load_episodes: typeof load_episodes;
   load_podcasts: typeof load_podcasts;

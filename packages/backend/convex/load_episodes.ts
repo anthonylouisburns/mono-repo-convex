@@ -98,44 +98,6 @@ export const patchPodcastRss = mutation({
   },
 });
 
-export const parseXml = action({
-  args: {
-    pod_id: v.id("podcast"),
-  },
-
-  // Action implementation.
-  handler: async (ctx, args) => {
-    console.log("parseXml");
-    const podcast = await ctx.runQuery(api.load_episodes.getPodcast, {
-      id: args.pod_id,
-    });
-    if (podcast == null || podcast.rss_body == null || podcast.chart == null || podcast.rank == null) {
-      console.error("podcast not found", podcast?.title, podcast?._id, podcast?.rss_body);
-      return;
-    }
-    const rss_blob = await ctx.storage.get(podcast.rss_body);
-    if (rss_blob == null) {
-      console.error("doc empty", podcast?.title, podcast?._id, podcast?.rss_body);
-      return;
-    }
-    const rss_text = await rss_blob.text();
-
-    const options = {
-      ignoreAttributes: false,
-    };
-    const parser = new XMLParser(options);
-    let doc = parser.parse(rss_text);
-
-    await ctx.runMutation(api.load_episodes.patchPodcastRssJson, {
-      podcast_id: args.pod_id,
-      podcast_chart: podcast.chart,
-      podcast_rank: podcast.rank,
-      rss_json: doc,
-      date: TODAYS_DATE,
-      offset: 0,
-    });
-  },
-});
 
 
 export const getPodcast = query({
@@ -146,85 +108,57 @@ export const getPodcast = query({
 });
 
 export const patchPodcastRssJson = mutation({
-  args: { podcast_id: v.id("podcast"), podcast_chart: v.string(), podcast_rank: v.number(), rss_json: v.any(), date: v.string(), offset: v.number() },
+  args: { podcast_id: v.id("podcast"), rss_json: v.array(v.any()), date: v.string()},
 
   handler: async (ctx, args) => {
-    console.log("patchPodcastRssJson start", args.podcast_id);
-    const { podcast_id, rss_json } = args;
-    const batch_size = 100;
-
-    const items = rss_json.rss.channel.item;
-    const max_episode = items.length;
-    const podcast_title = rss_json.rss.channel.title;
-    const podcast_description = rss_json.rss.channel.description;
-    console.log("patching podcast", podcast_title, podcast_id);
-    ctx.db.patch(podcast_id, { number_of_episodes: max_episode, title: podcast_title, description: podcast_description });
-
-    let last_batch = false;
-    if (args.offset + batch_size >= max_episode) {
-      last_batch = true;
+    console.log("patchPodcastRssJson start", args.podcast_id, args.date);
+    const podcast = await ctx.db.get(args.podcast_id);
+    if (!podcast) {
+      console.log("podcast not found", args.podcast_id);
+      return;
     }
-    const end_index = Math.min(args.offset + batch_size, max_episode);
-
-    for (let index = args.offset; index < end_index; index++) {
-      const item = rss_json.rss.channel.item[index];
-      const e_n = Math.ceil(max_episode - index);
-
+    for (const episode_data of args.rss_json) {  
+      const episode_number = episode_data.episode_number;
       const episode = await ctx.db
         .query("episode")
         .withIndex("podcast_episode_number", (q) =>
-          q.eq("podcast_id", args.podcast_id).eq("episode_number", e_n),
+          q.eq("podcast_id", args.podcast_id).eq("episode_number", episode_number),
         )
         .unique();
 
-      console.log("item", item.title);
-      const title = item.title;
-      if (!item.enclosure || item.enclosure["@_url"] == null) {
-        console.log("mp3_link missing", item);
+      if (episode_data.mp3_link == null) {
+        console.log("mp3_link missing", episode_data);
         return;
       }
       if (episode) {
+        console.log("patching episode", episode._id, episode_data);
         ctx.db.patch(episode._id, {
           podcast_id: args.podcast_id,
-          episode_number: Math.ceil(max_episode - index),
-          episode_description: item.description,
-          mp3_link: item.enclosure["@_url"],
-          title: title,
-          podcast_title: podcast_title,
-          chart: args.podcast_chart,
-          rank: args.podcast_rank,
-          updated_date: args.date
+          episode_number: episode_number,
+          episode_description: episode_data.description,
+          mp3_link: episode_data.mp3_link,
+          title: episode_data.title,
+          podcast_title: podcast.title,
+          updated_date: args.date,
+          chart: podcast.chart,
+          rank: podcast.rank,
+          status: undefined,
         });
       } else {
+        console.log("inserting episode", episode_data);
         ctx.db.insert("episode", {
           podcast_id: args.podcast_id,
-          episode_number: Math.ceil(max_episode - index),
-          episode_description: item.description,
-          mp3_link: item.enclosure["@_url"],
-          title: title,
-          podcast_title: podcast_title,
-          chart: args.podcast_chart,
-          rank: args.podcast_rank,
-          updated_date: args.date
+          episode_number: episode_number,
+          episode_description: episode_data.description,
+          mp3_link: episode_data.mp3_link,
+          title: episode_data.title,
+          podcast_title: podcast.title,
+          updated_date: args.date,
+          chart: podcast.chart,
+          rank: podcast.rank,
+          status: undefined,
         });
       }
-    }
-
-    if (last_batch) {
-      console.log("patchPodcastRssJson done", podcast_title, args.podcast_id);
-      await ctx.scheduler.runAfter(0, internal.load_episodes.markUnTrackedEpisodes, {
-        podcast_id: args.podcast_id,
-        max_episode: max_episode,
-      });
-    } else {
-      await ctx.scheduler.runAfter(0, api.load_episodes.patchPodcastRssJson, {
-        podcast_id: args.podcast_id,
-        podcast_chart: args.podcast_chart,
-        podcast_rank: args.podcast_rank,
-        rss_json: args.rss_json,
-        date: args.date,
-        offset: args.offset + batch_size,
-      });
     }
   },
 });
@@ -234,12 +168,18 @@ export const markUnTrackedEpisodes = internalMutation({
   handler: async (ctx, args) => {
     const episodes = await ctx.db.query("episode").withIndex("podcast_episode_number",
       (q) => q.eq("podcast_id", args.podcast_id)
-        .gte("episode_number", args.max_episode))
+        .gt("episode_number", args.max_episode))
       .collect();
-    for (const episode of episodes) {
-      ctx.db.patch(episode._id, {
-        status: "untracked episode",
-      });
+    if (episodes.length > 0) {
+      console.log("marking untracked episodes", episodes.length);
+      for (const episode of episodes) {
+        ctx.db.patch(episode._id, {
+          status: "untracked episode",
+        });
+      }
+    }else{
+      console.log("no untracked episodes");
     }
+
   },
 });

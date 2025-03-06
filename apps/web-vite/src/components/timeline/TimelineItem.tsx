@@ -43,12 +43,13 @@ export default function TimelineItem({ timeline_item, expandedPanel, updateExpan
               <Link className="navigation-light" to={`/episodes/${episode.podcast_id}`}>
                 <span dangerouslySetInnerHTML={{ __html: podcast?.title ?? "" }} />
               </Link>
+              {/* [ ] show episode info and/or podcast info - get rid of episodes tab */}
             </span>
             <span className="flex-shrink-0 text-center w-4">:</span>
             <span className="truncate w-3/5 text-left">
-              <Link className="navigation-light" to={`/episode/${episode._id}`}>
+              {/* <Link className="navigation-light" to={`/episode/${episode._id}`}> */}
                 <span dangerouslySetInnerHTML={{ __html: episode.title ?? "" }} />
-              </Link>
+              {/* </Link> */}
             </span>
           </div>
         </div>

@@ -46,7 +46,7 @@ export default function EverwhzHeader({ children }: { children: React.ReactNode 
           />
         </Link>
         <div>
-          <h1 className="rainbow-text">evrwhz</h1>
+          <h1 className="rainbow-text">&nbsp;evrwhz</h1>
         </div>
         <Authenticated>
           <p className="navigation" onClick={() => signOut()}>
@@ -63,7 +63,8 @@ export default function EverwhzHeader({ children }: { children: React.ReactNode 
             {navigation("timeline")} | 
             {/* {navigation("podcasts")} | */}
             {" "}
-            {navigation("episodes")} | {navigation("episode")}
+            {navigation("episodes")} 
+            {/* | {navigation("episode")} */}
           </div>
         </div>
       </Authenticated>

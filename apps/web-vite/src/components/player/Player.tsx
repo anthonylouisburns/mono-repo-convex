@@ -6,7 +6,7 @@ import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { Howl } from "howler";
 import { useEffect, useState, useCallback } from "react";
 import { msToTime } from "../../lib/utilities";
-
+import { Link } from "react-router-dom";
 export default function Player({ player_episode_id }: { player_episode_id: Id<"episode"> | undefined }) {
   const [sound, setSound] = useState<Howl>();
   const [currentTime, setCurrentTime] = useState(0);
@@ -80,7 +80,7 @@ export default function Player({ player_episode_id }: { player_episode_id: Id<"e
   return (
     <div className="header-center">
       <div>
-        {podcast?.title}
+        <Link className="navigation-light" to={`/episodes/${episode?.podcast_id}`}>{podcast?.title}</Link>
         <div className="heavy" dangerouslySetInnerHTML={{ __html: episode?.title ?? "-" }} />
         <button className="navigation-button" onClick={playSound}>play</button>
         <button className="navigation-button" onClick={() => sound?.pause()}>stop</button>

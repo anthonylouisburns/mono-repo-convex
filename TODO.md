@@ -1,3 +1,14 @@
+NEXT
+[ ] finish data pipeline
+[ ] release website
+[ ] go from episode to timeline opened to episode
+[ ] add filters
+[ ] show play history
+[ ] in play history edit progress, mark done
+[ ] get app to parity with website
+[ ] maybe design and swag
+[ ] image support
+
 DATA
 [ ] add description to podcast
 [x] download new podcasts

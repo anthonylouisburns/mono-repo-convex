@@ -36,6 +36,11 @@ export const udpateTimeline = migrations.define({
   },
 });
 
+export async function patchTimeline(ctx: MutationCtx, episode_id: Id<"episode">) {
+  const episode = await ctx.db.get(episode_id);
+  await insertTimelineFunc(ctx, episode as Doc<"episode">, true);
+}
+
 export async function insertTimelineFunc(ctx: MutationCtx, episode: Doc<"episode">, update:boolean) {
   const timeline = await ctx.db.query("timeline")
     .withIndex("podcast_episode", (q) => q.eq("podcast_id", episode.podcast_id).eq("episode_id", episode._id))

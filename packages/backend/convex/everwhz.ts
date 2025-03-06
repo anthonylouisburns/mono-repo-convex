@@ -32,9 +32,28 @@ export const currentUser = mutation({
   },
 });
 
+export const episodesWithOutYears = query({
+  args: { podcast_id: v.id("podcast") },
+
+  handler: async (ctx, args) => {
+    const episodes = await ctx.db
+      .query("episode")
+      .withIndex("podcast_episode_number", (q) =>
+        q.eq("podcast_id", args.podcast_id as Id<"podcast">),
+      )
+      .filter((q) => 
+        q.or(
+          q.eq(q.field("years"), undefined),
+          q.eq(q.field("years"), [])
+        )
+      )
+      .collect();
+    return episodes;
+  },
+});
 
 export const episodes = query({
-  args: { podcast_id: v.union(v.id("podcast"), v.null()) },
+  args: { podcast_id: v.id("podcast") },
 
   handler: async (ctx, args) => {
     const episodes = await ctx.db
