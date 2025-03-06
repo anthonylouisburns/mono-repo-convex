@@ -1,27 +1,10 @@
 import { internalAction, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { api, internal } from "./_generated/api";
-import { action, mutation, query } from "./_generated/server";
-const { XMLParser } = require("fast-xml-parser");
+import { mutation, query } from "./_generated/server";
 import { Id } from "./_generated/dataModel";
 export const TODAYS_DATE = new Date().toISOString().split("T")[0];
 
-export const scheduleDownloadRssForAllPodcasts = internalAction({
-  handler: async (ctx) => {
-    const podcasts = await ctx.runQuery(api.everwhz.podcasts);
-    for (const podcast of podcasts) {
-      console.log("scheduling download rss for podcast", podcast.title, podcast._id);
-
-      await ctx.runMutation(internal.batch.utils.createJob, {
-        type: "download_rss",
-        instructions: {
-          podcast_id: podcast._id,
-          max_episode: podcast.number_of_episodes,
-        },
-      });
-    }
-  },
-});
 
 export const downloadRssBody = internalAction({
   args: {
@@ -108,16 +91,17 @@ export const getPodcast = query({
 });
 
 export const patchPodcastRssJson = mutation({
-  args: { podcast_id: v.id("podcast"), rss_json: v.array(v.any()), date: v.string()},
+  args: { podcast_id: v.id("podcast"), rss_json: v.array(v.any()), date: v.string() },
 
   handler: async (ctx, args) => {
     console.log("patchPodcastRssJson start", args.podcast_id, args.date);
     const podcast = await ctx.db.get(args.podcast_id);
+    const episode_ids: Id<"episode">[] = [];
     if (!podcast) {
       console.log("podcast not found", args.podcast_id);
       return;
     }
-    for (const episode_data of args.rss_json) {  
+    for (const episode_data of args.rss_json) {
       const episode_number = episode_data.episode_number;
       const episode = await ctx.db
         .query("episode")
@@ -125,13 +109,13 @@ export const patchPodcastRssJson = mutation({
           q.eq("podcast_id", args.podcast_id).eq("episode_number", episode_number),
         )
         .unique();
-
       if (episode_data.mp3_link == null) {
         console.log("mp3_link missing", episode_data);
         return;
       }
       if (episode) {
-        console.log("patching episode", episode._id, episode_data);
+        episode_ids.push(episode?._id);
+        // console.log("patching episode", episode._id, episode_data);
         ctx.db.patch(episode._id, {
           podcast_id: args.podcast_id,
           episode_number: episode_number,
@@ -145,7 +129,7 @@ export const patchPodcastRssJson = mutation({
           status: undefined,
         });
       } else {
-        console.log("inserting episode", episode_data);
+        // console.log("inserting episode", episode_data);
         ctx.db.insert("episode", {
           podcast_id: args.podcast_id,
           episode_number: episode_number,
@@ -160,6 +144,7 @@ export const patchPodcastRssJson = mutation({
         });
       }
     }
+    return episode_ids;
   },
 });
 
@@ -177,7 +162,7 @@ export const markUnTrackedEpisodes = internalMutation({
           status: "untracked episode",
         });
       }
-    }else{
+    } else {
       console.log("no untracked episodes");
     }
 

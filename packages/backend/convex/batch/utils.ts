@@ -48,6 +48,7 @@ export const deleteOldFiles = mutation({
       error: v.optional(v.string()),
     },
     handler: async (ctx, args) => {
+      console.log("creating job", args.type);
       await ctx.db.insert("job", {
         type: args.type,
         data: args.data,
@@ -76,7 +77,7 @@ export const deleteOldFiles = mutation({
     args: {},
     handler: async (ctx) => {
       // [ ] sort asc
-      const job = await ctx.db.query("job").withIndex("status", (q) => q.eq("status", undefined)).order("desc").first();
+      const job = await ctx.db.query("job").withIndex("status", (q) => q.eq("status", undefined)).order("asc").first();
       return job;
     },
   });

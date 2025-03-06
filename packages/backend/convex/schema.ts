@@ -77,7 +77,10 @@ const schema = defineSchema({
     episode_id: v.id("episode"),
     position: v.number(),
     duration: v.optional(v.number()),
+    updated_at: v.optional(v.string()),
   })
+  .index("updated_at", ["user_id", "updated_at"])
+  .index("updated_at_device", ["device_id", "updated_at"])
     .index("user", ["user_id", "episode_id"])
     .index("device", ["device_id", "episode_id"]),
   podcast_suggestions: defineTable({
@@ -112,7 +115,7 @@ const schema = defineSchema({
     data: v.optional(v.any()),
     instructions: v.optional(v.any()),
     status: v.optional(v.string()),
-    error: v.optional(v.string()),
+    error: v.optional(v.any()),
   }).index("status", ["status"]),
 });
 export default schema;

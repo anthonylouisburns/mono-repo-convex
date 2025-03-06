@@ -196,6 +196,7 @@ export const playStatus = mutation({
     console.log("playStatus", args);
     const { id, device_id, position, duration } = args;
     const user_id = await auth.getUserId(ctx);
+    const updated_at = new Date().toISOString();
 
     console.log("playStatus", id, user_id, position);
 
@@ -210,6 +211,7 @@ export const playStatus = mutation({
           position: position,
           device_id: device_id,
           duration: duration,
+          updated_at: updated_at,
         });
         return;
       }
@@ -225,6 +227,7 @@ export const playStatus = mutation({
             position: position,
             user_id: user_id,
             duration: duration,
+            updated_at: updated_at,
           });
           return;
         }
@@ -236,6 +239,7 @@ export const playStatus = mutation({
         episode_id: id,
         position: position,
         duration: duration,
+        updated_at: updated_at,
       });
     } else {
       const play_status = await ctx.db
@@ -255,6 +259,7 @@ export const playStatus = mutation({
         episode_id: id,
         position: position,
         duration: duration,
+        updated_at: updated_at,
       });
     }
   },
@@ -291,6 +296,34 @@ export const getPlayStatus = query({
   },
 });
 
+export const getPlayStatusHistory = query({
+  args: { device_id: v.optional(v.string()) },
+  handler: async (ctx, args) => {
+    const { device_id } = args;
+    const user_id = await auth.getUserId(ctx);
+
+    if (user_id) {
+      const play_status = await ctx.db
+        .query("play_status")
+        .withIndex("updated_at", (q) => q.eq("user_id", user_id))
+        .order("desc")
+        .collect();
+      console.log("getPlayStatus play_status", play_status)
+      if (play_status) {
+        return play_status;
+      }
+    }
+
+    const play_status = await ctx.db
+      .query("play_status")
+      .withIndex("updated_at_device", (q) =>
+        q.eq("device_id", device_id),
+      )
+      .order("desc")
+      .collect();
+    return play_status;
+  },
+});
 //  get episodes with years order by first year in array
 export const getEpisodesWithYears = query({
   args: {},

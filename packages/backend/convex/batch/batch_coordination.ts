@@ -25,9 +25,14 @@ export const dailyInitialBatchJob = internalAction({
                 },
             });
         }
+        // [ ] move to seperate batch, maybe run multiple times a day but not when doing the main batch
+        const job_id = await ctx.runAction(internal.batch.batch_coordination.scheduleCreateAiPromptsForEpisodes);
+        if (job_id) {
+            await ctx.runAction(internal.batch.batch_coordination.runJob, { job_id: job_id});
+        }
         // 2.downloads rss, 3.schedules read rss data
-        await ctx.runAction(internal.load_episodes.scheduleDownloadRssForAllPodcasts);
- 
+        await ctx.runAction(internal.batch.batch_coordination.scheduleDownloadRssForAllPodcasts);
+
         await ctx.runMutation(internal.batch.utils.saveWork, {
             type: "daily_batch_job",
             summary: {
@@ -36,6 +41,31 @@ export const dailyInitialBatchJob = internalAction({
             },
         });
         await ctx.scheduler.runAfter(1, internal.batch.batch_coordination.runJobs, {});
+    },
+});
+
+export const scheduleDownloadRssForAllPodcasts = internalAction({
+    handler: async (ctx) => {
+        const podcasts = await ctx.runQuery(api.everwhz.podcasts);
+        for (const podcast of podcasts) {
+            console.log("scheduling download rss for podcast", podcast.title, podcast._id);
+
+            await ctx.runMutation(internal.batch.utils.createJob, {
+                type: "download_rss",
+                instructions: {
+                    podcast_id: podcast._id,
+                    max_episode: podcast.number_of_episodes,
+                },
+            });
+        }
+    },
+});
+
+export const scheduleCreateAiPromptsForEpisodes = internalAction({
+    handler: async (ctx) => {
+        await ctx.runMutation(internal.batch.utils.createJob, {
+            type: "schedule_create_ai_prompts",
+        });
     },
 });
 
@@ -49,7 +79,7 @@ export const runJobs = internalAction({
             return;
         }
         if (job_id) {
-            await ctx.scheduler.runAfter(1, internal.batch.batch_coordination.runJobs, { max_jobs: args.max_jobs, jobs_run: jobs_run + 1 });
+            await ctx.scheduler.runAfter(100, internal.batch.batch_coordination.runJobs, { max_jobs: args.max_jobs, jobs_run: jobs_run + 1 });
         } else {
             console.log("no more jobs");
             await ctx.runMutation(internal.batch.utils.saveWork, {
@@ -73,8 +103,9 @@ export const runJob = internalAction({
     args: {},
     handler: async (ctx): Promise<Id<"job"> | null> => {
         const job = await ctx.runQuery(internal.batch.utils.getNextJob);
+
         if (job) {
-            console.log("job", job);
+            // console.log("job", job.type, job._id);
             await ctx.runAction(internal.batch.batch_coordination.runOneJob, { job_id: job._id });
             return job._id;
         } else {
@@ -84,46 +115,71 @@ export const runJob = internalAction({
     },
 });
 
+export const reRunJob = internalAction({
+    args: { job_id: v.id("job") },
+    handler: async (ctx, args) => {
+        await ctx.runMutation(internal.batch.utils.updateJob, {
+            id: args.job_id,
+            status: undefined,
+        });
+        await ctx.runAction(internal.batch.batch_coordination.runOneJob, { job_id: args.job_id });
+    },
+});
+
 export const runOneJob = internalAction({
     args: { job_id: v.id("job") },
     handler: async (ctx, args) => {
         const job = await ctx.runQuery(internal.batch.utils.getJobById, { job_id: args.job_id });
+        await ctx.runMutation(internal.batch.utils.updateJob, {
+            id: args.job_id,
+            status: "running",
+            error: "running",
+        });
         if (job?.status != undefined) {
             console.log("job status", job?.status, "not running");
             return;
         }
-        if (job) {
-            console.log("job", job);
-            if (job.type === "download_rss") {
-                await downloadRss(ctx, job);
+        try {
+            if (job) {
+                console.log("job", job.type, job._id);
+                if (job.type === "download_rss") {
+                    await downloadRss(ctx, job);
+                }
+                if (job.type === "process_rss") {
+                    await processRss(ctx, job);
+                }
+                if (job.type === "mark_episodes_as_missing") {
+                    await markEpisodesAsMissing(ctx, job);
+                }
+                if (job.type === "process_episodes") {
+                    await processEpisodes(ctx, job);
+                }
+                if (job.type === "schedule_create_ai_prompts") {
+                    await scheduleCreateAiPrompts(ctx, job);
+                }
+                if (job.type === "create_ai_prompts") {
+                    await createAiPrompts(ctx, job);
+                }
+                if (job.type === "retrieve_ai_response") {
+                    await retrieveAiResponse(ctx, job);
+                }
+                if (job.type === "update_episode_details_from_ai_response") {
+                    await processPromptResponse(ctx, job);
+                }
+                if (job.type === "update_timeline") {
+                    await updateTimeline(ctx, job);
+                }
+                if (job.type === "update_timeline_confirm") {
+                    await updateTimelineConfirm(ctx, job);
+                }
             }
-            if (job.type === "process_rss") {
-                await processRss(ctx, job);
-            }
-            if (job.type === "mark_episodes_as_missing") {
-                await markEpisodesAsMissing(ctx, job);
-            }
-            if (job.type === "process_episodes") {
-                await processEpisodes(ctx, job);
-            }
-            if (job.type === "schedule_create_ai_prompts") {
-                await scheduleCreateAiPrompts(ctx, job);
-            }
-            if (job.type === "create_ai_prompts") {
-                await createAiPrompts(ctx, job);
-            }
-            if (job.type === "retrieve_ai_response") {
-                await retrieveAiResponse(ctx, job);
-            }
-            if (job.type === "update_episode_details_from_ai_response") {
-                await processPromptResponse(ctx, job);
-            }
-            if (job.type === "update_timeline") {
-                await updateTimeline(ctx, job);
-            }
-            if (job.type === "update_timeline_confirm") {
-                await updateTimelineConfirm(ctx, job);
-            }
+        } catch (error: any) {
+            console.log("error", error);
+            await ctx.runMutation(internal.batch.utils.updateJob, {
+                id: args.job_id,
+                status: "error",
+                error: error.message,
+            });
         }
     },
 });
@@ -136,6 +192,7 @@ async function updateTimelineConfirm(ctx: ActionCtx, job: Doc<"job">) {
         await ctx.runMutation(internal.batch.utils.updateJob, {
             id: job._id,
             status: "update timeline completed",
+            error: undefined,
         });
     }
 }
@@ -148,10 +205,14 @@ async function updateTimeline(ctx: ActionCtx, job: Doc<"job">) {
     await ctx.runMutation(internal.batch.utils.updateJob, {
         id: job._id,
         status: "update timeline initiated",
+        error: undefined,
     });
 
     await ctx.runMutation(internal.batch.utils.createJob, {
         type: "update_timeline_confirm",
+        instructions: {
+            job_id: job._id,
+        },
     });
 }
 
@@ -163,11 +224,13 @@ async function processPromptResponse(ctx: ActionCtx, job: Doc<"job">) {
         await ctx.runMutation(internal.batch.utils.updateJob, {
             id: job._id,
             status: "completed process prompt response",
+            error: undefined,
         });
     } else {
         await ctx.runMutation(internal.batch.utils.updateJob, {
             id: job._id,
             status: "completed process prompt response error",
+            error: "error processing prompt response",
         });
     }
 }
@@ -181,12 +244,14 @@ async function retrieveAiResponse(ctx: ActionCtx, job: Doc<"job">) {
         await ctx.runMutation(internal.batch.utils.updateJob, {
             id: job._id,
             status: "completed retrieve ai response",
+            error: undefined,
         });
     }
     await ctx.runMutation(internal.batch.utils.createJob, {
         type: "update_episode_details_from_ai_response",
         instructions: {
             prompt_id: prompt_id,
+            job_id: job._id,
         },
     });
 }
@@ -204,17 +269,20 @@ async function createAiPrompts(ctx: ActionCtx, job: Doc<"job">) {
             type: "retrieve_ai_response",
             instructions: {
                 prompt_id: prompt_id,
+                job_id: job._id,
             },
         });
         await ctx.runMutation(internal.batch.utils.updateJob, {
             id: job._id,
             status: "completed create ai prompts",
+            error: undefined,
         });
     } else {
         console.log("no prompt id");
         await ctx.runMutation(internal.batch.utils.updateJob, {
             id: job._id,
             status: "completed create ai prompts error",
+            error: "no prompt id",
         });
     }
 }
@@ -226,6 +294,11 @@ async function scheduleCreateAiPrompts(ctx: ActionCtx, job: Doc<"job">) {
     const last_job = job._id;
     if (!page_size || !podcast_id) {
         console.log("no page size or podcast id");
+        await ctx.runMutation(internal.batch.utils.updateJob, {
+            id: job._id,
+            status: "no page size or podcast id",
+            error: "no page size or podcast id",
+        });
         return
     }
     // run with episodes to update all years
@@ -245,20 +318,30 @@ async function scheduleCreateAiPrompts(ctx: ActionCtx, job: Doc<"job">) {
     await ctx.runMutation(internal.batch.utils.updateJob, {
         id: job._id,
         status: "completed schedule create ai prompts",
+        error: undefined,
     });
 }
 
 async function processEpisodes(ctx: ActionCtx, job: Doc<"job">) {
     console.log("processing episodes");
-    await ctx.runMutation(api.load_episodes.patchPodcastRssJson, {
+    const episode_ids = await ctx.runMutation(api.load_episodes.patchPodcastRssJson, {
         podcast_id: job.instructions.podcast_id,
         rss_json: job.data.episodes,
         date: BATCH_DATE,
     });
+    await ctx.runMutation(internal.batch.utils.createJob, {
+        type: "create_ai_prompts",
+        instructions: {
+            podcast_id: job.instructions.podcast_id,
+            episode_ids: episode_ids,
+        },
+    });
     await ctx.runMutation(internal.batch.utils.updateJob, {
         id: job._id,
         status: "completed process episodes",
+        error: undefined,
     });
+
 }
 
 async function markEpisodesAsMissing(ctx: ActionCtx, job: Doc<"job">) {
@@ -270,6 +353,7 @@ async function markEpisodesAsMissing(ctx: ActionCtx, job: Doc<"job">) {
     await ctx.runMutation(internal.batch.utils.updateJob, {
         id: job._id,
         status: "completed mark episodes as missing",
+        error: undefined,
     });
 }
 
@@ -293,6 +377,7 @@ async function downloadRss(ctx: ActionCtx, job: Doc<"job">) {
     await ctx.runMutation(internal.batch.utils.updateJob, {
         id: job._id,
         status: status,
+        error: undefined,
     });
 }
 
@@ -301,7 +386,9 @@ async function processRss(ctx: ActionCtx, job: Doc<"job">) {
     const storageId = job.instructions.storage_id;
     const podcastId = job.instructions.podcast_id;
     const lastJob = job.instructions.last_job;
+    console.log("processing rss", job._id);
     if (storageId) {
+        console.log("processing rss", storageId, job._id);
         const rss_blob = await ctx.storage.get(storageId);
         if (rss_blob) {
             const rss_text = await rss_blob.text();
@@ -358,11 +445,20 @@ async function processRss(ctx: ActionCtx, job: Doc<"job">) {
                     max_episode: max_episode,
                 },
             });
+            console.log("completed schedule update episodes from rss", job._id);
             await ctx.runMutation(internal.batch.utils.updateJob, {
                 id: job._id,
                 status: "completed schedule update episodes from rss",
+                error: undefined,
             });
 
         }
+    } else {
+        await ctx.runMutation(internal.batch.utils.updateJob, {
+            id: job._id,
+            status: "completed schedule update episodes from rss error",
+            error: "no storage id",
+        });
     }
+
 }
