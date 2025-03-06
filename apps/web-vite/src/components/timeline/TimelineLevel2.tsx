@@ -8,23 +8,29 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Doc } from "@packages/backend/convex/_generated/dataModel";
 import TimelineLevel3 from "./TimelineLevel3";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
-const AccordionPage2 = ({ first, last, expandedPanel, updateExpandedPanel, pageSize, index }: { first: { timeline: Doc<"timeline">, offset: number }, last: { timeline: Doc<"timeline">, offset: number }, expandedPanel: string, updateExpandedPanel: (panel: string) => void, pageSize: Array<number>, index: number }) => {
+const AccordionPage2 = ({ first, last, expandedPanel, updateExpandedPanel, pageSize, index, selectedOffset }: { first: { timeline: Doc<"timeline">, offset: number }, last: { timeline: Doc<"timeline">, offset: number }, expandedPanel: string, updateExpandedPanel: (panel: string) => void, pageSize: Array<number>, index: number, selectedOffset: number }) => {
+
+    useEffect(() => {
+        if (selectedOffset>=first.offset && selectedOffset<last.offset) {
+            updateExpandedPanel(first.timeline._id);
+        }
+    }, []); // Empty dependency array means run once on mount
 
     return (
         <Accordion key={first.timeline._id} expanded={expandedPanel===first.timeline._id} onChange={() => updateExpandedPanel(first.timeline._id)}>
             <AccordionSummary className={`${index % 2 === 0 ? 'bg-lime-100' : 'bg-lime-50'}`}>
                 <div className="flex items-center justify-between w-full">
                     <span className="font-bold">
-                        {first.timeline.start}-{last.timeline.start}
+                        {first.timeline.start}-{last.timeline.start}   
                     </span>
                 </div>
             </AccordionSummary>
             {(expandedPanel===first.timeline._id) && (
                 <AccordionDetails>
-                    <TimelineLevel3 pageSize={pageSize} offset={first.offset} count={last.offset - first.offset} />
+                    <TimelineLevel3 pageSize={pageSize} offset={first.offset} count={last.offset - first.offset} selectedOffset={selectedOffset} />
                 </AccordionDetails>
             )}
         </Accordion>
@@ -32,7 +38,7 @@ const AccordionPage2 = ({ first, last, expandedPanel, updateExpandedPanel, pageS
     );
 };
 
-export default function TimelineLevel2({ pageSize, offset, count }: { pageSize: Array<number>, offset: number, count: number }) {
+export default function TimelineLevel2({ pageSize, offset, count, selectedOffset }: { pageSize: Array<number>, offset: number, count: number, selectedOffset: number }) {
     const [expandedPanel, setExpandedPanel] = useState("");
     const result = useQuery(api.page_timeline.getBookmarks, {
         pageSize: pageSize[1] * pageSize[2] * pageSize[3],
@@ -54,7 +60,7 @@ export default function TimelineLevel2({ pageSize, offset, count }: { pageSize: 
     }
     return (
         <AccordionGroup className="w-full">
-            {pairs.map((tl, index) => <AccordionPage2 key={index} first={tl.first} last={tl.last} expandedPanel={expandedPanel} updateExpandedPanel={updateExpandedPanel} pageSize={pageSize} index={index}/>)}
+            {pairs.map((tl, index) => <AccordionPage2 key={index} first={tl.first} last={tl.last} expandedPanel={expandedPanel} updateExpandedPanel={updateExpandedPanel} pageSize={pageSize} index={index} selectedOffset={selectedOffset} />)}
         </AccordionGroup>
     );
 };

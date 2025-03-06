@@ -31,14 +31,14 @@ export const updateTimeline = internalAction({
 export const getNextPodcasts = internalQuery({
     args: {},
     handler: async (ctx) => {
-      console.log("getNextPodcast");
-      const podcasts = await ctx.db.query("podcast")
-        .filter((q) => q.neq(q.field("chart"), undefined))
-        .collect();
-  
-      return podcasts;
+        console.log("getNextPodcast");
+        const podcasts = await ctx.db.query("podcast")
+            .filter((q) => q.neq(q.field("chart"), undefined))
+            .collect();
+
+        return podcasts;
     }
-  });
+});
 
 export const updateTimelinePodcast = internalMutation({
     args: {
@@ -225,30 +225,30 @@ export const numberOfPages = query({
         console.log("count", count);
         let offset = 0
         const bookmarks: Array<Doc<"timeline">> = []
-        while(offset < count){
+        while (offset < count) {
             const { key } = await timeline_aggregate.at(ctx, offset);
             const timeline = await getBookmarkedTimeline(ctx, key);
-            if(timeline){
+            if (timeline) {
                 bookmarks.push(timeline);
             }
             offset += pageSize;
         }
-        const { key } = await timeline_aggregate.at(ctx, count-1);
+        const { key } = await timeline_aggregate.at(ctx, count - 1);
         const timeline = await getBookmarkedTimeline(ctx, key);
-        if(timeline){
+        if (timeline) {
             bookmarks.push(timeline);
         }
         console.log("bookmarks size:", bookmarks.length, "page size:", pageSize);
-        return {bookmarks: bookmarks, pageSize: pageSize, numberOfPages: bookmarks.length};
+        return { bookmarks: bookmarks, pageSize: pageSize, numberOfPages: bookmarks.length };
     },
 });
 
-async function getBookmarkedTimeline(ctx: QueryCtx, key:[string, string, number, number, number]): Promise<Doc<"timeline"> | null>{  
+async function getBookmarkedTimeline(ctx: QueryCtx, key: [string, string, number, number, number]): Promise<Doc<"timeline"> | null> {
     const timeline = await ctx.db.query("timeline")
         .withIndex("start_index", (q) => q.eq("start", key[0])
-        .eq("chart", key[1])
-        .eq("rank", key[2])
-        .eq("episode_number", key[3]))
+            .eq("chart", key[1])
+            .eq("rank", key[2])
+            .eq("episode_number", key[3]))
         .first();
     return timeline ?? null;
 }
@@ -275,23 +275,41 @@ export const getBookmarks = query({
     },
 });
 
-export async function getBookmarksFromOffset(ctx: QueryCtx, pageSize: number, offset: number, count: number){
+export const indexOfEpisode = query({
+    args: {
+        episode_id: v.id("episode")
+    },
+    handler: async (ctx, { episode_id }) => {
+        const episode = await ctx.db.get(episode_id);
+        if (episode) {
+            const timeline = await ctx.db.query("timeline")
+                .withIndex("podcast_episode", (q) => q.eq("podcast_id", episode.podcast_id).eq("episode_id", episode_id))
+                .first();
+            if (timeline) {
+                return await timeline_aggregate.indexOf(ctx, [timeline.start, timeline.chart, timeline.rank, timeline.episode_number, timeline._creationTime]);
+            }
+        }
+        return null;
+    }
+})
+
+export async function getBookmarksFromOffset(ctx: QueryCtx, pageSize: number, offset: number, count: number) {
     console.log("pageSize", pageSize, "offset", offset, "count", count);
-    const bookmarks: Array<{timeline: Doc<"timeline">, offset: number}> = []
+    const bookmarks: Array<{ timeline: Doc<"timeline">, offset: number }> = []
     let i = offset;
-    while(i < offset+count){
+    while (i < offset + count) {
         const { key } = await timeline_aggregate.at(ctx, i);
         const timeline = await getBookmarkedTimeline(ctx, key);
-        if(timeline){
-            bookmarks.push({timeline: timeline, offset: i});
+        if (timeline) {
+            bookmarks.push({ timeline: timeline, offset: i });
         }
         i += pageSize;
     }
-    const { key } = await timeline_aggregate.at(ctx, offset+count-1);
+    const { key } = await timeline_aggregate.at(ctx, offset + count - 1);
     const timeline = await getBookmarkedTimeline(ctx, key);
-    if(timeline){
-        bookmarks.push({timeline: timeline, offset: offset+count-1});
+    if (timeline) {
+        bookmarks.push({ timeline: timeline, offset: offset + count - 1 });
     }
     console.log("bookmarks size:", bookmarks.length, "page size:", pageSize);
-    return {bookmarks: bookmarks, pageSize: pageSize, numberOfPages: bookmarks.length};
+    return { bookmarks: bookmarks, pageSize: pageSize, numberOfPages: bookmarks.length };
 }

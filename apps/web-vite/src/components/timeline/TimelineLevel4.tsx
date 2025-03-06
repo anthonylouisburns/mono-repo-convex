@@ -6,12 +6,12 @@ import {
 } from "@mui/joy";
 import { api } from "@packages/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import TimelineItem from "./TimelineItem";
 import { Doc } from "@packages/backend/convex/_generated/dataModel";
 
 
-const AccordionPage4 = ({ first, last, expandedPanel, updateExpandedPanel, index }: { first: { timeline: Doc<"timeline">, offset: number }, last: { timeline: Doc<"timeline">, offset: number }, expandedPanel: string, updateExpandedPanel: (panel: string) => void, index: number }) => {
+const AccordionPage4 = ({ first, last, expandedPanel, updateExpandedPanel, index, selectedOffset }: { first: { timeline: Doc<"timeline">, offset: number }, last: { timeline: Doc<"timeline">, offset: number }, expandedPanel: string, updateExpandedPanel: (panel: string) => void, index: number, selectedOffset: number }) => {
     const count = last.offset - first.offset;
     const result = useQuery(api.page_timeline.pageOfTimeline, {
         pageSize: count,
@@ -25,6 +25,12 @@ const AccordionPage4 = ({ first, last, expandedPanel, updateExpandedPanel, index
             setExpandedPanelEpisode(panel);
         }
     }
+    useEffect(() => {
+        if (selectedOffset>=first.offset && selectedOffset<last.offset) {
+            updateExpandedPanel(first.timeline._id);
+        }
+    }, []); // Empty dependency array means run once on mount
+
     return (
         <Accordion key={first.timeline._id} expanded={expandedPanel===first.timeline._id} onChange={() => updateExpandedPanel(first.timeline._id)}>
             <AccordionSummary className={`${index % 2 === 0 ? 'bg-sky-100' : 'bg-sky-50'}`}>
@@ -36,15 +42,14 @@ const AccordionPage4 = ({ first, last, expandedPanel, updateExpandedPanel, index
             </AccordionSummary>
             {(expandedPanel===first.timeline._id) && (
                 <AccordionDetails>
-                    {result?.map((tl, index) => <TimelineItem key={index} timeline_item={tl} expandedPanel={expandedPanelEpisode} updateExpandedPanel={updateExpandedPanelEpisode} index={index}/>)}
+                    {result?.map((tl, index) => <TimelineItem key={index} timeline_item={tl} expandedPanel={expandedPanelEpisode} updateExpandedPanel={updateExpandedPanelEpisode} index={index} selectedOffset={selectedOffset} fistOffset={first.offset}/>)}
                 </AccordionDetails>
             )}
         </Accordion>
 
     );
 };
-export default function TimelineLevel4({ pageSize, offset, count }: { pageSize: Array<number>, offset: number, count: number }) {
-    
+export default function TimelineLevel4({ pageSize, offset, count, selectedOffset }: { pageSize: Array<number>, offset: number, count: number, selectedOffset: number }) {
     const result = useQuery(api.page_timeline.getBookmarks, {
         pageSize: pageSize[3],
         offset: offset,
@@ -66,7 +71,7 @@ export default function TimelineLevel4({ pageSize, offset, count }: { pageSize: 
     }
     return (
         <AccordionGroup className="w-full">
-            {pairs.map((tl, index) => <AccordionPage4 first={tl.first} last={tl.last} expandedPanel={expandedPanel} updateExpandedPanel={updateExpandedPanel} index={index}/>)}
+            {pairs.map((tl, index) => <AccordionPage4 first={tl.first} last={tl.last} expandedPanel={expandedPanel} updateExpandedPanel={updateExpandedPanel} index={index} selectedOffset={selectedOffset}/>)}
         </AccordionGroup>
     );
 };

@@ -55,15 +55,16 @@ export const runJobs = internalAction({
             await ctx.runMutation(internal.batch.utils.saveWork, {
                 type: "run_job",
                 summary: {
-                    synopsis: "ran all jobs - update timeline",
+                    synopsis: "ran all jobs",
                 },
             });
-            const job_id = await ctx.runMutation(internal.batch.utils.createJob, {
-                type: "update_timeline",
-            });
-            if (job_id) {
-                await ctx.scheduler.runAfter(1, internal.batch.batch_coordination.runJob, { job_id: job_id });
-            }
+            // [ ] confirm timeline updated
+            // const job_id = await ctx.runMutation(internal.batch.utils.createJob, {
+            //     type: "update_timeline",
+            // });
+            // if (job_id) {
+            //     await ctx.scheduler.runAfter(1, internal.batch.batch_coordination.runJob, { job_id: job_id });
+            // }
         }
     },
 });

@@ -9,20 +9,27 @@ import { Doc } from "@packages/backend/convex/_generated/dataModel";
 import PlayArrowOutlined from "@mui/icons-material/PlayArrowOutlined";
 import { Link, useOutletContext } from "react-router-dom";
 import { PlayerContext } from "../../App";
+import { useEffect } from "react";
 
-export default function TimelineItem({ timeline_item, expandedPanel, updateExpandedPanel, index }: { timeline_item: Doc<"timeline">, expandedPanel: string, updateExpandedPanel: (panel: string) => void, index: number }) {
+export default function TimelineItem({ timeline_item, expandedPanel, updateExpandedPanel, index, selectedOffset, fistOffset }: { timeline_item: Doc<"timeline">, expandedPanel: string, updateExpandedPanel: (panel: string) => void, index: number, selectedOffset: number, fistOffset: number }) {
   const podcast = useQuery(api.everwhz.podcastTitle, {
     id: timeline_item.podcast_id,
   });
   const { set_player_episode_id } = useOutletContext<PlayerContext>();
-
+  // const status = `${index}===${selectedOffset} ${expandedPanel}`
   const episode = useQuery(api.everwhz.episode, {
     id: timeline_item.episode_id,
   });
-  if (!episode) {
-    return null
-  }
+  useEffect(() => {
+    // console.log("Effect running", { selectedOffset, index, status } ); // Debug log
+    if ((selectedOffset-fistOffset) === index) {
+      updateExpandedPanel(timeline_item._id);
+    }
+  }, [selectedOffset, index]); // Adding these deps to ensure initial values are caught
 
+  if (!episode) {
+    return null;
+  }
   function selectEpisode() {
     set_player_episode_id(timeline_item.episode_id);
   }
@@ -48,7 +55,7 @@ export default function TimelineItem({ timeline_item, expandedPanel, updateExpan
             <span className="flex-shrink-0 text-center w-4">:</span>
             <span className="truncate w-3/5 text-left">
               {/* <Link className="navigation-light" to={`/episode/${episode._id}`}> */}
-                <span dangerouslySetInnerHTML={{ __html: episode.title ?? "" }} />
+              <span dangerouslySetInnerHTML={{ __html: episode.title ?? "" }} />
               {/* </Link> */}
             </span>
           </div>
@@ -58,7 +65,7 @@ export default function TimelineItem({ timeline_item, expandedPanel, updateExpan
         <div
           className="text-sm"
           dangerouslySetInnerHTML={{
-            __html: episode.episode_description ?? "-",
+            __html: episode.episode_description || "-",
           }}
         />
       </AccordionDetails>
