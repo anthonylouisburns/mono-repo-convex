@@ -5,9 +5,8 @@ import { ConvexReactClient } from "convex/react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import ErrorPage from "./components/ErrorPage";
-import Podcasts from "./components/podcasts/Podcasts";
+// import Podcasts from "./components/podcasts/Podcasts";
 import Episodes from "./components/episodes/Episodes";
-import Episode from "./components/episode/Episode";
 import TimelinePage from "./components/timeline/TimelinePage";
 import "./index.css";
 
@@ -23,18 +22,18 @@ const router = createBrowserRouter([
         path: "timeline",
         element: <TimelinePage />,
       },
-      {
-        path: "podcasts",
-        element: <Podcasts />,
-      },
+      // {
+      //   path: "podcasts",
+      //   element: <Podcasts />,
+      // },
       {
         path: "episodes/:podcast_id",
         element: <Episodes />,
       },
-      {
-        path: "episode/:episode_id",
-        element: <Episode />,
-      },
+      // {
+      //   path: "episode/:episode_id",
+      //   element: <Episode />,
+      // },
     ],
   },
 ]);

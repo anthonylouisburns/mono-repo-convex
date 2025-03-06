@@ -3,7 +3,7 @@ import { useMutation } from "convex/react";
 import { api } from "@packages/backend/convex/_generated/api";
 import { Dispatch, SetStateAction } from "react";
 import { Link } from "react-router-dom";
-
+//[ ] delete page
 export const Podcast = function Podcast({
   podcast,
   setName,

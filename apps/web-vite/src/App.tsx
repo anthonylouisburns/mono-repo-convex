@@ -18,14 +18,14 @@ function App() {
     <div>
 
       <AppBar>
-        <Toolbar className="bg-white">
+        <Toolbar className="bg-emerald-50">
           <EverwhzHeader>
             <PlayerHolder playerEpisodeId={player_episode_id!} />
           </EverwhzHeader>
         </Toolbar>
       </AppBar>
       <Toolbar />
-      <div className="pt-16">
+      <div className="pt-36">
         <Authenticated>
           <div className="padding-top-800">
             <Outlet context={{ player_episode_id, set_player_episode_id }} />

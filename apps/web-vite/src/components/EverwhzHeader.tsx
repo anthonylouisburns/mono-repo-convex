@@ -35,7 +35,7 @@ export default function EverwhzHeader({ children }: { children: React.ReactNode 
   }
 
   return (
-    <div className="bg-white w-full text-black">
+    <div className="bg-emerald-50 w-full text-black">
       <div className="header-center">
         <Link to="/">
           <img
@@ -60,7 +60,9 @@ export default function EverwhzHeader({ children }: { children: React.ReactNode 
       <Authenticated>
         <div className="header-center">
           <div>
-            {navigation("timeline")} | {navigation("podcasts")} |{" "}
+            {navigation("timeline")} | 
+            {/* {navigation("podcasts")} | */}
+            {" "}
             {navigation("episodes")} | {navigation("episode")}
           </div>
         </div>

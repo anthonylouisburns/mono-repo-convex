@@ -15,11 +15,16 @@ export default function Episodes() {
   const episodes = useQuery(api.everwhz.episodes, {
     podcast_id: podcast_id as Id<"podcast">,
   });
+  const podcast = useQuery(api.everwhz.podcastTitle, {
+    id: podcast_id as Id<"podcast">,
+  });
   console.log("podcast_id:", podcast_id);
 
   return (
     <div>
       <div className="pagePadding">
+        <div className="text-bold">{podcast?.title}</div>
+        <div className="text-bold">{podcast?.description}</div>
         {episodes &&
           episodes.map((episode) => (
             <EpisodeTitle key={episode._id} episode={episode} />

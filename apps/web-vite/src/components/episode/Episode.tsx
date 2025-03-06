@@ -5,6 +5,7 @@ import { api } from "@packages/backend/convex/_generated/api";
 import { Id } from "@packages/backend/convex/_generated/dataModel";
 import { useOutletContext, useParams } from "react-router-dom";
 import { PlayerContext } from "../../App";
+import PlayArrowOutlined from "@mui/icons-material/PlayArrowOutlined";
 export default function Episode(): JSX.Element {
   const { episode_id } = useParams();
   const { set_player_episode_id } = useOutletContext<PlayerContext>();
@@ -27,19 +28,17 @@ export default function Episode(): JSX.Element {
   return (
     <div>
       <div className="pagePadding">
-        {player_podcast_name}
-        <div
+        <span className="flex items-center gap-2 text-bold">
+        {player_podcast_name} : 
+          <div
           className="heavy"
           dangerouslySetInnerHTML={{
             __html: episode?.title ? episode.title : "",
           }}
-        />
-        <button className="navigation-button" onClick={() => selectEpisode()}>
-          +
-        </button>
+        /><PlayArrowOutlined className="text-green-600" onClick={() => selectEpisode()} /></span>
         <div
           className="dangerous"
-          dangerouslySetInnerHTML={{ __html: episode?.episode_description ?? "" }}
+          dangerouslySetInnerHTML={{ __html: episode?.episode_description ?? "" }} 
         />
       </div>
     </div>

@@ -10,7 +10,7 @@ import PlayArrowOutlined from "@mui/icons-material/PlayArrowOutlined";
 import { Link, useOutletContext } from "react-router-dom";
 import { PlayerContext } from "../../App";
 
-export default function TimelineItem({ timeline_item, expandedPanel, updateExpandedPanel }: { timeline_item: Doc<"timeline">, expandedPanel: string, updateExpandedPanel: (panel: string) => void }) {
+export default function TimelineItem({ timeline_item, expandedPanel, updateExpandedPanel, index }: { timeline_item: Doc<"timeline">, expandedPanel: string, updateExpandedPanel: (panel: string) => void, index: number }) {
   const podcast = useQuery(api.everwhz.podcastTitle, {
     id: timeline_item.podcast_id,
   });
@@ -32,7 +32,7 @@ export default function TimelineItem({ timeline_item, expandedPanel, updateExpan
       key={timeline_item._id}
       expanded={expandedPanel === timeline_item._id} // Only one open at a time
       onChange={() => updateExpandedPanel(timeline_item._id)}>
-      <AccordionSummary className="bg-blue-50">
+      <AccordionSummary className={`${index % 2 === 0 ? 'bg-stone-100' : 'bg-stone-50'}`}>
         <div className="flex items-center justify-between w-full">
           <span className="font-bold text-blue-700">
             {timeline_item.start}
@@ -40,7 +40,9 @@ export default function TimelineItem({ timeline_item, expandedPanel, updateExpan
           <PlayArrowOutlined className="text-green-600" onClick={() => selectEpisode()} />
           <div className="flex items-center gap-2 flex-1 justify-center">
             <span className="truncate w-2/5 text-right">
-              <span dangerouslySetInnerHTML={{ __html: podcast?.title ?? "" }} />
+              <Link className="navigation-light" to={`/episodes/${episode.podcast_id}`}>
+                <span dangerouslySetInnerHTML={{ __html: podcast?.title ?? "" }} />
+              </Link>
             </span>
             <span className="flex-shrink-0 text-center w-4">:</span>
             <span className="truncate w-3/5 text-left">
