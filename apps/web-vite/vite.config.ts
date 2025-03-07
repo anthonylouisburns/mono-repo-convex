@@ -16,7 +16,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
-        timeline2: resolve(__dirname, "timeline2/index.html"),
       },
     },
   },
