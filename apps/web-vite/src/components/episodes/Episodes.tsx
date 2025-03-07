@@ -23,8 +23,8 @@ export default function Episodes() {
   return (
     <div>
       <div className="pagePadding">
-        <div className="text-bold">{podcast?.title}</div>
-        <div className="text-bold">{podcast?.description}</div>
+        <span dangerouslySetInnerHTML={{ __html: podcast?.title ?? "" }} />
+        <span dangerouslySetInnerHTML={{ __html: podcast?.description ?? "" }} />
         {episodes &&
           episodes.map((episode) => (
             <EpisodeTitle key={episode._id} episode={episode} />

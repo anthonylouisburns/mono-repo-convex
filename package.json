@@ -12,6 +12,8 @@
   "devDependencies": {
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "@types/react-native-htmlview": "^0",
+    "@types/react-native-web": "^0",
     "concurrently": "^8.2.2",
     "prettier": "^3.1.0",
     "turbo": "latest"
@@ -41,7 +43,7 @@
     "autoprefixer": "^10.4.20",
     "convex": "^1.12.2",
     "convex-test": "^0.0.35",
-    "expo": "^51.0.21",
+    "expo": "^52.0.37",
     "expo-auth-session": "^5.5.2",
     "expo-constants": "^16.0.2",
     "expo-device": "^6.0.2",
@@ -51,7 +53,9 @@
     "react": "^18.3.1",
     "react-native": "^0.74.3",
     "react-native-device-info": "^11.1.0",
+    "react-native-htmlview": "^0.17.0",
     "react-native-os-logger": "^1.0.1",
+    "react-native-web": "^0.19.13",
     "react-select": "^5.10.0",
     "react-uuid": "^2.0.0",
     "sharp": "^0.33.4",
@@ -62,7 +66,7 @@
   "resolutions": {
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "expo": "51.0.14",
+    "expo": "52.0.37",
     "expo-web-browser": "13.0.3",
     "@babel/core": "7.24.0",
     "@babel/preset-env": "7.24.6",

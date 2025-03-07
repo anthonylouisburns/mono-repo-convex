@@ -33,8 +33,8 @@ export const EpisodeView = ({
         }}
       >
         <HTMLView
-          style={"<div>" + styles.dangerousTitle + "</div>"}
-          value={episode.title ?? "-"}
+          style={styles.dangerousTitle}
+          value={`<div>${episode.title ?? "-"}</div>`}
         />
       </Text>
       <ScrollView>{details()}</ScrollView>

@@ -61,10 +61,10 @@ export default function EverwhzHeader({ children }: { children: React.ReactNode 
         <div className="header-center">
           <div>
             {navigation("timeline")} | 
-            {/* {navigation("podcasts")} | */}
             {" "}
-            {navigation("episodes")} 
-            {/* | {navigation("episode")} */}
+            {navigation("episodes")} |
+            {" "}
+            {navigation("play_history", "play history")} 
           </div>
         </div>
       </Authenticated>

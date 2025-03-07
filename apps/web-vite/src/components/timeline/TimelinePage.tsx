@@ -7,7 +7,7 @@ export const getPageSize = (pageSize: Array<number>) => {
 
 export default function TimelinePage() {
   const [searchParams] = useSearchParams();
-  const selectedOffset = searchParams.get("index");
+  const selectedOffset = searchParams.get("index") ?? "-1";
   
 
   return (

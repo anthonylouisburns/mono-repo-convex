@@ -9,6 +9,7 @@ import ErrorPage from "./components/ErrorPage";
 import Episodes from "./components/episodes/Episodes";
 import TimelinePage from "./components/timeline/TimelinePage";
 import "./index.css";
+import PlayHistory from "./components/PlayHistory";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL);
 const router = createBrowserRouter([
@@ -22,18 +23,14 @@ const router = createBrowserRouter([
         path: "timeline",
         element: <TimelinePage />,
       },
-      // {
-      //   path: "podcasts",
-      //   element: <Podcasts />,
-      // },
       {
         path: "episodes/:podcast_id",
         element: <Episodes />,
       },
-      // {
-      //   path: "episode/:episode_id",
-      //   element: <Episode />,
-      // },
+      {
+        path: "play_history",
+        element: <PlayHistory />,
+      },
     ],
   },
 ]);

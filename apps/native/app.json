@@ -1,5 +1,6 @@
 {
   "expo": {
+    "newArchEnabled": true,
     "scheme": "everwhz",
     "name": "everwhz",
     "slug": "everwhz",
@@ -13,11 +14,15 @@
       "backgroundColor": "#ffffff",
       "width": 96
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "UIBackgroundModes": ["audio"]
+        "UIBackgroundModes": [
+          "audio"
+        ]
       },
       "bundleIdentifier": "com.burnstony.everwhz",
       "buildNumber": "15",
@@ -32,12 +37,17 @@
       },
       "package": "com.burnstony.everwhz",
       "versionCode": 5,
-      "blockedPermissions": ["android.permission.RECORD_AUDIO"]
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-font"],
+    "plugins": [
+      "expo-font",
+      "expo-secure-store"
+    ],
     "extra": {
       "eas": {
         "projectId": "6d52e2de-2ac4-496e-8401-fbda44af9e58"
