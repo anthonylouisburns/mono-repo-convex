@@ -16,7 +16,7 @@ export const PAGE_SIZE = 25;
 
 export const taddyBatchDownloadCharts = internalAction({
   args: {},
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const date = new Date().toISOString().split("T")[0];
 
     for (const chart_type of CHART_TYPES) {
