@@ -6,6 +6,14 @@ import { migrations } from "../migration";
 const { XMLParser } = require("fast-xml-parser");
 const BATCH_DATE = new Date().toISOString().split("T")[0];
 //[ ] add column to job success
+
+export const echo = internalAction({
+    args: {},
+    handler: async (ctx) => {
+        console.log("test cron does nothing");
+    },
+});
+
 export const dailyInitialBatchJob = internalAction({
     args: {},
     handler: async (ctx) => {
