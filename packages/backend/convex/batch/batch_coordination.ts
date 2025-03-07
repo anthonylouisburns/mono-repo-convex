@@ -9,7 +9,7 @@ const BATCH_DATE = new Date().toISOString().split("T")[0];
 
 export const echo = internalAction({
     args: {},
-    handler: async (ctx) => {
+    handler: async () => {
         console.log("test cron does nothing");
     },
 });
