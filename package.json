@@ -10,6 +10,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"
   },
   "devDependencies": {
+    "@types/howler": "^2",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@types/react-native-htmlview": "^0",
@@ -48,6 +49,7 @@
     "expo-constants": "^16.0.2",
     "expo-device": "^6.0.2",
     "expo-font": "^12.0.9",
+    "howler": "^2.2.4",
     "openai": "^4.85.1",
     "postcss": "^8.5.3",
     "react": "^18.3.1",

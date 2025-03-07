@@ -13,20 +13,26 @@ export const EpisodePlayed = function EpisodePlayed({ episode_id, position }: { 
     const episode = useQuery(api.everwhz.episode, { id: episode_id });
     const offset = useQuery(api.page_timeline.indexOfEpisode, { episode_id: episode_id });
     const { set_player_episode_id } = useOutletContext<PlayerContext>();
+    const title: string = episode?.title ? episode.title : "title not set";
     function selectEpisode() {
         set_player_episode_id(episode_id);
     }
     return (
         <ListItem>
+            {msToTime(position)}
             <PlayArrowOutlined className="text-green-600" onClick={() => selectEpisode()} />
             {episode?.podcast_id &&
                 <Link className="navigation-dark" to={`/episodes/${episode.podcast_id}`}>
                     <span dangerouslySetInnerHTML={{ __html: episode?.podcast_title ?? "" }} />:
                 </Link>
             }
-            <Link className="navigation-light" to={`/timeline?index=${offset}`}>
-                <span dangerouslySetInnerHTML={{ __html: episode?.title ?? "" }} />
-            </Link> - {msToTime(position)}
+            {offset !== null ? (
+                <Link className="navigation-light" to={`/timeline?index=${offset}`}>
+                    <div dangerouslySetInnerHTML={{ __html: title }} />
+                </Link>
+            ) : (
+                <div dangerouslySetInnerHTML={{ __html: title }} />
+            )}
         </ListItem>
     )
 }

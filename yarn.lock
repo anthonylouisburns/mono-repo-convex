@@ -4513,7 +4513,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/normalize-colors@npm:0.74.89, @react-native/normalize-colors@npm:^0.74.1":
+"@react-native/normalize-colors@npm:0.74.89":
   version: 0.74.89
   resolution: "@react-native/normalize-colors@npm:0.74.89"
   checksum: 10c0/6d0e5c91793ca5a66b4a0e5995361f474caacac56bde4772ac02b8ab470bd323076c567bd8856b0b097816d2b890e73a4040a3df01fd284adee683f5ba89d5ba
@@ -4538,6 +4538,13 @@ __metadata:
   version: 0.73.2
   resolution: "@react-native/normalize-colors@npm:0.73.2"
   checksum: 10c0/b24d5bc68a28ae8c9b221766dbfaecb0ca79b8baa28d298df23e0b1edfc88054ebe0258d62e04594a7a47399356a8962f54e3a97328562c6915997f69b7bb446
+  languageName: node
+  linkType: hard
+
+"@react-native/normalize-colors@npm:^0.74.1":
+  version: 0.74.85
+  resolution: "@react-native/normalize-colors@npm:0.74.85"
+  checksum: 10c0/44fbb2e78ed4656b78b32aa41b79e2e8b6264e1577b892a6f81205a7991490aad62ae96b3900d6f6e1609ffd5bab7ed1760aa814f119a90c05d13ab80942fda7
   languageName: node
   linkType: hard
 
@@ -5107,6 +5114,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/235d2fc69741448e853333b7c3d1180a966dd2b8972c8cbcd6b2a0c6cd7f8d582ab2b8e58219dbc62cce8f1b40aa317ff78ea2201cdd8249da5025adebed6f0b
+  languageName: node
+  linkType: hard
+
+"@types/howler@npm:^2":
+  version: 2.2.12
+  resolution: "@types/howler@npm:2.2.12"
+  checksum: 10c0/fb30e8c137ec03aa6a1e739be11b9d5b973f5f19d9f8a92eb11cff466170c9b5a314d73b8b34bb9a435e309ae880ba4847dee1029ec37d08c3f64b2219add462
   languageName: node
   linkType: hard
 
@@ -8244,6 +8258,7 @@ __metadata:
     "@packages/backend": "npm:^1.0.0"
     "@tailwindcss/postcss": "npm:^4.0.7"
     "@tailwindcss/vite": "npm:^4.0.7"
+    "@types/howler": "npm:^2"
     "@types/react": "npm:^19.0.8"
     "@types/react-dom": "npm:^19.0.3"
     "@types/react-native-htmlview": "npm:^0"
@@ -8257,6 +8272,7 @@ __metadata:
     expo-constants: "npm:^16.0.2"
     expo-device: "npm:^6.0.2"
     expo-font: "npm:^12.0.9"
+    howler: "npm:^2.2.4"
     openai: "npm:^4.85.1"
     postcss: "npm:^8.5.3"
     prettier: "npm:^3.1.0"
@@ -9596,6 +9612,13 @@ __metadata:
   dependencies:
     lru-cache: "npm:^10.0.1"
   checksum: 10c0/b19dbd92d3c0b4b0f1513cf79b0fc189f54d6af2129eeb201de2e9baaa711f1936929c848b866d9c8667a0f956f34bf4f07418c12be1ee9ca74fd9246335ca1f
+  languageName: node
+  linkType: hard
+
+"howler@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "howler@npm:2.2.4"
+  checksum: 10c0/74a295f56fd9b2abce122b27ed12c33fa195fb8a76832803e92d8e462a1eca803b55f44c14db052211d0cfab85c7c5249664c68d95bbbc16c775fac73866c6ef
   languageName: node
   linkType: hard
 
