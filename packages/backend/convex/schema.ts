@@ -116,6 +116,7 @@ const schema = defineSchema({
     instructions: v.optional(v.any()),
     status: v.optional(v.string()),
     error: v.optional(v.any()),
-  }).index("status", ["status"]),
+  }).index("status", ["status"])
+  .index("type", ["type"]),
 });
 export default schema;

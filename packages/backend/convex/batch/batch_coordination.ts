@@ -1,11 +1,11 @@
 import { v } from "convex/values";
 import { api, internal } from "../_generated/api";
 import { Doc, Id } from "../_generated/dataModel";
-import { internalAction, ActionCtx } from "../_generated/server";
+import { internalAction, ActionCtx, mutation } from "../_generated/server";
 import { migrations } from "../migration";
 const { XMLParser } = require("fast-xml-parser");
 const BATCH_DATE = new Date().toISOString().split("T")[0];
-
+//[ ] add column to job success
 export const dailyInitialBatchJob = internalAction({
     args: {},
     handler: async (ctx) => {
@@ -26,10 +26,10 @@ export const dailyInitialBatchJob = internalAction({
             });
         }
         // [ ] move to seperate batch, maybe run multiple times a day but not when doing the main batch
-        const job_id = await ctx.runAction(internal.batch.batch_coordination.scheduleCreateAiPromptsForEpisodes);
-        if (job_id) {
-            await ctx.runAction(internal.batch.batch_coordination.runJob, { job_id: job_id});
-        }
+        // const job_id = await ctx.runAction(internal.batch.batch_coordination.scheduleCreateAiPromptsForEpisodes);
+        // if (job_id) {
+        //     await ctx.runAction(internal.batch.batch_coordination.runJob, { job_id: job_id});
+        // }
         // 2.downloads rss, 3.schedules read rss data
         await ctx.runAction(internal.batch.batch_coordination.scheduleDownloadRssForAllPodcasts);
 
@@ -143,16 +143,16 @@ export const runOneJob = internalAction({
             if (job) {
                 console.log("job", job.type, job._id);
                 if (job.type === "download_rss") {
-                    await downloadRss(ctx, job);
+                    await downloadRss(ctx, job); // [ ] is it setting the max episode already done
                 }
                 if (job.type === "process_rss") {
-                    await processRss(ctx, job);
+                    await processRss(ctx, job); 
+                }
+                if (job.type === "update_episodes_from_rss") {//process_episodes
+                    await updateEpisodesFromRss(ctx, job);
                 }
                 if (job.type === "mark_episodes_as_missing") {
                     await markEpisodesAsMissing(ctx, job);
-                }
-                if (job.type === "process_episodes") {
-                    await processEpisodes(ctx, job);
                 }
                 if (job.type === "schedule_create_ai_prompts") {
                     await scheduleCreateAiPrompts(ctx, job);
@@ -166,6 +166,8 @@ export const runOneJob = internalAction({
                 if (job.type === "update_episode_details_from_ai_response") {
                     await processPromptResponse(ctx, job);
                 }
+
+                // not part of batch
                 if (job.type === "update_timeline") {
                     await updateTimeline(ctx, job);
                 }
@@ -183,6 +185,7 @@ export const runOneJob = internalAction({
         }
     },
 });
+
 
 async function updateTimelineConfirm(ctx: ActionCtx, job: Doc<"job">) {
     console.log("updating timeline confirm");
@@ -322,8 +325,8 @@ async function scheduleCreateAiPrompts(ctx: ActionCtx, job: Doc<"job">) {
     });
 }
 
-async function processEpisodes(ctx: ActionCtx, job: Doc<"job">) {
-    console.log("processing episodes");
+async function updateEpisodesFromRss(ctx: ActionCtx, job: Doc<"job">) {
+    console.log("updating episodes from rss");
     const episode_ids = await ctx.runMutation(api.load_episodes.patchPodcastRssJson, {
         podcast_id: job.instructions.podcast_id,
         rss_json: job.data.episodes,
@@ -357,20 +360,29 @@ async function markEpisodesAsMissing(ctx: ActionCtx, job: Doc<"job">) {
     });
 }
 
+//[ ] sometime etag and last-modified not working when I got both and one has -gzip in the header
+// Best Approach:
+// Test by removing -gzip in If-None-Match. If the server responds with 304 Not Modified, it works.
+// Check the Vary header. If you see Vary: Accept-Encoding, the server may be handling different versions separately.
+// If stripping -gzip fails, consider using Last-Modified as a fallback
 async function downloadRss(ctx: ActionCtx, job: Doc<"job">) {
     const storageId = await ctx.runAction(internal.load_episodes.downloadRssBody, { id: job.instructions.podcast_id });
-    console.log("storageId", storageId);
+    const max_episode = job.instructions.max_episode ?? 0;
+
     let status = "completed download rss";
     if (storageId) {
+        console.log("storageId", storageId);
         await ctx.runMutation(internal.batch.utils.createJob, {
             type: "process_rss",
             instructions: {
                 storage_id: storageId,
                 podcast_id: job.instructions.podcast_id,
                 last_job: job._id,
+                max_episode: max_episode,
             },
         });
     } else {
+        console.log("skipped rss up to date");
         status = "skipped rss up to date";
     }
 
@@ -385,7 +397,7 @@ async function processRss(ctx: ActionCtx, job: Doc<"job">) {
     const PAGE_SIZE = 10;
     const storageId = job.instructions.storage_id;
     const podcastId = job.instructions.podcast_id;
-    const lastJob = job.instructions.last_job;
+    
     console.log("processing rss", job._id);
     if (storageId) {
         console.log("processing rss", storageId, job._id);
@@ -426,7 +438,7 @@ async function processRss(ctx: ActionCtx, job: Doc<"job">) {
                     }));
 
                 await ctx.runMutation(internal.batch.utils.createJob, {
-                    type: "process_episodes",
+                    type: "update_episodes_from_rss",
                     instructions: {
                         podcast_id: podcastId,
                         last_job: job._id,
@@ -460,5 +472,27 @@ async function processRss(ctx: ActionCtx, job: Doc<"job">) {
             error: "no storage id",
         });
     }
-
 }
+
+export const renameJob = mutation({
+    args: {
+        old_type: v.string(),
+        new_type: v.string(),
+        size: v.number(),
+    },
+    handler: async (ctx, args) => {
+        const jobs = await ctx.db.query("job")
+            .withIndex("type", (q) => q.eq("type", args.old_type))
+            .take(args.size);
+        if (!jobs || jobs.length == 0) {
+            console.log("no jobs found");
+            return;
+        }
+        console.log("jobs", jobs.length);
+        for (const job of jobs) {
+            await ctx.db.patch(job._id, {
+                type: args.new_type,
+            });
+        }
+    },
+});

@@ -172,7 +172,9 @@ export const pageOfTimeline = query({
     handler: async (ctx, { page, pageSize }) => {
         const count = await timeline_aggregate.count(ctx);
         console.log("count", count);
-        const { key } = await timeline_aggregate.at(ctx, (page - 1) * pageSize);
+        console.log("pageOfTimeline index:", (page - 1) * pageSize, "pageSize", pageSize, "page", page);
+        const int_index = Math.floor((page - 1) * pageSize);
+        const { key } = await timeline_aggregate.at(ctx, int_index);
         console.log(key);
         let pageData = getPage(ctx, {
             table: "timeline",

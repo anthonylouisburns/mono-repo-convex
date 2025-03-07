@@ -271,6 +271,7 @@ export const processPromptResponse = internalMutation({
     await ctx.db.patch(args.prompt_id, {
       status: "response_processed",
     });
+    return true;
   },
 });
 

@@ -1,5 +1,6 @@
 import {
     internalMutation,
+    query,
 } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
@@ -77,5 +78,12 @@ export const updatePodcastDetailsFromRss = internalMutation({
     args: { podcast_id: v.id("podcast"), number_of_episodes: v.number(), title: v.string(), description: v.string() },
     handler: async (ctx, args) => {
         await ctx.db.patch(args.podcast_id, { number_of_episodes: args.number_of_episodes, title: args.title, description: args.description });
+    },
+});
+
+export const getPodcast = query({
+    args: { id: v.id("podcast") },
+    handler: async (ctx, args) => {
+        return await ctx.db.get(args.id);
     },
 });

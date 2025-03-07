@@ -130,7 +130,7 @@ export const patchPodcastRssJson = mutation({
         });
       } else {
         // console.log("inserting episode", episode_data);
-        ctx.db.insert("episode", {
+        const episode_id = await ctx.db.insert("episode", {
           podcast_id: args.podcast_id,
           episode_number: episode_number,
           episode_description: episode_data.description,
@@ -142,6 +142,7 @@ export const patchPodcastRssJson = mutation({
           rank: podcast.rank,
           status: undefined,
         });
+        episode_ids.push(episode_id);
       }
     }
     return episode_ids;
