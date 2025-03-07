@@ -63,7 +63,7 @@ export const updateAddPodcast = internalMutation({
                 });
             } else {
                 console.log(index, "podcast does not exist", series.name, series.rssUrl);
-                const id = await ctx.db.insert("podcast", {
+                await ctx.db.insert("podcast", {
                     rss_url: series.rssUrl,
                     chart: chart.chart_type,
                     rank: rank,

@@ -1,4 +1,4 @@
-import { api, internal } from "./_generated/api";
+import { internal } from "./_generated/api";
 import { Id, Doc } from "./_generated/dataModel";
 import {
   internalMutation,

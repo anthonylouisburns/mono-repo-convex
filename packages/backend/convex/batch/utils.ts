@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { api, internal } from "../_generated/api";
+import { api } from "../_generated/api";
 import { internalMutation, internalQuery, mutation } from "../_generated/server";
 
 export const deleteOldFiles = mutation({

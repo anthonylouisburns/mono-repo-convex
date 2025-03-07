@@ -1,5 +1,5 @@
 import { Migrations } from "@convex-dev/migrations";
-import { components, internal } from "./_generated/api";
+import { components } from "./_generated/api";
 import { insertTimeline, timeline_aggregate } from "./page_timeline";
 import { deleteTimeline } from "./page_timeline";
 import { Doc } from "./_generated/dataModel";
