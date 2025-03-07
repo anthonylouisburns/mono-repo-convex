@@ -43,4 +43,4 @@ yarn-error.log*
 my-cache/
 AuthKey_5327AZB24G.p8
 apple_private_key.pk
-
+packages/backend/deploy_convex.sh
