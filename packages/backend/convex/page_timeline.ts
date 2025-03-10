@@ -181,7 +181,8 @@ export const pageOfTimeline = query({
             index: "start_index",
             startIndexKey: key,
             targetMaxRows: pageSize,
-            schema: schema
+            schema: schema,
+            startInclusive: true,
         });
         return (await pageData).page;
     },

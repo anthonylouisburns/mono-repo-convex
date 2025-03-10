@@ -33,7 +33,6 @@ export default function TimelineItem({ timeline_item, expandedPanel, updateExpan
   function selectEpisode() {
     set_player_episode_id(timeline_item.episode_id);
   }
-
   return (
     <Accordion
       key={timeline_item._id}
