@@ -30,11 +30,15 @@ const Player = () => {
   const episode = useQuery(api.everwhz.episode, {
     id: episodePlayingId ?? undefined,
   });
-
+  const retrievePlayStatus = useQuery(api.everwhz.getPlayStatus, {
+    id: episodePlayingId,
+    device_id: deviceId,
+  });
   const set_play_status = useMutation(api.everwhz.playStatus);
 
   const [sound, setSound] = useState<Audio.Sound | null>(null);
 
+  const [positionMillis, setPositionMillis] = useState(0);
   const [position, setPosition] = useState(msToTime(0));
   const [duration, setDuration] = useState(msToTime(0));
   const [dropdownValue, setDropdownValue] = useState("timeline");
@@ -53,65 +57,37 @@ const Player = () => {
         console.log(
           `Encountered a fatal error during playback: ${playbackStatus["error"]}`,
         );
-        // Send Expo team the error on Slack or the forums so we can help you debug!
       }
     } else {
       if (playbackStatus.isPlaying) {
         const pos = playbackStatus.positionMillis;
-        if (pos - timeToMs(position) > 1000) {
-          setPosition(msToTime(pos));
-          if (Math.abs(pos - lastUpdatePos) > UPDATE_DELAY_SECONDS * 1000) {
-            set_play_status({ id: episodePlayingId, position: pos, device_id: deviceId });
-            setLastUpdatePos(pos);
-          }
+        if (pos - positionMillis > 1000) {
+          setPositionMillis(pos);
         }
       }
     }
   }
 
-  // useEffect(() => {
-  //   if (!sound || ) {
-  //     const new_position = getPlayStatus ? getPlayStatus.position : 0;
-  //     setPosition(msToTime(new_position));
-  //     console.log("useEffect 2");
-  //   }
-  //   if (sound && !isPlaying) {
-  //     const new_position = getPlayStatus ? getPlayStatus.position : 0;
-  //     sound.setPositionAsync(new_position);
-  //   }
-  // }, [getPlayStatus]);
 
-  useEffect(() => {
-    sound?.unloadAsync();
-    if (episodePlayingId == null) {
-      setSound(null);
-      setPodcastPlayingId(null);
-    } 
-    if (episodePlayingId) {
-      setPodcastPlayingId(episode.podcast_id);
-    }
-    loadSound();
-    // stopSound();
-    // const new_position =  getPlayStatus ? getPlayStatus.position : 0;
-    // setPosition(msToTime(new_position));
-    // playSound();
-  }, [episodePlayingId]);
+
 
   async function loadSound() {
     const mp3_link = episode.mp3_link;
     const source = { uri: mp3_link };
-    const getPlayStatus = useQuery(api.everwhz.getPlayStatus, {
-      id: episodePlayingId,
-      device_id: deviceId,
-    });
-    const positionMillis = getPlayStatus ? getPlayStatus.position : 0;
 
+    // console.log("loadSound++++++++retrievePlayStatus", retrievePlayStatus);
+    const positionMillis = retrievePlayStatus ? retrievePlayStatus.position : 0;
+
+    // console.log("loadSound++++++++positionMillis", positionMillis);
     const { sound, status } = await Audio.Sound.createAsync(source, { positionMillis: positionMillis }, updatePlayStatus);
+    // console.log("loadSound......", status["durationMillis"]);
     setDuration(msToTime(status["durationMillis"]));
+    setPositionMillis(positionMillis);
     setSound(sound);
   }
 
   async function playSound() {
+    console.log("playSound");
     await sound?.playAsync();
   }
 
@@ -119,34 +95,72 @@ const Player = () => {
     sound?.stopAsync();
   }
 
+  async function isPlaying(){
+    const status = await sound?.getStatusAsync();
+    if (status && status["isPlaying"]) {
+      return true;
+    }
+    return false;
+  }
+
   async function skip(seconds: number) {
-    //   sound.setPositionAsync(timeToMs(position) + (seconds * 1000));
-    //   setPosition(msToTime(timeToMs(position) + (seconds * 1000)));
+    const playing = await isPlaying();
+    stopSound();
+    setPositionMillis(positionMillis + (seconds * 1000));
+    sound?.setPositionAsync(positionMillis + (seconds * 1000));
+    if (playing) {
+      playSound();
+    }
   }
 
-  function playNext() {
-    //   sound.setPositionAsync(1000);
-    //   setPosition(msToTime(1000));
+
+  async function playNext() {
+    await setEpisodePlayingId("j97351nv8k0wrxcrr11j50m97n7b57h8" as Id<"episode">);
+    await playSound();
   }
 
-  if (isLoading || !episodePlayingId) {
+
+  useEffect(() => {
+    if (retrievePlayStatus === undefined) return;
+    stopSound();
+    sound?.unloadAsync();
+    if (episodePlayingId == null) {
+      setSound(null);
+      setPodcastPlayingId(null);
+      return
+    }
+
+    setPodcastPlayingId(episode.podcast_id);
+    console.log("loadSound++++++++episodePlayingId retrievePlayStatus", retrievePlayStatus);
+    loadSound();
+  }, [episodePlayingId, retrievePlayStatus]);
+
+  useEffect(() => {
+    setPosition(msToTime(positionMillis));
+    if (Math.abs(positionMillis - lastUpdatePos) > UPDATE_DELAY_SECONDS * 1000 && episodePlayingId) {
+      set_play_status({ id: episodePlayingId, position: positionMillis, device_id: deviceId });
+      setLastUpdatePos(positionMillis);
+    }
+  }, [positionMillis]);
+
+  if (isLoading || !episodePlayingId || !episode) {
     return <></>;
   }
 
   return (
     <View style={styles.player_center}>
+      <IconButton icon="close" onPress={() => setEpisodePlayingId(null)} style={{ marginTop: -5, marginBottom: -35, padding: 0 }} iconColor="red" />
       <View style={styles.player}>
-        <Text style={{ marginTop: 5, fontWeight: "bold" }}>{episode.podcast_name}</Text>
+        <Text style={{ marginTop: 5, fontWeight: "bold" }}>{episode.podcast_title}</Text>
       </View>
       <View style={styles.player}>
         <HTMLView value={episode.title ?? "-"} />
-        <IconButton icon="close" onPress={() => setEpisodePlayingId(null)} />
       </View>
       <View style={styles.player}>
         <IconButton iconColor="green" icon="rewind-30" onPress={() => skip(-30)} style={{ margin: -5, padding: 0 }} />
-        <IconButton iconColor="green" icon="pause-circle-outline" onPress={stopSound} style={{ margin: -5, padding: 0 }} />
+        <IconButton iconColor="green" icon="pause-circle-outline" onPress={() => stopSound()} style={{ margin: -5, padding: 0 }} />
         <Text style={{ marginTop: 5 }}>{position} / {duration}</Text>
-        <IconButton iconColor="green" icon="play-outline" onPress={playSound} style={{ margin: -5, padding: 0 }} />
+        <IconButton iconColor="green" icon="play-outline" onPress={() => playSound()} style={{ margin: -5, padding: 0 }} />
         <IconButton iconColor="green" icon="fast-forward-60" onPress={() => skip(60)} style={{ margin: -5, padding: 0 }} />
       </View>
       <View style={styles.player}>

@@ -25,7 +25,6 @@ const Episodes = ({ route, navigation }) => {
           <EpisodeView
             episode_id={episode._id}
             podcast_name={podcast_name}
-            longView={false}
             navigation={navigation}
           />
         </View>
