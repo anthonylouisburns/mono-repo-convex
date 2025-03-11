@@ -3,16 +3,17 @@ import { useFonts } from "expo-font";
 import { LogBox } from "react-native";
 import Navigation from "./src/navigation/Navigation";
 
+import LoginScreen from "./src/screens/LoginScreen";
+import { AudioContext } from "./AudioContext";
+import { Audio, InterruptionModeAndroid, InterruptionModeIOS } from "expo-av";
 import { useEffect, useState } from "react";
 import React from "react";
 import * as WebBrowser from "expo-web-browser";
-import { AuthLoading } from "convex/react";
+import { Authenticated, Unauthenticated, AuthLoading } from "convex/react";
 import * as SecureStore from "expo-secure-store";
 import uuid from "react-uuid";
 const deviceIdKey = "everwhz-deviceId";
-import * as Application from "expo-application";
-import { PlayerContext } from "./PlayerContext";
-import { Id } from "@packages/backend/convex/_generated/dataModel";
+
 export const getDeviceId = async () => {
   let deviceId = await SecureStore.getItemAsync(deviceIdKey);
 
@@ -29,8 +30,13 @@ export default function AppWithContext() {
   LogBox.ignoreAllLogs();
 
   const [deviceId, setDeviceId] = useState<string>("-");
-  const [episodePlayingId, setEpisodePlayingId] = useState<Id<"episode"> | null>(null);
-  const [podcastPlayingId, setPodcastPlayingId] = useState<Id<"podcast"> | null>(null);
+  const [sound, setSound] = useState<Audio.Sound>();
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [player_podcast_name, set_player_podcast_name] = useState();
+  const [podcast_id, set_podcast_id] = useState();
+  const [player_episode_id, set_player_episode_id] = useState();
+  const [duration, set_duration] = useState("-");
+  const [position, set_position] = useState("-");
 
   const [loaded] = useFonts({
     Bold: require("./src/assets/fonts/Inter-Bold.ttf"),
@@ -50,25 +56,26 @@ export default function AppWithContext() {
 
   WebBrowser.maybeCompleteAuthSession();
 
-
   useEffect(() => {
-    async function getDeviceId() {
-      try {
-        if (Platform.OS === 'android') {
-          const id = Application.getAndroidId();
-          setDeviceId(id);
-        } else if (Platform.OS === 'ios') {
-          const id = await Application.getIosIdForVendorAsync();
-          setDeviceId(id);
-        }
-      } catch (error) {
-        console.error('Failed to get device ID:', error);
-      }
-    }
-
-    getDeviceId();
+    getDeviceId().then((id) => setDeviceId(id));
   }, []);
-
+  useEffect(() => {
+    Audio.setAudioModeAsync({
+      staysActiveInBackground: true,
+      playsInSilentModeIOS: true,
+      interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+      interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+      shouldDuckAndroid: true,
+      playThroughEarpieceAndroid: true,
+    });
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+  // [ ] whats up with this code
 
   if (!loaded) {
     return false;
@@ -87,17 +94,26 @@ export default function AppWithContext() {
         <AuthLoading>
           <Text>loading...</Text>
         </AuthLoading>
-        <PlayerContext.Provider
+        <AudioContext.Provider
           value={{
-            deviceId,
-            episodePlayingId,
-            setEpisodePlayingId,
-            podcastPlayingId,
-            setPodcastPlayingId,
+            sound,
+            setSound,
+            player_podcast_name,
+            set_player_podcast_name,
+            duration,
+            set_duration,
+            position,
+            set_position,
+            podcast_id,
+            set_podcast_id,
+            player_episode_id,
+            set_player_episode_id,
+            isPlaying,
+            setIsPlaying,
           }}
         >
           <Navigation />
-        </PlayerContext.Provider>
+        </AudioContext.Provider>
       </View>
     </>
   );

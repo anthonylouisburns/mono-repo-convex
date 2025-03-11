@@ -7,13 +7,14 @@ import { styles } from "./Styles";
 import { useAuthActions } from "@convex-dev/auth/dist/react";
 import { Authenticated, Unauthenticated, useConvexAuth } from "convex/react";
 import { auth } from "@packages/backend/convex/auth";
+import { PlayerContext } from "../../PlayerContext";
 
 export const EverwhzHeader = ({ navigation, page }) => {
   // [ ] get user info from backend
   const { signOut } = useAuthActions();
   const { isAuthenticated } = useConvexAuth();
 
-  const { podcast_id, podcast_name, sound } = useContext(AudioContext);
+  const { podcastPlayingId } = useContext(PlayerContext);
 
   function logOut() {
     console.log("logging out");
@@ -72,15 +73,14 @@ export const EverwhzHeader = ({ navigation, page }) => {
         </>
       );
     } else {
-      if (podcast_id) {
+      if (podcastPlayingId) {
         return (
           <>
             <Text
               style={styles.link}
               onPress={() =>
                 navigation.navigate("Episodes", {
-                  podcast_id: podcast_id,
-                  podcast_name: podcast_name,
+                  podcast_id: podcastPlayingId,
                 })
               }
             >
