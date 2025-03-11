@@ -37,7 +37,7 @@ const LoginScreen = ({ navigation }) => {
       console.log("everwhz.LoginScreen 3", code, url);
       await signIn(authType, { code });
       console.log("everwhz.LoginScreen 4 isAuthenticated");
-      navigation.navigate("Timeline");
+      navigation.navigate("TimelinePage");
     } else {
       console.error("error", result);
     }

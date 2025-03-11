@@ -32,7 +32,7 @@ export const EverwhzHeader = ({ navigation, page }) => {
         <>
           <Text
             style={styles.link}
-            onPress={() => navigation.navigate("Timeline")}
+            onPress={() => navigation.navigate("TimelinePage")}
           >
             timeline
           </Text>{" "}

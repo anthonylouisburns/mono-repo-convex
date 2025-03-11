@@ -7,6 +7,7 @@ import Episodes from "../screens/Episodes";
 import Episode from "../screens/Episode";
 import Player from "../component/Player";
 import LoginScreen from "../screens/LoginScreen";
+import TimelinePage from "../screens/timeline/TimelinePage";
 const Stack = createNativeStackNavigator();
 
 const Navigation = () => {
@@ -15,7 +16,7 @@ const Navigation = () => {
       <Player />
       <NavigationContainer>
         <Stack.Navigator
-          initialRouteName="Timeline"
+          initialRouteName="TimelinePage"
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="Timeline" component={Timeline} />
@@ -23,6 +24,7 @@ const Navigation = () => {
           <Stack.Screen name="Episodes" component={Episodes} />
           <Stack.Screen name="Episode" component={Episode} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <Stack.Screen name="TimelinePage" component={TimelinePage} />
         </Stack.Navigator>
       </NavigationContainer>
     </>

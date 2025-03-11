@@ -1,4 +1,4 @@
-import { View, Text, TextInput } from "react-native";
+import { View, Text, TextInput, Button } from "react-native";
 import { styles } from "./Styles";
 import { useContext, useEffect, useState } from "react";
 import { AVPlaybackStatus, Audio } from "expo-av";
@@ -9,14 +9,19 @@ import { Id } from "@packages/backend/convex/_generated/dataModel";
 import HTMLView from "react-native-htmlview";
 import { msToTime, timeToMs } from "../lib/utilities";
 import React from "react";
+import * as Application from "expo-application";
+import { Platform } from "react-native";
+import { IconButton } from "react-native-paper";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const Player = () => {
   const UPDATE_DELAY_SECONDS = 5;
   const [lastUpdatePos, setLastUpdatePos] = useState(0);
   const { isLoading } = useConvexAuth();
-  const { sound }: { sound: Audio.Sound } = useContext(AudioContext);
+  const [deviceId, setDeviceId] = useState<string | null>(null);
 
   const {
+    sound,
     setSound,
     player_podcast_name,
     player_episode_id,
@@ -26,6 +31,14 @@ const Player = () => {
 
   const [position, setPosition] = useState(msToTime(0));
   const [duration, setDuration] = useState(msToTime(0));
+  const [dropdownValue, setDropdownValue] = useState("timeline");
+  const [open, setOpen] = useState(false);
+  const dropDownOptions = [
+    { label: "timeline", value: "timeline" },
+    { label: "timeline shuffle", value: "timeline-shuffle" },
+    { label: "podcast", value: "podcast" },
+    { label: "podcast shuffle", value: "podcast-shuffle" },
+  ];
 
   const episode = useQuery(api.everwhz.episode, {
     id: player_episode_id as Id<"episode">,
@@ -49,7 +62,7 @@ const Player = () => {
           setPosition(msToTime(pos));
           // [x] mutation save place
           if (Math.abs(pos - lastUpdatePos) > UPDATE_DELAY_SECONDS * 1000) {
-            set_play_status({ id: player_episode_id, position: pos });
+            set_play_status({ id: player_episode_id, position: pos, device_id: deviceId });
             setLastUpdatePos(pos);
           }
         }
@@ -57,7 +70,9 @@ const Player = () => {
     }
   }
 
-  function playStatusNoOp(status: AVPlaybackStatus) {}
+
+
+  function playStatusNoOp(status: AVPlaybackStatus) { }
 
   function positionFocus() {
     console.log("focus");
@@ -90,6 +105,13 @@ const Player = () => {
     }
   }, [getPlayStatus]);
 
+  useEffect(() => {
+    // stopSound();
+    // const new_position =  getPlayStatus ? getPlayStatus.position : 0;
+    // setPosition(msToTime(new_position));
+    // playSound();
+  }, [player_episode_id]);
+
   async function playSound() {
     console.log("Loading Sound");
     setIsPlaying(true);
@@ -101,10 +123,10 @@ const Player = () => {
     const { sound, status } =
       position.length > 1
         ? await Audio.Sound.createAsync(
-            source,
-            { positionMillis: timeToMs(position) },
-            playStatus,
-          )
+          source,
+          { positionMillis: timeToMs(position) },
+          playStatus,
+        )
         : await Audio.Sound.createAsync(source, {}, playStatus);
 
     console.log("110 Sound", status["durationMillis"]);
@@ -116,6 +138,34 @@ const Player = () => {
     await sound.playAsync();
   }
 
+  async function skip(seconds: number) {
+    sound.setPositionAsync(timeToMs(position) + (seconds * 1000));
+    setPosition(msToTime(timeToMs(position) + (seconds * 1000)));
+  }
+  function playNext() {
+    sound.setPositionAsync(1000);
+    setPosition(msToTime(1000));
+  }
+
+  useEffect(() => {
+    async function getDeviceId() {
+      try {
+        if (Platform.OS === 'android') {
+          const id = Application.getAndroidId();
+          setDeviceId(id);
+        } else if (Platform.OS === 'ios') {
+          const id = await Application.getIosIdForVendorAsync();
+          setDeviceId(id);
+        }
+      } catch (error) {
+        console.error('Failed to get device ID:', error);
+      }
+    }
+
+    getDeviceId();
+
+  }, []);
+
   if (isLoading || !player_episode_id) {
     return <></>;
   }
@@ -123,27 +173,40 @@ const Player = () => {
   return (
     <View style={styles.player_center}>
       <View style={styles.player}>
-        <Text style={styles.podcast_name}>{player_podcast_name}:</Text>
+        <Text style={{ marginTop: 5, fontWeight: "bold" }}>{isPlaying ? "Playing" : "Paused"}:{player_podcast_name}</Text>
       </View>
       <View style={styles.player}>
         <HTMLView value={episode.title ?? "-"} />
       </View>
       <View style={styles.player}>
-        <Text style={styles.link} onPress={playSound}>
-          play{" "}
-        </Text>
-        <TextInput
-          style={styles.white}
-          value={position}
-          onFocus={positionFocus}
-          onBlur={positionFocusOut}
-          onChangeText={(text) => setPosition(text)}
-        />
-        <Text> / {duration}</Text>
-        <Text style={styles.link} onPress={stopSound}>
-          {" "}
-          stop
-        </Text>
+        <IconButton iconColor="green" icon="rewind-30" onPress={() => skip(-30)} style={{ margin: -5, padding: 0 }} />
+        <IconButton iconColor="green" icon="pause-circle-outline" onPress={stopSound} style={{ margin: -5, padding: 0 }} />
+        <Text style={{ marginTop: 5 }}>{position} / {duration}</Text>
+        <IconButton iconColor="green" icon="play-outline" onPress={playSound} style={{ margin: -5, padding: 0 }} />
+        <IconButton iconColor="green" icon="fast-forward-60" onPress={() => skip(60)} style={{ margin: -5, padding: 0 }} />
+      </View>
+      <View style={styles.player}>
+        <IconButton
+          iconColor="green"
+          icon="skip-previous-outline"
+          onPress={() => playNext()}
+          style={{ margin: -5, padding: 0 }} />
+        <View>
+          <DropDownPicker
+            value={dropdownValue}
+            setValue={(value) => setDropdownValue(value)}
+            items={dropDownOptions}
+            multiple={false}
+            open={open}
+            setOpen={setOpen}
+            style={{ backgroundColor: "light-grey", width: 110, borderWidth: 0, margin: -10 }}
+          />
+        </View>
+        <IconButton
+          iconColor="green"
+          icon="skip-next-outline"
+          onPress={() => playNext()}
+          style={{ margin: -5, padding: 0 }} />
       </View>
     </View>
   );
